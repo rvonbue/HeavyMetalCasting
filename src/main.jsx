@@ -6,17 +6,20 @@ import Root from './Root.jsx'
 import Login from './pages/Login.jsx'
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
+import { AppStateProvider } from './AppState';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Root />} errorElement={<NotFound />}>
-          <Route index element={<Home />} /> {/* default when path is "/" */}
-          <Route path="login" element={<Login />} />
-          <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
-      </Route>
-    </Routes>
-    </BrowserRouter>
+    <AppStateProvider>
+      <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Root />} errorElement={<NotFound />}>
+            <Route index element={<Home />} /> {/* default when path is "/" */}
+            <Route path="login" element={<Login />} />
+            <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
+        </Route>
+      </Routes>
+      </BrowserRouter>
+    </AppStateProvider>
   </StrictMode>,
 )

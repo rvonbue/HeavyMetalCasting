@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from "react-router";
 import './Login.css';
+import { Button_A } from "../components/Buttons";
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -39,8 +40,7 @@ function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-
-        <button type="submit">Log In</button>
+        <Button_A button_name="LOG IN" link_val="/" button_type="form" button_styles_outer={{ marginTop: "1.5rem"}}/>  
       </form>
     </div>
   );

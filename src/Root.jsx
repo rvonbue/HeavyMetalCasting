@@ -1,17 +1,24 @@
 import { useState } from 'react'
-import Header from "./components/header/Header";
-
 import { Outlet } from 'react-router-dom';
+import Header from "./components/header/Header";
+import { useAppState, useAppDispatch } from './AppState';
 import './App.css'
-
-
+import ShoppingTab from "./components/ShoppingTab"
+;
 function Root() {
-
+  const { showShoppingCart } = useAppState();
+  const dispatch = useAppDispatch(); 
+  
   return (
     <>
       <Header/>
       <div style={{height: "calc(100vh - 56px)" }}>
         <Outlet />
+        <ShoppingTab 
+          isOpen={showShoppingCart} 
+          onClose={() => { 
+            dispatch({ type: 'SET_SHOPPING_CART', payload: false })
+            }}/>
       </div>
     </>
   )

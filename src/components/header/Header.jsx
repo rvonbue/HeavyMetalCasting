@@ -1,35 +1,65 @@
 import { useState } from 'react'
 import { NavLink } from "react-router";
 import { Link } from 'react-router-dom';
+import { useAppState, useAppDispatch } from '../../AppState';
+
+const CartIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 576 512"
+    aria-hidden="true"
+    focusable="false"
+    width="24"
+    height="24"
+    style={{cursor: "pointer", pointerEvents: "all" }}
+  >
+    <path
+      fill="#ffffff"
+      d="M16 0C7.2 0 0 7.2 0 16s7.2 16 16 16l37.9 0c7.6 0 14.2 5.3 15.7 12.8l58.9 288c6.1 29.8 32.3 51.2 62.7 51.2L496 384c8.8 0 16-7.2 16-16s-7.2-16-16-16l-304.8 0c-15.2 0-28.3-10.7-31.4-25.6L152 288l314.6 0c29.4 0 55-20 62.1-48.5L570.6 71.8c5-20.2-10.2-39.8-31-39.8L99.1 32C92.5 13 74.4 0 53.9 0L16 0zm90.1 64l433.4 0L497.6 231.8C494 246 481.2 256 466.5 256l-321.1 0L106.1 64zM168 456a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zm80 0a56 56 0 1 0 -112 0 56 56 0 1 0 112 0zm200-24a24 24 0 1 1 0 48 24 24 0 1 1 0-48zm0 80a56 56 0 1 0 0-112 56 56 0 1 0 0 112z"
+    />
+  </svg>
+);
 
 function Header() {
+  const { showShoppingCart } = useAppState();
+  const dispatch = useAppDispatch(); 
+  
+//  console.log('showShoppingCart', showShoppingCart);
+// console.log('dispatch', dispatch);
+
   return (
     <>
     <header 
-      className="bg-hmc-A font-cinzel"
+      className="bg-hmc-a"
       style={{ position: 'sticky', overflow: 'visible', top: 0, width: "100%", }}
     >
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center",maxWidth: "1280px", margin: "auto", padding: "1rem 1.5rem 1rem .7rem" }}>
+      <div 
+        className="text-hmc-b"
+        style={{ display: "flex", justifyContent: "center", alignItems: "center",maxWidth: "1280px", margin: "auto", padding: "1rem 1.5rem 1rem .7rem" }}
+      >
         <div style={{ width: "25%" }} >
           <NavLink 
-           to="/" end
-           className="bg-hmc-A font-cinzel my-custom-color"
-           style={{color: "var(--theme-text-color-A)" }}
+           to="/" 
+           end
+           className=""
+           style={{ color: "inherit" }}
           >
             HMC
           </NavLink> 
         </div>
-          <div className="bg-hmc-A font-cinzel text-hmcA">test</div>
         <div  style={{width: "50%" }}>
-          <NavLink to="/" end style={{color: "var(--theme-text-color-A)",padding: "0px 8px"}}>SHOP</NavLink>
-          <NavLink to="/trending" end style={{color: "var(--theme-text-color-A)", padding: "0px 8px"}}>COLLECTIONS</NavLink>
-          <NavLink to="/concerts" className="text-red-500" style={{ padding: "0px 8px"}}>MY STORY</NavLink>
+          <NavLink to="/" end style={{padding: "0px 8px", color: "inherit"}}>SHOP</NavLink>
+          <NavLink to="/trending" end style={{padding: "0px 8px", color: "inherit"}}>COLLECTIONS</NavLink>
+          <NavLink to="/concerts" className="text-red-500" style={{ padding: "0px 8px",color: "inherit"}}>MY STORY</NavLink>
         </div>
-      <div 
-          className="text-hmc-B" 
-          style={{width: "25%",}}
-        >
-          <Link to="/login" style={{color: "var(--theme-text-color-A)" }} >SIGN IN</Link>
+        <div className="flex justify-end" style={{width: "25%", display: "flex" }}>
+          <Link to="/login" style={{ color: "inherit", marginRight: "36px" }} >SIGN IN</Link>
+          <div onClick={() => { 
+            dispatch({ type: 'SET_SHOPPING_CART', payload: !showShoppingCart });
+            
+            }}>
+            <CartIcon />
+          </div>
         </div>
       </div>
     </header>

@@ -3,7 +3,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        'hmcA': '#FF5722',
+        'my-custom-color': '#FF5722',
       },
       fontFamily: {
         cinzel: ['Cinzel', 'serif'],
