@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom';
 import Header from "./components/header/Header";
 import { useAppState, useAppDispatch } from './AppState';
-import './App.css'
+import './styles/App.css'
 import ShoppingTab from "./components/ShoppingTab"
 ;
 function Root() {
@@ -18,7 +18,7 @@ function Root() {
           isOpen={showShoppingCart} 
           onClose={() => { 
             dispatch({ type: 'SET_SHOPPING_CART', payload: false })
-            }}/>
+          }}/>
       </div>
     </>
   )

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import HMC_cardSrc from "../assets/images/404.png";
-import { Button_A } from "../components/Buttons";
+import { Button_A } from "../components/Resuables";
 
 export default function NotFound() {
   return (

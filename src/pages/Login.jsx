@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from "react-router";
 import './Login.css';
-import { Button_A } from "../components/Buttons";
+import { Button_A } from "../components/Resuables";
 
 function LoginPage() {
   const [email, setEmail] = useState('');
