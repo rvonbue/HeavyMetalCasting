@@ -5,6 +5,9 @@ import './styles/index.css'
 import App from './App.jsx'
 import Login from './pages/Login.jsx'
 import Home from "./pages/Home";
+import ShopPage from "./pages/ShopPage";
+import CollectionsPage from "./pages/CollectionsPage";
+import AboutUsPage from "./pages/AboutUsPage";
 
 import Admin from "./pages/Admin";
 import ProductOverviewPage from "./pages/AdminPages/ProductOverviewPage";
@@ -23,8 +26,11 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" element={<App />} errorElement={<NotFound />}>
           <Route index element={<Home />} /> {/* default when path is "/" */}
           <Route path="login" element={<Login />} />
+          <Route path="shop" element={<ShopPage />} />
+          <Route path="collections" element={<CollectionsPage />} />
+          <Route path="about_us" element={<AboutUsPage />} />
           <Route path="admin" element={<Admin />}>
-            <Route path="orders" element={<ProductOrdersPage />} />
+            <Route index path="orders" element={<ProductOrdersPage replace />} />
             <Route path="overview_products" element={<ProductOverviewPage />} />
             <Route path="edit_product" element={<ProductEditPage />} />
             <Route path="add_product" element={<ProductAddPage />} />

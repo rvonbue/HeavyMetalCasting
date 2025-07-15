@@ -13,6 +13,8 @@
 @theme {
   --color-hmc-a: oklch(0.1 0.11 178);   
   --color-hmc-b: oklch(0.87 0.22 105.85);
+  --color-hmc-c: oklch(0.96 0.0 1);
+  --color-hmc-bg-a: #2c2b2b;
   --color-hmc-button-a: oklch(86.9% 0.022 252.894);
   --color-hmc-button-b: oklch(55.4% 0.046 257.417);
   --color-hmc-button-text-a: oklch(0.1 0.11 178);

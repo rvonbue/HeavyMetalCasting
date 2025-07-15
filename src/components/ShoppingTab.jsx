@@ -9,7 +9,7 @@ export default function ShoppingTab({ isOpen, onClose }) {
       {/* Overlay (optional) */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-40 z-40"
+          className="fixed inset-0 bg-black bg-opacity-40 z-40 cursor-pointer"
           style={{opacity: 0.25}}
           onClick={onClose}
         />
@@ -36,7 +36,7 @@ export default function ShoppingTab({ isOpen, onClose }) {
         </div>
 
         {/* Content */}
-        <div className="p-4 overflow-y-auto h-[calc(100%-64px)]">
+        <div className="p-4 h-[calc(100%-64px)]">
             {shoppingCartEmpty ? 
               <div className="text-lg">Your shopping cart is empty.</div> 
               : 

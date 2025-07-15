@@ -8,12 +8,107 @@ const initialState = {
   showShoppingCart: false,
   shoppingCartItems: [],
   orders: [],
-  products: [
-    { id: 1, name: 'T-shirt', price: 19.99, stock: 120, description: "I love tshirts" },
-    { id: 2, name: 'Hoodie', price: 39.99, stock: 75, description: "I love Hoodies"  },
-    { id: 3, name: 'Cap', price: 14.99, stock: 200, description: "Caps are ok" },
+  productCategories: [
+    {id: 1, label: "ring", },
+    {id: 2, label: "necklace"},
+    {id: 3, label: "pin"},
+    {id: 3, label: "earrings"},
   ],
-  productsLoading: false
+  toolbarHeight: 56,
+  products: [
+    { id: 1, name: 'T-shirt', live: true, price: 19.99, cat: [1],stock: 120, 
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus euismod, nisl vitae luctus interdum, orci tortor vulputate purus, sed vulputate ante mauris sit amet urna. Sed nec ante at purus fermentum sollicitudin. Integer quis ex sed quam aliquet facilisis. Nulla facilisi. Phasellus euismod, mauris vitae malesuada efficitur, justo libero cursus nibh, sit amet consequat odio felis quis orci. Donec ac dolor sit amet purus feugiat interdum. Curabitur in felis ac justo sollicitudin hendrerit.", 
+      images: ["20210202_215207.jpg", "20210902_163609.jpg","20210202_215207.jpg", "20210902_163609.jpg","20210202_215207.jpg",] },
+    { id: 2, name: 'Hoodie', live: false, price: 39.99, cat: [3], stock: 75, description: "I love Hoodies", images: []  },
+    { id: 3, name: 'Cap', live: true, price: 14.99, cat: [2,1], stock: 200, description: "Caps are ok", images: [] },
+  ],
+  productsLoading: false,
+  productProps: [
+      { 
+        adminDisplayName: "ID", 
+        storeDisplayName: "", 
+        dataType: "number", 
+        dataName: "id",
+        userEdit: false,
+        classNames: "min-w-36",
+        inputStyles: {
+          width: "50%"
+        }
+      },
+      { 
+        adminDisplayName: "Product Name", 
+        storeDisplayName: "", 
+        dataType: "text", 
+        dataName: "name",
+        userEdit: true,
+        classNames: "min-w-36",
+        divStyles: {
+          width: "50%"
+        },
+        inputStyles: {
+          maxWidth: "100%"
+        }
+      },
+    
+       { 
+        adminDisplayName: "Product Categories", 
+        storeDisplayName: "", 
+        dataType: "list", 
+        dataName: "cat",
+        userEdit: true,
+        classNames: "min-w-36",
+        inputStyles: {
+          width: "500px",
+        }
+      },
+      { 
+        adminDisplayName: "Live", 
+        storeDisplayName: "", 
+        dataType: "checkbox", 
+        dataName: "live",
+        userEdit: true,
+        inputStyles: {
+          width: "24px",
+          height: "24px"
+        }
+      },
+      { 
+        adminDisplayName: "Price($)", 
+        storeDisplayName: "", 
+        dataType: "number", 
+        dataName: "price",
+        userEdit: true,
+        inputProps: {step: "0.01"},
+        inputStyles: {
+          maxWidth: "100px"
+        }
+      },
+      { 
+        adminDisplayName: "Stock",
+        storeDisplayName: "",  
+        dataType: "number", 
+        dataName: "stock",
+        userEdit: true,
+        inputStyles: {
+          maxWidth: "100px"
+        }
+      },
+      { 
+        adminDisplayName: "Description", 
+        storeDisplayName: "", 
+        dataType: "textarea", 
+        dataName: "description",
+        userEdit: true,
+        classNames: "min-w-36",
+        divStyles: {
+          width: "100%"
+        },
+        inputStyles: {
+          maxWidth: "100%"
+        }
+      },
+  ],
+  initialLoading: false
 };
 
 // Reducer to handle state updates
@@ -37,7 +132,6 @@ function appReducer(state, action) {
 const AppStateContext = createContext();
 const AppDispatchContext = createContext();
 
-// Provider component
 export function AppStateProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
@@ -50,7 +144,6 @@ export function AppStateProvider({ children }) {
   );
 }
 
-// Custom hooks for usage
 export function useAppState() {
   const context = useContext(AppStateContext);
   if (context === undefined) throw new Error('useAppState must be used within AppStateProvider');

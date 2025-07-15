@@ -1,84 +1,38 @@
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useMatch  } from 'react-router-dom';
 import { NavLink } from "react-router";
 import { useAppState, useAppDispatch } from '../AppState'
 import { FolderTab } from "../components/Resuables";
 
 function AdminPage() {
-  const { products, howShoppingCart } = useAppState();
-  const [productProps, setProductProps] = useState([
-      { 
-        adminDisplayName: "ID", 
-        storeDisplayName: "", 
-        dataType: "number", 
-        dataName: "id",
-        userEdit: false 
-      },
-      { 
-        adminDisplayName: "Product Name", 
-        storeDisplayName: "", 
-        dataType: "text", 
-        dataName: "name",
-        userEdit: true 
-      },
-      { 
-        adminDisplayName: "Price", 
-        storeDisplayName: "", 
-        dataType: "number", 
-        dataName: "price",
-        userEdit: true 
-      },
-      { 
-        adminDisplayName: "Stock",
-        storeDisplayName: "",  
-        dataType: "number", 
-        dataName: "stock",
-        userEdit: true 
-      },
-      { 
-        adminDisplayName: "Description", 
-        storeDisplayName: "", 
-        dataType: "text", 
-        dataName: "description",
-        userEdit: true 
-      },
-  ]);
+  const { toolbarHeight } = useAppState();
 
-
-  const childrenProps = {
-      productProps, 
-      setProductProps,
-      products
-  };
+  const editMatch = useMatch('/admin/edit_product')
+  const overviewMatch = useMatch('/admin/overview_products');
+  const addingMatch = useMatch('/admin/add_product');
+  const productManagementLabelStatus = `${editMatch ? " (editing)" : ""}${overviewMatch ? " (overview)" : ""}${addingMatch ? " (adding)" : ""}`;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-4xl text-hmc-a font-bold mb-6">Admin Dashboard</h1>
+    <div className={`flex flex-col h-[calc(100vh-${toolbarHeight}px)] `}>
+      {/* Component-local header (if you still want one) */}
+      {/* <header className="flex-none p-1">
+        <h1 className="text-4xl text-hmc-a font-bold">Admin Dashboard</h1>
+      </header> */}
 
       {/* Tabs */}
-      <div className="flex justify-center">
-        <NavLink to="/admin/orders" end style={{padding: "0px 8px", color: "inherit"}}>
-         {({ isActive }) => (
-          <FolderTab
-            label="Orders"
-            selected={isActive}
-          />
-         )}
+      <nav className="flex-none flex justify-center space-x-4 overflow-hidden">
+        <NavLink to="/admin/orders" end style={{ color: 'inherit' }}>
+          {({ isActive }) => <FolderTab label="Orders" selected={isActive} />}
         </NavLink>
-        <NavLink to="/admin/overview_products" end style={{padding: "0px 8px", color: "inherit"}}>
-        {({ isActive }) => (
-          <FolderTab
-            label="Product Managment"
-            selected={isActive}
-          />
-        )}
+        <NavLink to="/admin/overview_products" end style={{ color: 'inherit' }}>
+           <FolderTab label={"Product Management"} labelStatus={productManagementLabelStatus} selected={editMatch || overviewMatch || addingMatch} />
         </NavLink>
-      </div>
+      </nav>
 
-      {/* Tab Content */}
-      <div className="bg-white rounded shadow p-4 mt-2" >
-        <Outlet context={childrenProps} />
-      </div>
+      {/* This will now be exactly (100vh - 56px) minus the nav height, and scroll internally */}
+      <main className="flex-1 min-h-0 overflow-y-auto p-0">
+        <Outlet />
+      </main>
     </div>
   );
 }

@@ -1,14 +1,16 @@
 import { Link } from "react-router-dom";
+import Select from 'react-select';
 
 export function Button_A({button_name, link_val, button_type, button_styles_outer }) {
   return (
     <>      
       {button_type === "form" ? 
-        <div className="text-hmc-a hover:text-hmc-b bg-hmc-button-a hover:bg-hmc-button-b hover:text-avocado-600 px-5 py-2 rounded transition font-bold"
+        <div className="text-hmc-a hover:text-hmc-b bg-hmc-button-a hover:bg-hmc-button-b hover:text-avocado-600 px-5 py-2 rounded transition font-bold cursor-pointer"
           style={button_styles_outer}
         >
           <button 
             type="submit"
+            className="cursor-pointer"
             style={ { color: "inherit", backgroundColor: "inherit",}}
           >
             {button_name}
@@ -19,7 +21,7 @@ export function Button_A({button_name, link_val, button_type, button_styles_oute
         <Link
           to={link_val}
           className="bg-hmc-button-a hover:bg-hmc-button-b hover:text-avocado-600 px-5 py-2 rounded transition font-bold"
-          style={{ color: "inherit" }}
+          style={{ color: "inherit" , ...button_styles_outer}}
         >
           {button_name}
         </Link>
@@ -30,8 +32,7 @@ export function Button_A({button_name, link_val, button_type, button_styles_oute
   )
 }
 
-
-export function FolderTab({ label, selected, onClick }) {
+export function FolderTab({ label, labelStatus, selected, onClick }) {
   return (
     <div
       className={`relative inline-block cursor-pointer mr-12 top-2 z-[${
@@ -59,8 +60,45 @@ export function FolderTab({ label, selected, onClick }) {
             : 'bg-hmc-button-a text-hmc-button-text-a'
         }`}
       >
-        {label}
+        {label}{labelStatus ? <div className="!font-black ml-2 text-hmc-button-text-a">{labelStatus}</div> : null}
       </div>
     </div>
   );
 }
+
+export const PageContainer = ({ children, bg }) => {
+  return (
+    <div className={`max-w-[1280px] mx-auto ${bg === "alt1" ? "bg-white" : "bg-hmc-bg-a"} rounded shadow p-6`}> 
+      {children}
+    </div>
+  );
+};
+
+export const FormLabel = ({ labelName, classNames, children }) => {
+  return (
+    <label className={`mb-1 whitespace-nowrap font-bold ${classNames ? classNames : ""}`}>{labelName}</label>
+  );
+};
+
+export function MultiSelectDropdown({ ptions }) {
+    const [selectedOptions, setSelectedOptions] = useState([]);
+
+    const handleChange = (selected) => {
+      setSelectedOptions(selected);
+    };
+
+    return (
+        <Select
+            isMulti
+            name="colors"
+            options={options}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            onChange={handleChange}
+            value={selectedOptions}
+        />
+    );
+}
+
+
+export const productImageLinks = `/public/testProductImages/`;

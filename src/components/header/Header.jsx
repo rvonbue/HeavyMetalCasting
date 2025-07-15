@@ -4,13 +4,12 @@ import { Link } from 'react-router-dom';
 import { useAppState, useAppDispatch } from '../../AppState';
 import { CartIcon } from "../../styles/Icons";
 
+const activeBorder = 'p-8 border-b-4 border-color-hmc-b text-blue-600 pb-2';
+const inactiveBorder = 'p-8 border-b-4 border-transparent text-gray-600 pb-2';
 
 function Header() {
   const { showShoppingCart } = useAppState();
   const dispatch = useAppDispatch(); 
-  
-//  console.log('showShoppingCart', showShoppingCart);
-// console.log('dispatch', dispatch);
 
   return (
     <>
@@ -33,24 +32,30 @@ function Header() {
           </NavLink> 
         </div>
         <div  style={{width: "50%" }}>
-          <NavLink to="/" end style={{padding: "0px 8px", color: "inherit"}}>SHOP</NavLink>
-          <NavLink to="/trending" end style={{padding: "0px 8px", color: "inherit"
-
-
-          }} className={({ isActive }) => {
-            console.log("isActive", isActive);
-            return isActive ? 'border-b-4 border-blue-600 text-blue-600 pb-2'
-            : 'border-b-4 border-transparent text-gray-600 pb-2';
-          }
-            
-          }>
+          <NavLink 
+            to="/shop" end 
+            style={{ color: "inherit"}}
+            className={({ isActive }) => isActive ? activeBorder : inactiveBorder}
+          >
+            SHOP
+          </NavLink>
+          <NavLink 
+            to="/collections" end 
+            style={{color: "inherit"}} 
+            className={({ isActive }) => isActive ? activeBorder : inactiveBorder}>
             COLLECTIONS
           </NavLink>
-          <NavLink to="/concerts" className="text-red-500" style={{ padding: "0px 8px",color: "inherit"}}>MY STORY</NavLink>
+          <NavLink 
+            to="/about_us" 
+            className={({ isActive }) => isActive ? activeBorder : inactiveBorder}
+            style={{ color: "inherit"}}
+          >
+            ABOUT US
+          </NavLink>
         </div>
         <div className="flex justify-end" style={{width: "25%", display: "flex" }}>
           <Link to="/login" style={{ color: "inherit", marginRight: "36px" }} >SIGN IN</Link>
-          <Link to="/admin" style={{ color: "inherit", marginRight: "36px" }} >ADMIN</Link>
+          <Link to="/admin/overview_products" style={{ color: "inherit", marginRight: "36px" }} >ADMIN</Link>
           <div onClick={() => { 
             dispatch({ type: 'SET_SHOPPING_CART', payload: !showShoppingCart });
             }}>
