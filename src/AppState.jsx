@@ -9,18 +9,42 @@ const initialState = {
   shoppingCartItems: [],
   orders: [],
   productCategories: [
-    {id: 1, label: "ring", },
-    {id: 2, label: "necklace"},
-    {id: 3, label: "pin"},
+    {id: 1, label: "rings", },
+    {id: 2, label: "necklaces"},
+    {id: 3, label: "pins"},
     {id: 3, label: "earrings"},
   ],
-  toolbarHeight: 56,
+  toolbarHeight: 56,  
   products: [
-    { id: 1, name: 'T-shirt', live: true, price: 19.99, cat: [1],stock: 120, 
+    { 
+      id: 1, 
+      name: 'Ring =#`1', 
+      live: true, 
+      price: 19.99, 
+      productCat: [1],
+      stock: 120, 
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus euismod, nisl vitae luctus interdum, orci tortor vulputate purus, sed vulputate ante mauris sit amet urna. Sed nec ante at purus fermentum sollicitudin. Integer quis ex sed quam aliquet facilisis. Nulla facilisi. Phasellus euismod, mauris vitae malesuada efficitur, justo libero cursus nibh, sit amet consequat odio felis quis orci. Donec ac dolor sit amet purus feugiat interdum. Curabitur in felis ac justo sollicitudin hendrerit.", 
       images: ["20210202_215207.jpg", "20210902_163609.jpg","20210202_215207.jpg", "20210902_163609.jpg","20210202_215207.jpg",] },
-    { id: 2, name: 'Hoodie', live: false, price: 39.99, cat: [3], stock: 75, description: "I love Hoodies", images: []  },
-    { id: 3, name: 'Cap', live: true, price: 14.99, cat: [2,1], stock: 200, description: "Caps are ok", images: [] },
+    { 
+      id: 2, 
+      name: 'Hoodie', 
+      live: false, 
+      price: 39.99, 
+      productCat: [3], 
+      stock: 75, 
+      description: "I love Hoodies", 
+      images: []  
+    },
+    { 
+      id: 3, 
+      name: 'Ring and Necklace', 
+      live: true, 
+      price: 14.99, 
+      productCat: [2,1], 
+      stock: 200, 
+      description: "Raskdljflkasdjfkl;sdj f are ok", 
+      images: [] 
+    },
   ],
   productsLoading: false,
   productProps: [
@@ -54,7 +78,7 @@ const initialState = {
         adminDisplayName: "Product Categories", 
         storeDisplayName: "", 
         dataType: "list", 
-        dataName: "cat",
+        dataName: "productCat",
         userEdit: true,
         classNames: "min-w-36",
         inputStyles: {

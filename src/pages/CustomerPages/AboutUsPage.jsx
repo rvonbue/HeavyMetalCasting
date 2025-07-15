@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button_A, PageContainer } from "../components/Resuables";
+import { Button_A, PageContainer } from "../../components/Resuables";
 
 function AboutUsPage() {
 

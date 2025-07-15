@@ -1,18 +1,18 @@
-import React, { useEffect, useState  } from 'react';
+import { useEffect, useState  } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useForm, Controller } from "react-hook-form";
 import Select from 'react-select';
-import { useLocation } from 'react-router-dom';
 import { toNumber } from 'lodash-es';
 
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 // import { useOutletContext } from 'react-router-dom';
 import { useAppState, useAppDispatch } from '../../AppState'
-import { PageContainer, Button_A, productImageLinks, FormLabel, MultiSelectDropdown  } from "../../components/Resuables";
+import { PageContainer, Button_A, FormLabel } from "../../components/Resuables"; // MultiSelectDropdown
 import {  TailwindSpinner } from "../../styles/Icons";
-
+import { productImageLinks } from "../../staticData/PathData.js";
 
 function ProductEditPage(){
-  const { products, productProps, productsLoading, categories } = useAppState();
+  const { products, productProps, productsLoading, productCategories } = useAppState();
   const location = useLocation();
   const handleFormSubmit = (data) => {
     console.log("Updated product:", data);
@@ -28,7 +28,7 @@ function ProductEditPage(){
       <EditProductForm 
         selectedProduct={selectedProduct}
         productProps={productProps} 
-        categories={categories}
+        productCategories={productCategories}
         onSubmit={handleFormSubmit} 
       />
     }
@@ -36,13 +36,13 @@ function ProductEditPage(){
 }
 
 const customStyles = {
-       multiValueLabel: (base) => ({
-            ...base,
-            fontSize: '1.2rem', // Change to your desired font size
-       }),
-   };
+  multiValueLabel: (base) => ({
+      ...base,
+      fontSize: '1.2rem', // Change to your desired font size
+  }),
+};
 
-const EditProductForm = ({ productProps, onSubmit, selectedProduct, categories  }) => {
+const EditProductForm = ({ productProps, onSubmit, selectedProduct, productCategories  }) => {
   const {
     register,
     control,
@@ -59,7 +59,6 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, categories  
   });
 
   const [fieldsUpdated, setFieldsUpdated] = useState();
-
   const { errors } = formState;
   const isDirty = formState.isDirty; // true if any field has changed
   const dirtyFields = formState.dirtyFields; // which fields changed
@@ -96,7 +95,7 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, categories  
                     control={control}
                     dataName={dataName}
                     inputStyles={inputStyles}
-                    categories={categories}
+                    productCategories={productCategories}
                   />
                   :
                 <input
@@ -119,7 +118,6 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, categories  
         
         { fieldsUpdated && 
           <div className="flex ">
-
             <ExclamationTriangleIcon className="w-6 h-6 text-yellow-500" /> 
             Warning unsaved changes
           </div>}
@@ -127,22 +125,21 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, categories  
     </>
   );
 };
-const CategorySelectComponent = ({ control, dataName, inputStyles, categories}) => {
+const CategorySelectComponent = ({ control, dataName, inputStyles, productCategories}) => {
     
     return ( 
       <div style={inputStyles}>
         <Controller
-          name={dataName}  // The name of your field in the form
+          name={dataName}
           control={control}
           render={({ field }) => {
-            const allCategories = categories.map((cat) => ({...cat, value: cat.id }));
+            const allCategories = productCategories.map((cat) => ({...cat, value: cat.id }));
             const selectedOptions = field.value.map((id) => allCategories.find((cat) => cat.id === id ));
-            // console.log("field",field )
             return (
               <Select
-                  {...field} // Pass down the field props
+                  {...field} 
                   isMulti
-                  onChange={(selectedOption) => field.onChange(selectedOption)} // Update the value in react-hook-form
+                  onChange={(changeOptions) => field.onChange(changeOptions.map((opt) => opt.value))} // Update the value in react-hook-form
                   options={allCategories}
                   className="basic-multi-select"
                   classNamePrefix="select"

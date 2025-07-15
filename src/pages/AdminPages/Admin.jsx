@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Outlet, useMatch  } from 'react-router-dom';
 import { NavLink } from "react-router";
-import { useAppState, useAppDispatch } from '../AppState'
-import { FolderTab } from "../components/Resuables";
+import { useAppState, useAppDispatch } from '../../AppState'
+import { FolderTab } from "../../components/Resuables";
 
 function AdminPage() {
   const { toolbarHeight } = useAppState();

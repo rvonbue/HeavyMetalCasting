@@ -100,5 +100,3 @@ export function MultiSelectDropdown({ ptions }) {
     );
 }
 
-
-export const productImageLinks = `/public/testProductImages/`;

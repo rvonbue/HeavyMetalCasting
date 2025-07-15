@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import HMC_cardSrc from "../assets/images/HMC_card.jpg";
+import HMC_cardSrc from "../../assets/images/HMC_card.jpg";
 
 function Home() {
 

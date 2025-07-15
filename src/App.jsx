@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom';
-import Header from "./components/header/Header";
+import HeaderNavbar from "./components/header/Header";
 import { useAppState, useAppDispatch } from './AppState';
 import './styles/App.css'
 import ShoppingTab from "./components/ShoppingTab"
@@ -11,14 +11,12 @@ function Root() {
   
   return (
     <>
-      <Header/>
+      <HeaderNavbar/>
       <div style={{height: "calc(100vh - 56px)" }}>
         <Outlet />
         <ShoppingTab 
           isOpen={showShoppingCart} 
-          onClose={() => { 
-            dispatch({ type: 'SET_SHOPPING_CART', payload: false })
-          }}/>
+          onClose={() => dispatch({ type: 'SET_SHOPPING_CART', payload: false })}/>
       </div>
     </>
   )

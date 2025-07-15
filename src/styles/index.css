@@ -17,8 +17,13 @@
   --color-hmc-bg-a: #2c2b2b;
   --color-hmc-button-a: oklch(86.9% 0.022 252.894);
   --color-hmc-button-b: oklch(55.4% 0.046 257.417);
-  --color-hmc-button-text-a: oklch(0.1 0.11 178);
-  --color-hmc-button-text-b:  oklch(86.9% 0.022 252.894);
+  --color-hmc-button-text-a: oklch(0.1 0.11 178);  
+  --color-hmc-button-text-b: oklch(86.9% 0.022 252.894);
+  --color-hmc-border-a: oklch(55.4% 0.046 257.417);
+  --color-hmc-border-b: oklch(86.9% 0.022 252.894);
+  --color-hmc-link: oklch(0.96 0.0 1);
+  --color-hmc-link-active: oklch(0.87 0.22 105.85);
+  --color-hmc-text-a: oklch(0.96 0.0 1);
   --font-family: "Cinzel"; 
   --breakpoint-3xl: 120rem; 
   --color-avocado-100: oklch(0.99 0 0);
@@ -34,6 +39,7 @@
 :root {
   overflow: hidden;
 }
+ 
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -51,14 +57,14 @@
 
 }
 
-a {
+/* a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
 }
 a:hover {
   color: #535bf2;
-}
+} */
 
 /* body {
   margin: 0;

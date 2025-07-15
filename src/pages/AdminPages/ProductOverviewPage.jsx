@@ -1,25 +1,24 @@
-import React, { useEffect, useState } from 'react';
-// import { useOutletContext } from 'react-router-dom';
-import { useAppState, useAppDispatch } from '../../AppState'
+import { useEffect, useState } from 'react';
+import { useAppState } from '../../AppState'
 import { NavLink } from "react-router";
 import { sortBy } from "lodash-es";
 import { PencilIcon, TrashIcon, TailwindSpinner, ArrowUpIcon, ArrowDownIcon } from "../../styles/Icons";
 import { Button_A, PageContainer } from "../../components/Resuables";
 
 function sortProducts(products, sortColumnInfo){
-  
   return sortColumnInfo.reverse ? sortBy(products, [sortColumnInfo.dataName]).reverse() : sortBy(products, [sortColumnInfo.dataName]);
 }
 
 export default function ProductOverviewPage() {
-   const { products, productProps, productsLoading, categories } = useAppState();
+   const { products, productProps, productsLoading, productCategories } = useAppState();
    const [sortColumnInfo, setSortColumnInfo] = useState({dataName: "live", reverse: false });
    const [sortedProducts, setSortedProducts] = useState(sortProducts(products, sortColumnInfo));
 
    useEffect(() => {
       setSortedProducts(sortProducts(products, sortColumnInfo));
    }, [sortColumnInfo.dataName, sortColumnInfo.reverse, products]);
-console.log("sortColumnInfo ", sortColumnInfo)
+   
+
   return (
     <PageContainer bg="alt1">
       <div className="mx-auto bg-white rounded shadow">
@@ -58,7 +57,7 @@ console.log("sortColumnInfo ", sortColumnInfo)
                     key={index + dataName}
                     className="p-3 border-b border-hmc-button-text-b text-left align-top"
                   >
-                    {getCellValue({categories, dataName, product }) }
+                    {getCellValue({productCategories, dataName, product }) }
                   </td>
                 ))}
                 <td className="p-3 border-b border-hmc-b-500 text-left align-top">
@@ -83,12 +82,12 @@ console.log("sortColumnInfo ", sortColumnInfo)
   );
 }
 
-function getCellValue({ categories, dataName, product }){
+function getCellValue({ productCategories, dataName, product }){
   const value = product[dataName];
-
+  // console.log(" productCategories, dataName, product, value", productCategories, dataName, product, value );
   switch (dataName) {
-    case "cat":
-      return value.map((catId) => categories.find((cat) => cat.id ===  catId).label).join(", ");
+    case "productCat":
+      return value.map((catId) => productCategories.find((cat) => cat.id ===  catId).label).join(", ");
     case "live":
       return value === true ? "Yes" : "No";
     default:

@@ -3,9 +3,7 @@ import { NavLink } from "react-router";
 import { Link } from 'react-router-dom';
 import { useAppState, useAppDispatch } from '../../AppState';
 import { CartIcon } from "../../styles/Icons";
-
-const activeBorder = 'p-8 border-b-4 border-color-hmc-b text-blue-600 pb-2';
-const inactiveBorder = 'p-8 border-b-4 border-transparent text-gray-600 pb-2';
+import { activeBorder, inactiveBorder } from "../../styles/App.jsx";
 
 function Header() {
   const { showShoppingCart } = useAppState();
@@ -14,7 +12,7 @@ function Header() {
   return (
     <>
     <header 
-      className="bg-hmc-a"
+      className="bg-hmc-a select-none"
       style={{ position: 'sticky', overflow: 'visible', top: 0, width: "100%", }}
     >
       <div 
