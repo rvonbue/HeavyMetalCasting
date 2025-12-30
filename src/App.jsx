@@ -3,8 +3,8 @@ import { Outlet } from 'react-router-dom';
 import HeaderNavbar from "./components/header/Header";
 import { useAppState, useAppDispatch } from './AppState';
 import './styles/App.css'
-import ShoppingTab from "./components/ShoppingTab"
-;
+import ShoppingTab from "./components/shoppingTab/ShoppingTab.jsx";
+
 function Root() {
   const { showShoppingCart } = useAppState();
   const dispatch = useAppDispatch(); 

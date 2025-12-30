@@ -1,4 +1,4 @@
-import { useAppState, useAppDispatch } from '../AppState';
+import { useAppState, useAppDispatch } from '../../AppState';
 
 export default function ShoppingTab({ isOpen, onClose }) {
   const { shoppingCartItems } = useAppState();

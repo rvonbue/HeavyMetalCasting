@@ -56,7 +56,6 @@ export default function HeaderDesktop({ totalItemsInCart, showShoppingCart }) {
             dispatch({ type: 'SET_SHOW_SHOPPING_CART', payload: !showShoppingCart });
             }}>
               <div className="flex items-center justify-center text-xs font-bold">  
-                
                 <CartIcon />
                 <div className="w-6 h-6 rounded-full border border-color-text-hmc-c flex items-center justify-center">
                   {totalItemsInCart}  
