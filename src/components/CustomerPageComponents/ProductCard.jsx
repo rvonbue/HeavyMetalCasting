@@ -1,19 +1,23 @@
 import {  productImageLinks, imgPlaceholder } from "../../staticData/PathData.js";
-
+import { Link } from "react-router-dom";
+import { getProductImageLinks } from "../Resuables.jsx";
+ 
 export default function ProductCard({ product }) {
-    let imgSrc = product.images.length > 0 ? `${productImageLinks}${product.images[0]}` : `${imgPlaceholder}`;
+    const { heroImgLink } = getProductImageLinks(product);
 
     return (
       <div className="p-4 select-none">
-        <img
-          src={imgSrc}
-          alt={`Thumbnail`}
-          className="p-4 max-w-full max-h-full object-contain border-1 border-[var(--color-hmc-border-b)] min-h-[300px]"
-        />
-        <div className="text-hmc-text-a mt-2">
-           <div className="text-base font-semibold">{product.name}</div>
-           <div className="text-sm">{product.price}</div>
-        </div>
+        <Link to={`/product/${product.id}`}>
+          <img
+            src={`${heroImgLink.pathFile}`}
+            alt={`Thumbnail`}
+            className="p-4 max-w-full max-h-full object-contain border-1 border-[var(--color-hmc-border-b)] min-h-[300px]"
+          />
+          <div className="text-hmc-text-a mt-2">
+              <div className="text-base font-semibold">{product.name}</div>
+            <div className="text-sm">{product.price}</div>
+          </div>
+        </Link>
       </div>
     );
 }

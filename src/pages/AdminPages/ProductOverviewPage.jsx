@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAppState } from '../../AppState'
+import { useAppState, useAppDispatch } from '../../AppState'
 import { NavLink } from "react-router";
 import { sortBy } from "lodash-es";
 import { PencilIcon, TrashIcon, TailwindSpinner, ArrowUpIcon, ArrowDownIcon } from "../../styles/Icons";
@@ -11,6 +11,7 @@ function sortProducts(products, sortColumnInfo){
 
 export default function ProductOverviewPage() {
    const { products, productProps, productsLoading, productCategories } = useAppState();
+   const dispatch = useAppDispatch(); 
    const [sortColumnInfo, setSortColumnInfo] = useState({dataName: "live", reverse: false });
    const [sortedProducts, setSortedProducts] = useState(sortProducts(products, sortColumnInfo));
 
@@ -18,7 +19,6 @@ export default function ProductOverviewPage() {
       setSortedProducts(sortProducts(products, sortColumnInfo));
    }, [sortColumnInfo.dataName, sortColumnInfo.reverse, products]);
    
-
   return (
     <PageContainer bg="alt1">
       <div className="mx-auto bg-white rounded shadow">
@@ -28,7 +28,7 @@ export default function ProductOverviewPage() {
         </div>
         { productsLoading ? <TailwindSpinner/> 
         :
-        <table className="w-full table-auto border-collapse">
+        <table className="w-full table-auto border-collapse select-none">
           <thead>
             <tr className="bg-hmc-button-text-b">
               {productProps.map(({ adminDisplayName, dataName }, index) => (
@@ -69,7 +69,9 @@ export default function ProductOverviewPage() {
                     >
                       <PencilIcon classes={"mr-4"} />
                     </NavLink>
-                    <TrashIcon />
+                    <div onClick={() => dispatch({ type: 'DELETE_PRODUCT', payload: product.id })}>
+                      <TrashIcon />
+                    </div>
                   </div>
                 </td>
               </tr>

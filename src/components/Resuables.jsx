@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import Select from 'react-select';
 
+import {productImageLinks} from "../staticData/PathData.js";
+
 export function Button_A({button_name, link_val, button_type, button_styles_outer }) {
   return (
     <>      
@@ -16,16 +18,20 @@ export function Button_A({button_name, link_val, button_type, button_styles_oute
             {button_name}
           </button> 
         </div>
+        : button_type === "onClick" ?
+          <div className="text-hmc-a hover:text-hmc-b font-bold">
+            {button_name}
+          </div> 
         :
-        <div className="text-hmc-a hover:text-hmc-b font-bold">
-        <Link
-          to={link_val}
-          className="bg-hmc-button-a hover:bg-hmc-button-b hover:text-avocado-600 px-5 py-2 rounded transition font-bold"
-          style={{ color: "inherit" , ...button_styles_outer}}
-        >
-          {button_name}
-        </Link>
-        </div>
+          <div className="text-hmc-a hover:text-hmc-b font-bold">
+            <Link
+              to={link_val}
+              className="bg-hmc-button-a hover:bg-hmc-button-b hover:text-avocado-600 px-5 py-2 rounded transition font-bold"
+              style={{ color: "inherit" , ...button_styles_outer}}
+            >
+              {button_name}
+            </Link>
+          </div>
       }
     </>
 
@@ -100,3 +106,24 @@ export function MultiSelectDropdown({ ptions }) {
     );
 }
 
+export function getProductById(products, productId) {
+  return products.find((product) => product.id === parseInt(productId));
+};
+
+export function getProductImageLinks(product) {
+  const images = product && Array.isArray(product.images) ? product.images : [];
+  const heroImgLink = images.length > 0 ? images[0] : null;
+  const imgs = images.length > 1 ? images.slice(1) : [];
+
+  return heroImgLink ?  { 
+    heroImgLink: { ...heroImgLink, pathFile: `${productImageLinks}${heroImgLink.filename}` }, 
+    imgs: imgs.map(img => ({...img, pathFile: `${productImageLinks}${img.filename}`}))
+
+  } : { heroImgLink: { filename: 'placeholder.png' }, imgs: [] };
+} 
+
+
+export function addItemtoCart(product) {
+  // Implementation for adding item to cart
+  console.log(`Adding product ${product.name} to cart.`);
+}

@@ -8,19 +8,29 @@ export default function BreadCrumb() {
   // console.log(location.hash);     // e.g., "#section1"
   // console.log(location.state);    // any state passed via navigate()
   // console.log("afhajksdhfjklsadhlf", location.pathname);
-  
+  const paths = location.pathname.replace(/^\/|\/$/g, "").split("/");
+  const urls = paths.map((p, index) => paths.reduce((red, val, index2) => { return index > index2 - 1  ? (red + "/" + val) : red}, ""));
+
   return (
-      <div className="font-bold text-hmc-c text-left">
-         {/* <NavLink 
-            to={`/${ShopPathName}/${displayObject.label}/`} end 
+      <div className="font-bold text-hmc-c text-left text-sm">
+        <NavLink 
+          to="/"
+          style={{ color: "inherit"}}
+          className={"uppercase"}
+        >
+            Home
+        </NavLink>
+        {paths.map((val, index) => 
+          <NavLink 
+            to={urls[index]}
             style={{ color: "inherit"}}
-            className={({ isActive }) => { 
-              return  ( (isActive ? activeBorder : inactiveBorder) + "text-1xl text-hmc-c ml-2 cursor-pointer" );
-            }}
+            className={"uppercase ml-1"}
           >
-            {displayObject.label}
-          </NavLink> */}
-         Home {location.pathname.replace(/^\/|\/$/g, "").split("/").reduce((red, val) => (red + " / " + val), "")} 
+             / {val}
+          </NavLink>
+        )} 
+
+
       </div>
   )
 }

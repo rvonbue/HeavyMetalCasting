@@ -16,7 +16,7 @@ function Root() {
         <Outlet />
         <ShoppingTab 
           isOpen={showShoppingCart} 
-          onClose={() => dispatch({ type: 'SET_SHOPPING_CART', payload: false })}/>
+          onClose={() => dispatch({ type: 'SET_SHOW_SHOPPING_CART', payload: false })}/>
       </div>
     </>
   )

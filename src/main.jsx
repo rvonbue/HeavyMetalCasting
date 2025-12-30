@@ -6,6 +6,7 @@ import App from './App.jsx'
 import Login from './pages/Login.jsx'
 import Home from "./pages/CustomerPages/Home.jsx";
 import ShopPage from "./pages/CustomerPages/ShopPage";
+import ProductPage from "./pages/CustomerPages/CustomerProductPage.jsx";
 import CollectionsPage from "./pages/CustomerPages/CollectionsPage";
 import AboutUsPage from "./pages/CustomerPages/AboutUsPage";
 
@@ -17,6 +18,7 @@ import ProductAddPage from "./pages/AdminPages/ProductAddPage.jsx";
 
 import NotFound from "./pages/NotFound";
 import { AppStateProvider } from './AppState';
+import { ShopPathName } from "./staticData/PathData.js";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -26,7 +28,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" element={<App />} errorElement={<NotFound />}>
           <Route index element={<Home />} /> {/* default when path is "/" */}
           <Route path="login" element={<Login />} />
-          <Route path="shop/:category?" element={<ShopPage />} />
+          <Route path={`${ShopPathName}/:category?`} element={<ShopPage />} />
+          <Route path={`/:product/:product_id`} element={<ProductPage />} />
           <Route path="collections" element={<CollectionsPage />} />
           <Route path="about_us" element={<AboutUsPage />} />
           <Route path="admin" element={<Admin />}>

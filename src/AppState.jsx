@@ -1,10 +1,13 @@
 import React, { createContext, useReducer, useContext } from 'react';
+import { productData } from './staticData/testData.js';
+import appReducer from './reducers/appReducer.jsx';
 
 // Initial global state
 const initialState = {
   user: null,
   theme: 'light',
   loading: false,
+  appSizeMode: 'desktop', // 'desktop' or 'mobile'
   showShoppingCart: false,
   shoppingCartItems: [],
   orders: [],
@@ -12,40 +15,10 @@ const initialState = {
     {id: 1, label: "rings", },
     {id: 2, label: "necklaces"},
     {id: 3, label: "pins"},
-    {id: 3, label: "earrings"},
+    {id: 4, label: "earrings"},
   ],
   toolbarHeight: 56,  
-  products: [
-    { 
-      id: 1, 
-      name: 'Ring =#`1', 
-      live: true, 
-      price: 19.99, 
-      productCat: [1],
-      stock: 120, 
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus euismod, nisl vitae luctus interdum, orci tortor vulputate purus, sed vulputate ante mauris sit amet urna. Sed nec ante at purus fermentum sollicitudin. Integer quis ex sed quam aliquet facilisis. Nulla facilisi. Phasellus euismod, mauris vitae malesuada efficitur, justo libero cursus nibh, sit amet consequat odio felis quis orci. Donec ac dolor sit amet purus feugiat interdum. Curabitur in felis ac justo sollicitudin hendrerit.", 
-      images: ["20210202_215207.jpg", "20210902_163609.jpg","20210202_215207.jpg", "20210902_163609.jpg","20210202_215207.jpg",] },
-    { 
-      id: 2, 
-      name: 'Hoodie', 
-      live: false, 
-      price: 39.99, 
-      productCat: [3], 
-      stock: 75, 
-      description: "I love Hoodies", 
-      images: []  
-    },
-    { 
-      id: 3, 
-      name: 'Ring and Necklace', 
-      live: true, 
-      price: 14.99, 
-      productCat: [2,1], 
-      stock: 200, 
-      description: "Raskdljflkasdjfkl;sdj f are ok", 
-      images: [] 
-    },
-  ],
+  products: [...productData], 
   productsLoading: false,
   productProps: [
       { 
@@ -134,23 +107,6 @@ const initialState = {
   ],
   initialLoading: false
 };
-
-// Reducer to handle state updates
-function appReducer(state, action) {
-  // console.log("action",action )
-  switch (action.type) {
-    case 'SET_USER':
-      return { ...state, user: action.payload };
-    case 'SET_THEME':
-      return { ...state, theme: action.payload };
-    case 'SET_LOADING':
-      return { ...state, loading: action.payload };
-    case 'SET_SHOPPING_CART':
-      return { ...state, showShoppingCart: action.payload };
-    default:
-      return state;
-  }
-}
 
 // Create context
 const AppStateContext = createContext();
