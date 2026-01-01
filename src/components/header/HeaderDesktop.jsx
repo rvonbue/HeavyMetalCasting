@@ -98,7 +98,7 @@ export default function HeaderDesktop({
         {/* Right */}
         <div
           className="flex items-center"
-          style={{ marginLeft: 'auto', gap: '1.5rem' }}
+          style={{ marginLeft: 'auto', gap: '0.25rem' }}
         >
           {loggedIn ? (
             <SkullIcon />
@@ -110,9 +110,10 @@ export default function HeaderDesktop({
 
           <Link
             to="/admin/overview_products"
-            style={{ color: 'inherit', marginRight: '36px' }}
+            style={{ color: 'inherit', }}
+            className="w-6 h-6 rounded-full border border-color-text-hmc-c flex items-center justify-center hmc-bounce"
           >
-            ADMIN
+            A
           </Link>
 
           {/* Cart */}

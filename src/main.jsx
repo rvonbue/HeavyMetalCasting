@@ -39,7 +39,6 @@ createRoot(document.getElementById('root')).render(
               <Route path="edit_product" element={<ProductEditPage />} />
               <Route path="add_product" element={<ProductAddPage />} />
             </Route>
-
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
