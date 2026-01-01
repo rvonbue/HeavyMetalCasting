@@ -10,7 +10,7 @@ function sortProducts(products, sortColumnInfo){
 }
 
 export default function ProductOverviewPage() {
-   const { products, productProps, productsLoading, productCategories } = useAppState();
+   const { products, productProps, productsLoading, productAttributes } = useAppState();
    const dispatch = useAppDispatch(); 
    const [sortColumnInfo, setSortColumnInfo] = useState({dataName: "live", reverse: false });
    const [sortedProducts, setSortedProducts] = useState(sortProducts(products, sortColumnInfo));
@@ -52,12 +52,12 @@ export default function ProductOverviewPage() {
           <tbody>
             {sortedProducts.map((product) => (
               <tr key={product.id} className="hover:bg-gray-50 transition-colors">
-                {productProps.map(({ dataName }, index) => (
+                {productProps.map(({ dataName, dataType }, index) => (
                   <td
                     key={index + dataName}
                     className="p-3 border-b border-hmc-button-text-b text-left align-top"
                   >
-                    {getCellValue({productCategories, dataName, product }) }
+                    {getCellValue({productAttributes, dataName, dataType, product }) }
                   </td>
                 ))}
                 <td className="p-3 border-b border-hmc-b-500 text-left align-top">
@@ -84,13 +84,15 @@ export default function ProductOverviewPage() {
   );
 }
 
-function getCellValue({ productCategories, dataName, product }){
+function getCellValue({ productAttributes, dataName, dataType, product }){
   const value = product[dataName];
-  // console.log(" productCategories, dataName, product, value", productCategories, dataName, product, value );
-  switch (dataName) {
-    case "productCat":
-      return value.map((catId) => productCategories.find((cat) => cat.id ===  catId).label).join(", ");
-    case "live":
+  console.log("dataType:", dataType);
+   
+
+  switch (dataType) {
+    case "list":
+      return value.map((catId) => productAttributes[dataName].find((cat) => cat.id ===  catId).label).join(", ");
+    case "checkbox":
       return value === true ? "Yes" : "No";
     default:
       return value;

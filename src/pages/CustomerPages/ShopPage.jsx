@@ -10,11 +10,11 @@ import ProductCard from "../../components/CustomerPageComponents/ProductCard.jsx
 
 function ShopPage() {
   let { category } = useParams();
-  const { products, productCategories } = useAppState();
+  const { products, productAttributes: { productCategories } } = useAppState();
 
   let selectedCategory = category;
   const selectedCategoryId = selectedCategory ? productCategories.find((prdC) => prdC.label.toLowerCase() === selectedCategory.toLowerCase()).id : undefined;
-  const sortedFilteredProducts = selectedCategory ? products.filter((prd) => (prd.live === true && prd.productCat.some((catId) => catId === selectedCategoryId))) 
+  const sortedFilteredProducts = selectedCategory ? products.filter((prd) => (prd.live === true && prd.productCategories.some((catId) => catId === selectedCategoryId))) 
                                                     : products.filter((prd) => prd.live === true);
 
   return (
@@ -24,7 +24,10 @@ function ShopPage() {
         {selectedCategory || "invisible"}
       </div>
       <div className="flex mt-8">
-        <SidePanel selectedCategory={selectedCategory} productCategories={productCategories}/>
+        <SidePanel 
+          selectedCategory={selectedCategory} 
+          productCategories={productCategories}
+        />
         <ProductsContainer 
           sortedFiltered
           sortedFilteredProducts={sortedFilteredProducts}
@@ -37,7 +40,7 @@ function ShopPage() {
 function SidePanel({ selectedCategory, productCategories }) {
   
   const [sidePanelState, setSidePanelState] = useState({
-    categoriesOpen: false
+    categoriesOpen: true
   });
   
   return (

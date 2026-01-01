@@ -8,8 +8,9 @@ import HeaderDesktop from './HeaderDesktop.jsx';
 import HeaderMobile from './HeaderDesktop.jsx';
 
 function Header() {
-  const { showShoppingCart, shoppingCartItems, appSizeMode } = useAppState();
+  const { showShoppingCart, shoppingCartItems, appSizeMode, user } = useAppState();
   const totalItemsInCart = shoppingCartItems.reduce((total, item) => total + item.quantity, 0); 
+  const loggedIn = user.id != undefined
 
   return (
     <>
@@ -17,11 +18,16 @@ function Header() {
         <HeaderDesktop 
           totalItemsInCart={totalItemsInCart} 
           showShoppingCart={showShoppingCart}
-        /> : 
+          user={user}
+          loggedIn={loggedIn} 
+        /> 
+        : 
         <HeaderMobile 
           totalItemsInCart={totalItemsInCart} 
-          showShoppingCart={showShoppingCart}
-        />
+          showShoppingCart={showShoppingCart} 
+          user={user}
+          loggedIn={loggedIn} 
+         />  
       }
     </>
   )

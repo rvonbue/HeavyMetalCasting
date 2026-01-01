@@ -4,6 +4,7 @@ import HeaderNavbar from "./components/header/Header";
 import { useAppState, useAppDispatch } from './AppState';
 import './styles/App.css'
 import ShoppingTab from "./components/shoppingTab/ShoppingTab.jsx";
+import { toolbarHeight } from "./styles/App.jsx";
 
 function Root() {
   const { showShoppingCart } = useAppState();
@@ -12,7 +13,7 @@ function Root() {
   return (
     <>
       <HeaderNavbar/>
-      <div style={{height: "calc(100vh - 56px)" }}>
+      <div style={{height: `calc(100vh - ${toolbarHeight}px)`}}>
         <Outlet />
         <ShoppingTab 
           isOpen={showShoppingCart} 

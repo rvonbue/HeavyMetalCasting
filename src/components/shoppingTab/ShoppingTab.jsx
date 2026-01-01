@@ -7,14 +7,14 @@ import { getShoppingCartItemDetails } from '../../actions/shoppingCartActions.js
 function ShoppingTab({isOpen, onClose}) {
   const { products, appSizeMode, shoppingCartItems } = useAppState();
   // const dispatch = useAppDispatch();  
-  const shoppingCartItemDetials = getShoppingCartItemDetails({products,  shoppingCartItems});
-
+  const shoppingCartItemDetails = getShoppingCartItemDetails({products,  shoppingCartItems});
+  
   return (
     <>
       {appSizeMode === 'desktop' ?    
-        <ShoppingTabDesktop isOpen={isOpen} onClose={onClose} shoppingCartItemDetials={shoppingCartItemDetials} 
+        <ShoppingTabDesktop isOpen={isOpen} onClose={onClose} shoppingCartItemDetails={shoppingCartItemDetails} 
         /> : 
-        <ShoppingTabMobile isOpen={isOpen} onClose={onClose}  shoppingCartItemDetials={shoppingCartItemDetials}
+        <ShoppingTabMobile isOpen={isOpen} onClose={onClose}  shoppingCartItemDetails={shoppingCartItemDetails}
         />
       }
     </>

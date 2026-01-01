@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Select from 'react-select';
 
 import {productImageLinks} from "../staticData/PathData.js";
+import { toolbarHeight } from "../styles/App.jsx";
 
 export function Button_A({button_name, link_val, button_type, button_styles_outer }) {
   return (
@@ -37,7 +38,6 @@ export function Button_A({button_name, link_val, button_type, button_styles_oute
 
   )
 }
-
 export function FolderTab({ label, labelStatus, selected, onClick }) {
   return (
     <div
@@ -71,10 +71,9 @@ export function FolderTab({ label, labelStatus, selected, onClick }) {
     </div>
   );
 }
-
 export const PageContainer = ({ children, bg }) => {
   return (
-    <div className={`max-w-[1280px] mx-auto ${bg === "alt1" ? "bg-white" : "bg-hmc-bg-a"} rounded shadow p-6`}> 
+    <div className={`max-w-[1280px] mx-auto ${bg === "alt1" ? "bg-white" : "bg-hmc-bg-a"} rounded shadow p-6 overflow-auto h-full`} > 
       {children}
     </div>
   );
@@ -121,9 +120,3 @@ export function getProductImageLinks(product) {
 
   } : { heroImgLink: { filename: 'placeholder.png' }, imgs: [] };
 } 
-
-
-export function addItemtoCart(product) {
-  // Implementation for adding item to cart
-  console.log(`Adding product ${product.name} to cart.`);
-}

@@ -1,10 +1,13 @@
 import { useAppState, useAppDispatch } from '../../AppState';
 import { getProductImageLinks, Button_A } from "../Resuables.jsx";
 import { Link } from 'react-router-dom';
+import { getShoppingCartProductQuantity } from '../../actions/shoppingCartActions.jsx';
+import { updateCartAction } from '../../actions/shoppingCartActions.jsx';
 
-export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetials }) {
+export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }) {
   const { shoppingCartItems } = useAppState();
-  const { shoppingCartItemsList, totalCost } = shoppingCartItemDetials;  
+  
+  const { shoppingCartItemsList, totalCost } = shoppingCartItemDetails;  
   const shoppingCartEmpty = shoppingCartItems.length === 0;
 
   return (
@@ -24,52 +27,53 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetials }
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        {/* Close Button */}
-        <div 
-            className="flex justify-between items-center  border-b select-none cursor-pointer"
-           onClick={onClose}   
-          >
-          <div className="pl-4 text-lg">
-            SHOPPING CART
-          </div>
-          <button 
-            className="text-gray-600 hover:text-black cursor-pointer"
-            style={{ fontSize: '32px', marginRight: '12px'}}
-           
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-4 h-[calc(100%-128px)]">
-            {shoppingCartEmpty ? 
-              <div className="text-lg">Your shopping cart is empty.</div> 
-              : 
-              <div>
-                {shoppingCartItemsList.map(product => (
-                  <ShoppingCartItemRowDisplay key={product.id} product={product} />
-                ))} 
+      
+      {/* Close Button */}
+         {isOpen && (
+            <>
+              <div 
+                  className="flex justify-between items-center  border-b select-none cursor-pointer"
+                  onClick={onClose}   
+              >
+                <div className="pl-4 text-lg">SHOPPING CART</div>
+                <button 
+                  className="text-gray-600 hover:text-black cursor-pointer"
+                  style={{ fontSize: '32px', marginRight: '12px'}}
+                >
+                  ✕
+                </button>
               </div>
-            }
-        </div>
-        <div className="font-semibold text-hmc-text-b border-t select-none text-lg">
-          Total Cost {totalCost}
-        </div>
-        <div> 
-            <Button_A button_name="CHECK OUT" link_val="/" button_type="form" /> 
-        </div>   
-      </div>
-      <div>
+              {/* Content */}
+              <div className="p-4 h-[calc(100%-128px)]">
+                  {shoppingCartEmpty ? 
+                    <div className="text-lg select-none">Your shopping cart is empty.</div> 
+                    : 
+                    <div>
+                      {shoppingCartItemsList.map(product => (
+                        <ShoppingCartItemRowDisplay key={product.id} product={product} shoppingCartItems={shoppingCartItems}/>
+                      ))} 
+                    </div>
+                  }
+              </div>
+              <div className="font-semibold text-hmc-text-b border-t select-none text-lg">
+                Total Cost: {totalCost}
+              </div>
+              <div> 
+                  <Button_A button_name="CHECK OUT" link_val="/" button_type="form" /> 
+              </div>   
+            </> 
+          )}
       </div>
     </>
   );
 }
 
 
-function ShoppingCartItemRowDisplay({ product }) { 
+function ShoppingCartItemRowDisplay({ product, shoppingCartItems }) { 
   const { heroImgLink } = getProductImageLinks(product);
-
+  const dispatch = useAppDispatch(); 
+  const shoppingCartProductQuantity = getShoppingCartProductQuantity({ shoppingCartItems, productId: product.id });
+  
     return (
       <div className="p-4 select-none">
       <div className="flex gap-4 items-start">
@@ -97,10 +101,14 @@ function ShoppingCartItemRowDisplay({ product }) {
             <span className="text-sm font-normal">x</span>
             <input
             type="number"
-            defaultValue={product.quantity}
+            value={shoppingCartProductQuantity}
             min="1"
             step="1"
             className="w-16 text-sm border rounded px-1 py-0.5 text-center"
+            onChange={(val) => {
+              const quantity = parseInt(val.target.value, 10);  
+              updateCartAction({ dispatch, product, newQuantity: quantity });
+            }}
             />
           </div>
           </div>
@@ -109,4 +117,4 @@ function ShoppingCartItemRowDisplay({ product }) {
       </div>
       </div>
     );
-  }
+}

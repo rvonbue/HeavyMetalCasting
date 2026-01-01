@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from "react-router";
 import './styles/index.css'
@@ -6,7 +6,7 @@ import App from './App.jsx'
 import Login from './pages/Login.jsx'
 import Home from "./pages/CustomerPages/Home.jsx";
 import ShopPage from "./pages/CustomerPages/ShopPage";
-import ProductPage from "./pages/CustomerPages/CustomerProductPage.jsx";
+import CustomerProductPage from "./pages/CustomerPages/CustomerProductPage.jsx";
 import CollectionsPage from "./pages/CustomerPages/CollectionsPage";
 import AboutUsPage from "./pages/CustomerPages/AboutUsPage";
 
@@ -29,7 +29,7 @@ createRoot(document.getElementById('root')).render(
           <Route index element={<Home />} /> {/* default when path is "/" */}
           <Route path="login" element={<Login />} />
           <Route path={`${ShopPathName}/:category?`} element={<ShopPage />} />
-          <Route path={`/:product/:product_id`} element={<ProductPage />} />
+          <Route path={`/:product/:product_id`} element={<CustomerProductPage />} />
           <Route path="collections" element={<CollectionsPage />} />
           <Route path="about_us" element={<AboutUsPage />} />
           <Route path="admin" element={<Admin />}>

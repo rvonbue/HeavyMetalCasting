@@ -10,9 +10,10 @@ import { useAppState, useAppDispatch } from '../../AppState'
 import { PageContainer, Button_A, FormLabel } from "../../components/Resuables"; // MultiSelectDropdown
 import {  TailwindSpinner } from "../../styles/Icons";
 import { productImageLinks } from "../../staticData/PathData.js";
+import { getProductImageLinks } from "../../components/Resuables.jsx";
 
 function ProductEditPage(){
-  const { products, productProps, productsLoading, productCategories } = useAppState();
+  const { products, productProps, productsLoading, productAttributes } = useAppState();
   const location = useLocation();
   const handleFormSubmit = (data) => {
     console.log("Updated product:", data);
@@ -28,7 +29,7 @@ function ProductEditPage(){
       <EditProductForm 
         selectedProduct={selectedProduct}
         productProps={productProps} 
-        productCategories={productCategories}
+        productAttributes={productAttributes}
         onSubmit={handleFormSubmit} 
       />
     }
@@ -42,7 +43,7 @@ const customStyles = {
   }),
 };
 
-const EditProductForm = ({ productProps, onSubmit, selectedProduct, productCategories  }) => {
+const EditProductForm = ({ productProps, onSubmit, selectedProduct, productAttributes  }) => {
   const {
     register,
     control,
@@ -72,6 +73,8 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, productCateg
     }
   }, [isDirty, dirtyFields, setFieldsUpdated]);
 
+  const { imgs } = getProductImageLinks(selectedProduct);
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -88,14 +91,14 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, productCateg
                 { dataType === "textarea" ? 
                   <textarea
                     className="border border-gray-300 p-2 rounded w-full h-32 resize-none"
-                    {...register(dataName, { required: true })}
+                    {...register(dataName, { ...inputProps })}
                   /> :
                 dataType === "list" ? 
                   <CategorySelectComponent 
                     control={control}
                     dataName={dataName}
                     inputStyles={inputStyles}
-                    productCategories={productCategories}
+                    listData={productAttributes[dataName]}
                   />
                   :
                 <input
@@ -103,7 +106,7 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, productCateg
                   className="border border-gray-300 p-2 rounded w-full"
                   style={{cursor: "pointer", ...inputStyles}}
                   {...inputProps}
-                  {...register(dataName, { required: true })}
+                  {...register(dataName, { ...inputProps })}
                 />
                 }
                 {errors[dataName] && (
@@ -125,7 +128,7 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, productCateg
     </>
   );
 };
-const CategorySelectComponent = ({ control, dataName, inputStyles, productCategories}) => {
+const CategorySelectComponent = ({ control, dataName, inputStyles, listData}) => {
     
     return ( 
       <div style={inputStyles}>
@@ -133,7 +136,8 @@ const CategorySelectComponent = ({ control, dataName, inputStyles, productCatego
           name={dataName}
           control={control}
           render={({ field }) => {
-            const allCategories = productCategories.map((cat) => ({...cat, value: cat.id }));
+            const allCategories = listData.map((cat) => ({...cat, value: cat.id }));
+            console.log("allCategories:", allCategories);
             const selectedOptions = field.value.map((id) => allCategories.find((cat) => cat.id === id ));
             return (
               <Select
@@ -158,14 +162,14 @@ const ProductImageGrid = ({ images }) => (
   <FormLabel labelName={"Image Gallery"}/>
   <hr className="bg-hmc-a"/>
   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-    {images.map((src, idx) => (
+    {images.map(({filename}, index) => (
       <div
-        key={idx}
+        key={index}
         className="w-full aspect-square bg-gray-100 rounded overflow-hidden flex items-center justify-center"
       >
         <img
-          src={`${productImageLinks}${src}`}
-          alt={`Thumbnail ${idx}`}
+          src={`${productImageLinks}${filename}`}
+          alt={`Thumbnail ${index}`}
           className="max-w-full max-h-full object-contain"
         />
       </div>

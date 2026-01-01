@@ -1,7 +1,8 @@
-import {  productImageLinks, imgPlaceholder } from "../../staticData/PathData.js";
 import { Link } from "react-router-dom";
 import { getProductImageLinks } from "../Resuables.jsx";
- 
+import { CartIcon } from "../../styles/Icons.jsx";
+import { Button_A } from "../Resuables.jsx";
+
 export default function ProductCard({ product }) {
     const { heroImgLink } = getProductImageLinks(product);
 
@@ -13,11 +14,15 @@ export default function ProductCard({ product }) {
             alt={`Thumbnail`}
             className="p-4 max-w-full max-h-full object-contain border-1 border-[var(--color-hmc-border-b)] min-h-[300px]"
           />
-          <div className="text-hmc-text-a mt-2">
-              <div className="text-base font-semibold">{product.name}</div>
-            <div className="text-sm">{product.price}</div>
-          </div>
         </Link>
+        <div className="text-hmc-text-a mt-2">
+            <div className="text-base font-semibold">{product.name}</div>
+          <div className="text-md mt-2 ">{product.price}</div>
+          <div className="flex mt-4">
+            <Button_A button_name="Add to Cart" button_styles_outer={{ marginRight: "0.5rem"  }} /> 
+            {/* <CartIcon/> */}
+          </div>
+        </div>
       </div>
     );
 }

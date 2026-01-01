@@ -4,19 +4,38 @@ import appReducer from './reducers/appReducer.jsx';
 
 // Initial global state
 const initialState = {
-  user: null,
+  user: {},
   theme: 'light',
   loading: false,
   appSizeMode: 'desktop', // 'desktop' or 'mobile'
   showShoppingCart: false,
   shoppingCartItems: [],
   orders: [],
-  productCategories: [
-    {id: 1, label: "rings", },
-    {id: 2, label: "necklaces"},
-    {id: 3, label: "pins"},
-    {id: 4, label: "earrings"},
-  ],
+  productAttributes: {
+    productCategories: [
+      {id: 1, label: "ring", },
+      {id: 2, label: "necklace"},
+      {id: 3, label: "pin"},
+      {id: 4, label: "earrings"},
+    ],
+    sizeCharts: [
+      {
+        id: 1, 
+        label: "ring_sizes",
+        options: [{label: "6", value: "6"},{label: "7", value: "7"},{label: "8", value: "8"},{label: "9", value: "9"},{label: "10", value: "10"},{label: "11", value: "11"},{label: "12", value: "12"}]
+      },
+      {
+        id: 2, 
+        label: "necklace_lengths", 
+        options: [{label:"16in", value:"16in"},{label:"18in", value:"18in"},{label:"20in", value:"20in"},{label:"22in", value:"22in"},{label:"24in", value:"24in"}]
+      },
+      {
+        id: 3, 
+        label: "earring_types", 
+        options: [{label:"studs", value:"studs"},{label:"hoops", value:"hoops"},{label:"dangles", value:"dangles"}]
+      },
+    ],
+  },
   toolbarHeight: 56,  
   products: [...productData], 
   productsLoading: false,
@@ -51,11 +70,25 @@ const initialState = {
         adminDisplayName: "Product Categories", 
         storeDisplayName: "", 
         dataType: "list", 
-        dataName: "productCat",
+        dataName: "productCategories",
         userEdit: true,
         classNames: "min-w-36",
         inputStyles: {
           width: "500px",
+        }
+      },
+      { 
+        adminDisplayName: "Size Chart", 
+        storeDisplayName: "Size Chart", 
+        dataType: "list", 
+        dataName: "sizeCharts",
+        userEdit: true,
+        classNames: "min-w-36",
+        divStyles: {
+          width: "100%"
+        },
+        inputStyles: {
+          maxWidth: "100%"
         }
       },
       { 
@@ -67,6 +100,9 @@ const initialState = {
         inputStyles: {
           width: "24px",
           height: "24px"
+        },
+        inputProps: {
+          required: false
         }
       },
       { 
@@ -103,7 +139,7 @@ const initialState = {
         inputStyles: {
           maxWidth: "100%"
         }
-      },
+      }
   ],
   initialLoading: false
 };
@@ -114,7 +150,7 @@ const AppDispatchContext = createContext();
 
 export function AppStateProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
-
+  
   return (
     <AppStateContext.Provider value={state}>
       <AppDispatchContext.Provider value={dispatch}>
