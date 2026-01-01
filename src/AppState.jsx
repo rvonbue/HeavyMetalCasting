@@ -5,7 +5,7 @@ import appReducer from './reducers/appReducer.jsx';
 // Initial global state
 const initialState = {
   user: {},
-  theme: 'light',
+  theme: 'dark',
   loading: false,
   appSizeMode: 'desktop', // 'desktop' or 'mobile'
   showShoppingCart: false,

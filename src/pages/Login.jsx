@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import './Login.css';
 import { Button_A } from "../components/Resuables";
 

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { NavLink, useParams } from 'react-router'
+import { NavLink, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { Button_A, PageContainer } from '../../components/Resuables'

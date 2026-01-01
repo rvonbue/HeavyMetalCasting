@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import { sortBy } from "lodash-es";
 import { PencilIcon, TrashIcon, TailwindSpinner, ArrowUpIcon, ArrowDownIcon } from "../../styles/Icons";
 import { Button_A, PageContainer } from "../../components/Resuables";

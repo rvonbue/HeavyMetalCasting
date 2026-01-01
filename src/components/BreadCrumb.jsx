@@ -1,5 +1,4 @@
-import { useLocation } from 'react-router-dom';
-import { NavLink } from "react-router";
+import { useLocation, NavLink } from 'react-router-dom';
 
 export default function BreadCrumb() {
   const location = useLocation();
@@ -22,6 +21,7 @@ export default function BreadCrumb() {
         </NavLink>
         {paths.map((val, index) => 
           <NavLink 
+            key={urls[index]}
             to={urls[index]}
             style={{ color: "inherit"}}
             className={"uppercase ml-1"}

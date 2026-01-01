@@ -1,6 +1,5 @@
-import { Outlet, useMatch  } from 'react-router-dom';
+import { Outlet, useMatch, NavLink  } from 'react-router-dom';
 import { useSelector } from 'react-redux'
-import { NavLink } from "react-router";
 import { FolderTab } from "../../components/Resuables";
 
 function AdminPage() {

@@ -1,7 +1,7 @@
-import { useAppState, useAppDispatch } from '../../AppState';
+import { useSelector } from 'react-redux';
 
 export default function ShoppingTab({ isOpen, onClose }) {
-  const { shoppingCartItems } = useAppState();
+  const { shoppingCartItems } = useSelector(state => state.cart);
   const shoppingCartEmpty = shoppingCartItems.length === 0;
 
   return (

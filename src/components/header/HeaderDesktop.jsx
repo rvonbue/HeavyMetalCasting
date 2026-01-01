@@ -1,5 +1,4 @@
-import { NavLink } from 'react-router'
-import { Link } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { CartIcon, SkullIcon } from '../../styles/Icons.jsx'
@@ -17,7 +16,6 @@ export default function HeaderDesktop({
   const toolbarHeight = useSelector(
     state => state.app.toolbarHeight
   )
-
   return (
     <header
       className="bg-hmc-a select-none"
