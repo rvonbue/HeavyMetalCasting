@@ -123,8 +123,7 @@ export default function HeaderDesktop({
             style={{ cursor: 'pointer' }}
           >
             <div className="flex items-center justify-center text-xs font-bold">
-              <CartIcon />
-
+              <CartIcon stroke='#FFFF'/>
               <div
                 key={totalItemsInCart}
                 className="w-6 h-6 rounded-full border border-color-text-hmc-c flex items-center justify-center hmc-bounce"

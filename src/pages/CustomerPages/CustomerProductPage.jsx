@@ -48,24 +48,25 @@ function ProductPage({ product }) {
 
   return (
     <>
-      
-
-      <div className="w-full mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="col-span-1">
-          <img
-            src={selectedImage}
-            alt={product.name || product.title || 'Product Image'}
-            className="rounded shadow max-h-100 max-w-100 object-contain w-full"
-          />
-          <ThumbnailCarousel
-            imgs={imgs}
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
-            productName={product.name || product.title}
-          />
+      <div className="w-full grid grid-cols-1 md:grid-cols-[40%_60%]">
+        <div className="col-span-1 flex items-center justify-center">
+          <div className="w-full">
+            <img
+              src={selectedImage}
+              alt={product.name || product.title || 'Product Image'}
+              className="rounded shadow w-full max-w-full h-auto object-contain"
+              style={{ display: 'block' }}
+            />
+            <ThumbnailCarousel
+              imgs={imgs}
+              selectedImage={selectedImage}
+              setSelectedImage={setSelectedImage}
+              productName={product.name || product.title}
+            />
+          </div>
         </div>
 
-        <div className="md:col-span-2 text-left">
+        <div className="col-span-1 text-left pl-8" >
           <h1 className="text-2xl font-bold text-hmc-c">
             {product.name || 'Product Page'}
             {product.price != null && ( <p className="text-hmc-c font-bold text-lg mb-4">${product.price}</p> )}
