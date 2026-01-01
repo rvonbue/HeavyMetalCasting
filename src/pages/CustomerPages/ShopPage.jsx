@@ -1,41 +1,71 @@
-import { useState } from 'react';
-import { Button_A, PageContainer } from "../../components/Resuables";
-import BreadCrumb from "../../components/BreadCrumb";
-import { useAppState  } from '../../AppState'; // useAppDispatch
-import { NavLink, useParams  } from "react-router";
-// import { activeBorder, inactiveBorder } from "../../styles/App.jsx";
-import { ShopPathName } from "../../staticData/PathData.js";
-import ProductCard from "../../components/CustomerPageComponents/ProductCard.jsx";
+import { useState, useMemo } from 'react'
+import { NavLink, useParams } from 'react-router'
+import { useSelector } from 'react-redux'
 
+import { Button_A, PageContainer } from '../../components/Resuables'
+import BreadCrumb from '../../components/BreadCrumb'
+import ProductCard from '../../components/CustomerPageComponents/ProductCard.jsx'
+import { ShopPathName } from '../../staticData/PathData.js'
 
 function ShopPage() {
-  let { category } = useParams();
-  const { products, productAttributes: { productCategories } } = useAppState();
+  const { category } = useParams()
 
-  let selectedCategory = category;
-  const selectedCategoryId = selectedCategory ? productCategories.find((prdC) => prdC.label.toLowerCase() === selectedCategory.toLowerCase()).id : undefined;
-  const sortedFilteredProducts = selectedCategory ? products.filter((prd) => (prd.live === true && prd.productCategories.some((catId) => catId === selectedCategoryId))) 
-                                                    : products.filter((prd) => prd.live === true);
+  const products = useSelector(
+    state => state.products.products
+  )
+
+  const productCategories = useSelector(
+    state => state.products.productAttributes.productCategories
+  )
+
+  const selectedCategory = category
+
+  const selectedCategoryId = useMemo(() => {
+    if (!selectedCategory) return undefined
+    return productCategories.find(
+      c => c.label.toLowerCase() === selectedCategory.toLowerCase()
+    )?.id
+  }, [selectedCategory, productCategories])
+
+  const sortedFilteredProducts = useMemo(() => {
+    if (!selectedCategoryId) {
+      return products.filter(prd => prd.live === true)
+    }
+
+    return products.filter(
+      prd =>
+        prd.live === true &&
+        prd.productCategories.some(catId => catId === selectedCategoryId)
+    )
+  }, [products, selectedCategoryId])
 
   return (
     <PageContainer>
       <BreadCrumb />
-      <div className={"text-left text-3xl text-hmc-text-a font-bold mt-6 select-none" + (selectedCategory === undefined ? " invisible" : "")}> 
-        {selectedCategory || "invisible"}
+
+      <div
+        className={
+          'text-left text-3xl text-hmc-text-a font-bold mt-6 select-none' +
+          (selectedCategory ? '' : ' invisible')
+        }
+      >
+        {selectedCategory || 'invisible'}
       </div>
+
       <div className="flex mt-8">
-        <SidePanel 
-          selectedCategory={selectedCategory} 
+        <SidePanel
+          selectedCategory={selectedCategory}
           productCategories={productCategories}
         />
-        <ProductsContainer 
-          sortedFiltered
+
+        <ProductsContainer
           sortedFilteredProducts={sortedFilteredProducts}
         />
       </div>
     </PageContainer>
   )
 }
+
 
 function SidePanel({ selectedCategory, productCategories }) {
   

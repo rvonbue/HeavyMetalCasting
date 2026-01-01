@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAppState, useAppDispatch } from '../../AppState'
+import { useSelector, useDispatch } from 'react-redux'
 import { NavLink } from "react-router";
 import { sortBy } from "lodash-es";
 import { PencilIcon, TrashIcon, TailwindSpinner, ArrowUpIcon, ArrowDownIcon } from "../../styles/Icons";
@@ -10,8 +10,8 @@ function sortProducts(products, sortColumnInfo){
 }
 
 export default function ProductOverviewPage() {
-   const { products, productProps, productsLoading, productAttributes } = useAppState();
-   const dispatch = useAppDispatch(); 
+   const { products, productProps, productsLoading, productAttributes } = useSelector(state => state.products);
+   const dispatch = useDispatch(); 
    const [sortColumnInfo, setSortColumnInfo] = useState({dataName: "live", reverse: false });
    const [sortedProducts, setSortedProducts] = useState(sortProducts(products, sortColumnInfo));
 

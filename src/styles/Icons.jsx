@@ -102,3 +102,28 @@ export const SkullIcon = ({
     <path d="M15 16v1" />
   </svg>
 );
+
+const DeleteIcon = ({ stroke = "#000", size = 24 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={stroke}
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    {/* Skeleton casted trash can */}
+    <rect x="5" y="6" width="14" height="14" rx="2" ry="2" />
+    {/* Open lid */}
+    <line x1="3" y1="6" x2="21" y2="6" />
+    {/* Inner skeleton bars */}
+    <line x1="9" y1="6" x2="9" y2="20" />
+    <line x1="15" y1="6" x2="15" y2="20" />
+    {/* Lid handle */}
+    <line x1="10" y1="3" x2="14" y2="3" />
+  </svg>
+);
+
+export default DeleteIcon;

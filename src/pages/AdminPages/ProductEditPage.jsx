@@ -1,19 +1,19 @@
 import { useEffect, useState  } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useForm, Controller } from "react-hook-form";
+import { useSelector, useDispatch } from 'react-redux'
 import Select from 'react-select';
 import { toNumber } from 'lodash-es';
 
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 // import { useOutletContext } from 'react-router-dom';
-import { useAppState, useAppDispatch } from '../../AppState'
 import { PageContainer, Button_A, FormLabel } from "../../components/Resuables"; // MultiSelectDropdown
 import {  TailwindSpinner } from "../../styles/Icons";
 import { productImageLinks } from "../../staticData/PathData.js";
 import { getProductImageLinks } from "../../components/Resuables.jsx";
 
 function ProductEditPage(){
-  const { products, productProps, productsLoading, productAttributes } = useAppState();
+  const { products, productProps, productsLoading, productAttributes } = useSelector(state => state.products);
   const location = useLocation();
   const handleFormSubmit = (data) => {
     console.log("Updated product:", data);

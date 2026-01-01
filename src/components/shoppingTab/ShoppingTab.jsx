@@ -1,22 +1,34 @@
-import { useState } from 'react'
-import { useAppState, useAppDispatch } from '../../AppState';
-import ShoppingTabMobile from './ShoppingTabMobile.jsx';
-import ShoppingTabDesktop  from './ShoppingTabDesktop.jsx';
-import { getShoppingCartItemDetails } from '../../actions/shoppingCartActions.jsx';
+import { useSelector } from 'react-redux'
 
-function ShoppingTab({isOpen, onClose}) {
-  const { products, appSizeMode, shoppingCartItems } = useAppState();
-  // const dispatch = useAppDispatch();  
-  const shoppingCartItemDetails = getShoppingCartItemDetails({products,  shoppingCartItems});
-  
+import ShoppingTabMobile from './ShoppingTabMobile.jsx'
+import ShoppingTabDesktop from './ShoppingTabDesktop.jsx'
+import { getShoppingCartItemDetails } from '../../actions/shoppingCartActions.jsx'
+
+function ShoppingTab({ isOpen, onClose }) {
+  const products = useSelector(state => state.products.products)
+  const appSizeMode = useSelector(state => state.app.appSizeMode)
+  const shoppingCartItems = useSelector(state => state.cart.shoppingCartItems)
+
+  const shoppingCartItemDetails = getShoppingCartItemDetails({
+    products,
+    shoppingCartItems,
+  })
+
   return (
     <>
-      {appSizeMode === 'desktop' ?    
-        <ShoppingTabDesktop isOpen={isOpen} onClose={onClose} shoppingCartItemDetails={shoppingCartItemDetails} 
-        /> : 
-        <ShoppingTabMobile isOpen={isOpen} onClose={onClose}  shoppingCartItemDetails={shoppingCartItemDetails}
+      {appSizeMode === 'desktop' ? (
+        <ShoppingTabDesktop
+          isOpen={isOpen}
+          onClose={onClose}
+          shoppingCartItemDetails={shoppingCartItemDetails}
         />
-      }
+      ) : (
+        <ShoppingTabMobile
+          isOpen={isOpen}
+          onClose={onClose}
+          shoppingCartItemDetails={shoppingCartItemDetails}
+        />
+      )}
     </>
   )
 }

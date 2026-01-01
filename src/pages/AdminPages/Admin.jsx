@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import { Outlet, useMatch  } from 'react-router-dom';
+import { useSelector } from 'react-redux'
 import { NavLink } from "react-router";
-import { useAppState, useAppDispatch } from '../../AppState'
 import { FolderTab } from "../../components/Resuables";
 
 function AdminPage() {
-  const { toolbarHeight } = useAppState();
+  const { toolbarHeight } = useSelector(state => state.app.toolbarHeight);
 
   const editMatch = useMatch('/admin/edit_product')
   const overviewMatch = useMatch('/admin/overview_products');

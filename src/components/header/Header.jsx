@@ -1,34 +1,49 @@
-import { useState } from 'react'
-import { NavLink } from "react-router";
-import { Link } from 'react-router-dom';
-import { useAppState, useAppDispatch } from '../../AppState';
-import { CartIcon } from "../../styles/Icons";
-import { activeBorder, inactiveBorder } from "../../styles/App.jsx";
-import HeaderDesktop from './HeaderDesktop.jsx';
-import HeaderMobile from './HeaderDesktop.jsx';
+import { useSelector } from 'react-redux'
+
+import HeaderDesktop from './HeaderDesktop.jsx'
+import HeaderMobile from './HeaderMobile.jsx'
 
 function Header() {
-  const { showShoppingCart, shoppingCartItems, appSizeMode, user } = useAppState();
-  const totalItemsInCart = shoppingCartItems.reduce((total, item) => total + item.quantity, 0); 
-  const loggedIn = user.id != undefined
+  const showShoppingCart = useSelector(
+    state => state.cart.showShoppingCart
+  )
+
+  const shoppingCartItems = useSelector(
+    state => state.cart.shoppingCartItems
+  )
+
+  const appSizeMode = useSelector(
+    state => state.app.appSizeMode
+  )
+
+  const user = useSelector(
+    state => state.app.user
+  )
+
+  const totalItemsInCart = shoppingCartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  )
+
+  const loggedIn = Boolean(user?.id)
 
   return (
     <>
-      {appSizeMode === 'desktop' ?    
-        <HeaderDesktop 
-          totalItemsInCart={totalItemsInCart} 
+      {appSizeMode === 'desktop' ? (
+        <HeaderDesktop
+          totalItemsInCart={totalItemsInCart}
           showShoppingCart={showShoppingCart}
           user={user}
-          loggedIn={loggedIn} 
-        /> 
-        : 
-        <HeaderMobile 
-          totalItemsInCart={totalItemsInCart} 
-          showShoppingCart={showShoppingCart} 
+          loggedIn={loggedIn}
+        />
+      ) : (
+        <HeaderMobile
+          totalItemsInCart={totalItemsInCart}
+          showShoppingCart={showShoppingCart}
           user={user}
-          loggedIn={loggedIn} 
-         />  
-      }
+          loggedIn={loggedIn}
+        />
+      )}
     </>
   )
 }
