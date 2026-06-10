@@ -12,18 +12,18 @@ function ShopPage() {
   const selectedCategoriesByRoute = category ? category.split("_") : [];
 
   const shopProducts = useSelector(state => state.products.shopProducts);
-  const productCategories = useSelector(
-    state => state.products.productAttributes.productCategories
+  const product_categories = useSelector(
+    state => state.products.productAttributes.product_categories
   )
 
   const selectedCategory = category
 
   const selectedCategoryId = useMemo(() => {
     if (!selectedCategory) return undefined
-    return productCategories.find(
+    return product_categories.find(
       c => c.label.toLowerCase() === selectedCategory.toLowerCase()
     )?.id
-  }, [selectedCategory, productCategories])
+  }, [selectedCategory, product_categories])
 
   const sortedFilteredProducts = useMemo(() => {
     if (!selectedCategoryId) {
@@ -33,7 +33,7 @@ function ShopPage() {
     return shopProducts.filter(
       prd =>
         prd.live === true &&
-        prd.productCategories.some(catId => catId === selectedCategoryId)
+        prd.product_categories.some(catId => catId === selectedCategoryId)
     )
   }, [shopProducts, selectedCategoryId])
 
@@ -53,7 +53,7 @@ function ShopPage() {
       <div className="flex mt-8">
         <SidePanel
           selectedCategoriesByRoute={selectedCategoriesByRoute}
-          productCategories={productCategories}
+          product_categories={product_categories}
         />
 
         <ProductsContainer
@@ -65,7 +65,7 @@ function ShopPage() {
 }
 
 
-function SidePanel({ selectedCategoriesByRoute, productCategories }) {
+function SidePanel({ selectedCategoriesByRoute, product_categories }) {
   
   const [sidePanelState, setSidePanelState] = useState({
     categoriesOpen: true
@@ -75,7 +75,7 @@ function SidePanel({ selectedCategoriesByRoute, productCategories }) {
       <SidepanelList 
         headerName={"Categories"} 
         {...{ sidePanelState, setSidePanelState }}
-        displayData={productCategories}
+        displayData={product_categories}
         selectedCategoriesByRoute={selectedCategoriesByRoute}
       />
   )

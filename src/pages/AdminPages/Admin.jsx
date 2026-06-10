@@ -3,14 +3,12 @@ import { Outlet, useMatch, NavLink  } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
 import { FolderTab } from "../../components/Resuables";
 import { supabase } from '../../lib/supabase';
-import { downloadProducts } from '../../api/productsApi';
 import {
   setProducts,
   setProductsLoading,
+  setProductEditFields
 } from '../../store/productsSlice';
-
-
-
+import { getProductEditFields } from "../../api/productEditApis";
 
 function AdminPage() {
   const { toolbarHeight } = useSelector(state => state.app.toolbarHeight);
@@ -20,24 +18,17 @@ function AdminPage() {
   const addingMatch = useMatch('/admin/add_product');
   const productManagementLabelStatus = `${editMatch ? " (editing)" : ""}${overviewMatch ? " (overview)" : ""}${addingMatch ? " (adding)" : ""}`;
 
-  useEffect(() => {
-    async function loadProducts() {
-      try {
-        dispatch(setProductsLoading(true));
+useEffect(() => {
+  async function loadFields() {
+    const fields = await getProductEditFields();
 
-        const products = await downloadProducts();
+    dispatch(
+      setProductEditFields(fields)
+    );
+  }
 
-        dispatch(setProducts(products));
-      } catch (error) {
-        console.error(error);
-      } finally {
-        dispatch(setProductsLoading(false));
-      }
-    }
-
-    loadProducts();
-  }, [dispatch]);
-
+  loadFields();
+}, [dispatch]);
 
   return (
     <div className={`flex flex-col h-[calc(100vh-${toolbarHeight}px)] `}>

@@ -6,48 +6,11 @@ const initialState = {
   shopProducts: [],
   productsLoading: true,
   productAttributes: {
-    productCategories: [
-      { id: 1, label: 'rings' },
-      { id: 2, label: 'necklaces' },
-      { id: 3, label: 'earrings' },
-      { id: 4, label: 'pins' },
-    ],
-    sizeCharts: [
-      {
-        id: 1,
-        label: 'ring_sizes',
-        options: [
-          { label: '6', value: '6' },
-          { label: '7', value: '7' },
-          { label: '8', value: '8' },
-          { label: '9', value: '9' },
-          { label: '10', value: '10' },
-          { label: '11', value: '11' },
-          { label: '12', value: '12' },
-        ],
-      },
-      {
-        id: 2,
-        label: 'necklace_lengths',
-        options: [
-          { label: '16in', value: '16in' },
-          { label: '18in', value: '18in' },
-          { label: '20in', value: '20in' },
-          { label: '22in', value: '22in' },
-          { label: '24in', value: '24in' },
-        ],
-      },
-      {
-        id: 3,
-        label: 'earring_types',
-        options: [
-          { label: 'studs', value: 'studs' },
-          { label: 'hoops', value: 'hoops' },
-          { label: 'dangles', value: 'dangles' },
-        ],
-      },
-    ],
+    product_categories: [],
+    size_charts: [],
+    metal_types: []
   },
+  productEditFields: [],
   productProps: [
     {
       adminDisplayName: 'ID',
@@ -63,18 +26,18 @@ const initialState = {
       userEdit: true,
       classNames: 'min-w-36',
     },
-    {
-      adminDisplayName: 'Product Categories',
-      dataType: 'list',
-      dataName: 'productCategories',
-      userEdit: true,
-    },
-    {
-      adminDisplayName: 'Size Chart',
-      dataType: 'list',
-      dataName: 'sizeCharts',
-      userEdit: true,
-    },
+    // {
+    //   adminDisplayName: 'Product Categories',
+    //   dataType: 'list',
+    //   dataName: 'product_categories',
+    //   userEdit: true,
+    // },
+    // {
+    //   adminDisplayName: 'Size Chart',
+    //   dataType: 'list',
+    //   dataName: 'size_charts',
+    //   userEdit: true,
+    // },
     {
       adminDisplayName: 'Live',
       dataType: 'checkbox',
@@ -106,12 +69,30 @@ const productsSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
+    setAppData(state, action) {
+      const {
+        products,
+        product_categories,
+        size_charts,
+        metal_types,
+      } = action.payload;
+      console.log("setAppData:action", action);
+      state.products = products ?? [];
+      state.shopProducts = state.products.filter(prd => prd.live);
+      state.productAttributes.product_categories = product_categories ?? [];
+      state.productAttributes.size_charts = size_charts ?? [];
+      state.productAttributes.metal_types = metal_types ?? [];
+      state.productsLoading = false;
+    },
     setProductsLoading(state, action) {
       state.productsLoading = action.payload
     },
     setProducts(state, action) {
       state.products = action.payload;
       state.shopProducts= action.payload.filter(prd => prd.live === true);
+    },
+    setProductEditFields(state, action){
+      state.productEditFields = action.payload;
     },
     updateProduct(state, action) {
       const { id, updates } = action.payload
@@ -128,18 +109,30 @@ const productsSlice = createSlice({
         product => product.id !== action.payload
       )
     },
+    addProductImages: (state, action) => {
+      const { productId, images } = action.payload;
+
+      const product = state.products.find(
+        (p) => p.id === productId
+      );
+
+      if (!product) return;
+
+      product.product_images ??= [];
+      product.product_images.push(...images);
+    },
   },
 })
 
-
-
-
 export const {
-  setProducts,
+  setAppData,
   setProductsLoading,
+  setProducts,
+  setProductEditFields,
   updateProduct,
   addProduct,
   removeProduct,
+  addProductImages
 } = productsSlice.actions
 
 export default productsSlice.reducer

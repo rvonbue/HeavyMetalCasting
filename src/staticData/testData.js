@@ -4,8 +4,8 @@ export const productData = [
       name: 'Lord of the Rings', 
       live: true, 
       price: 19.99, 
-      productCategories: [1],
-      sizeCharts:[1],
+      product_categories: [1],
+      size_charts:[1],
       stock: 120, 
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus euismod, nisl vitae luctus interdum, orci tortor vulputate purus, sed vulputate ante mauris sit amet urna. Sed nec ante at purus fermentum sollicitudin. Integer quis ex sed quam aliquet facilisis. Nulla facilisi. Phasellus euismod, mauris vitae malesuada efficitur, justo libero cursus nibh, sit amet consequat odio felis quis orci. Donec ac dolor sit amet purus feugiat interdum. Curabitur in felis ac justo sollicitudin hendrerit.", 
       images: [
@@ -19,8 +19,8 @@ export const productData = [
       name: 'Saguro Cactus Earrings', 
       live: true, 
       price: 39.99, 
-      productCategories: [4], 
-      sizeCharts:[2],
+      product_categories: [4], 
+      size_charts:[2],
       stock: 75, 
       description: "Beautiful cactus earrings perfect for any occasion", 
       images: [
@@ -32,8 +32,8 @@ export const productData = [
       name: 'Eagle Pin', 
       live: true, 
       price: 14.99, 
-      productCategories: [3], 
-      sizeCharts:[3],
+      product_categories: [3], 
+      size_charts:[3],
       stock: 200, 
       description: "Great pin for jackets and backpacks", 
       images: [

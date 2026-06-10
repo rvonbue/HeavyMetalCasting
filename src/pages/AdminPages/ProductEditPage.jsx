@@ -8,9 +8,12 @@ import { toNumber } from 'lodash-es';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 // import { useOutletContext } from 'react-router-dom';
 import { PageContainer, Button_A, FormLabel } from "../../components/Resuables"; // MultiSelectDropdown
+import ProductImageUploaderDropzone from "../../components/ProductImageUploaderDropzone"; // MultiSelectDropdown
+
 import {  TailwindSpinner } from "../../styles/Icons";
 import { productImageLinks } from "../../staticData/PathData.js";
 import { getProductImageLinks } from "../../components/Resuables.jsx";
+
 
 function ProductEditPage(){
   const { products, productProps, productsLoading, productAttributes } = useSelector(state => state.products);
@@ -73,9 +76,8 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, productAttri
     }
   }, [isDirty, dirtyFields, setFieldsUpdated]);
 
-  const { imgs } = getProductImageLinks(selectedProduct);
-
-  return (
+  
+  return (  
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="flex justify-between items-center mb-6">
@@ -117,8 +119,8 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, productAttri
               </div>
             ))}
           </div>
-          <ProductImageGrid images={selectedProduct.images}/>
-        
+          {selectedProduct.product_images.length > 0  &&<ProductImageGrid product_images={selectedProduct.product_images}/>  }
+            <ProductImageUploaderDropzone product={selectedProduct} /> 
         { fieldsUpdated && 
           <div className="flex ">
             <ExclamationTriangleIcon className="w-6 h-6 text-yellow-500" /> 
@@ -157,18 +159,18 @@ const CategorySelectComponent = ({ control, dataName, inputStyles, listData}) =>
       </div>)
 }
 
-const ProductImageGrid = ({ images }) => (
+const ProductImageGrid = ({ product_images }) => (
   <>
   <FormLabel labelName={"Image Gallery"}/>
   <hr className="bg-hmc-a"/>
   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-    {images.map(({filename}, index) => (
+    {product_images.map(({image_url}, index) => (
       <div
         key={index}
         className="w-full aspect-square bg-gray-100 rounded overflow-hidden flex items-center justify-center"
       >
         <img
-          src={`${productImageLinks}${filename}`}
+          src={image_url}
           alt={`Thumbnail ${index}`}
           className="max-w-full max-h-full object-contain"
         />
@@ -177,6 +179,8 @@ const ProductImageGrid = ({ images }) => (
   </div>
   </>
 );
+
+
 
 
 export default ProductEditPage;

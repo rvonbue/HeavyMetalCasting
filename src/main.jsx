@@ -20,11 +20,14 @@ import './styles/App.css';
 import './styles/index.css';
 import NotFound from "./pages/NotFound";
 import { ShopPathName } from "./staticData/PathData.js";
+import ErrorBoundary from "./components/ErrorBoundary";
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
+      <ErrorBoundary>
         <Routes>
           <Route path="/" element={<App />}>
             <Route index element={<Home />} />
@@ -41,7 +44,9 @@ createRoot(document.getElementById('root')).render(
             </Route>
             <Route path="*" element={<NotFound />} />
           </Route>
+          
         </Routes>
+        </ErrorBoundary>
       </BrowserRouter>
     </Provider>
   </StrictMode>
