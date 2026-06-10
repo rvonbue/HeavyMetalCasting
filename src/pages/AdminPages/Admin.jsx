@@ -1,14 +1,43 @@
+import { useEffect } from "react";
 import { Outlet, useMatch, NavLink  } from 'react-router-dom';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { FolderTab } from "../../components/Resuables";
+import { supabase } from '../../lib/supabase';
+import { downloadProducts } from '../../api/productsApi';
+import {
+  setProducts,
+  setProductsLoading,
+} from '../../store/productsSlice';
+
+
+
 
 function AdminPage() {
   const { toolbarHeight } = useSelector(state => state.app.toolbarHeight);
-
+  const dispatch = useDispatch();
   const editMatch = useMatch('/admin/edit_product')
   const overviewMatch = useMatch('/admin/overview_products');
   const addingMatch = useMatch('/admin/add_product');
   const productManagementLabelStatus = `${editMatch ? " (editing)" : ""}${overviewMatch ? " (overview)" : ""}${addingMatch ? " (adding)" : ""}`;
+
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        dispatch(setProductsLoading(true));
+
+        const products = await downloadProducts();
+
+        dispatch(setProducts(products));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        dispatch(setProductsLoading(false));
+      }
+    }
+
+    loadProducts();
+  }, [dispatch]);
+
 
   return (
     <div className={`flex flex-col h-[calc(100vh-${toolbarHeight}px)] `}>

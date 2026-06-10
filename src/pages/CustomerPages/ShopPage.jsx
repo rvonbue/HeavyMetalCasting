@@ -8,12 +8,10 @@ import ProductCard from '../../components/CustomerPageComponents/ProductCard.jsx
 import { ShopPathName } from '../../staticData/PathData.js'
 
 function ShopPage() {
-  const { category } = useParams()
+  const { category } = useParams();
+  const selectedCategoriesByRoute = category ? category.split("_") : [];
 
-  const products = useSelector(
-    state => state.products.products
-  )
-
+  const shopProducts = useSelector(state => state.products.shopProducts);
   const productCategories = useSelector(
     state => state.products.productAttributes.productCategories
   )
@@ -29,15 +27,15 @@ function ShopPage() {
 
   const sortedFilteredProducts = useMemo(() => {
     if (!selectedCategoryId) {
-      return products.filter(prd => prd.live === true)
+      return shopProducts.filter(prd => prd.live === true)
     }
 
-    return products.filter(
+    return shopProducts.filter(
       prd =>
         prd.live === true &&
         prd.productCategories.some(catId => catId === selectedCategoryId)
     )
-  }, [products, selectedCategoryId])
+  }, [shopProducts, selectedCategoryId])
 
   return (
     <PageContainer>
@@ -46,15 +44,15 @@ function ShopPage() {
       <div
         className={
           'text-left text-3xl text-hmc-text-a font-bold mt-6 select-none' +
-          (selectedCategory ? '' : ' invisible')
+          (selectedCategoriesByRoute.length ? '' : ' invisible')
         }
       >
-        {selectedCategory || 'invisible'}
+        {selectedCategoriesByRoute.join(" ") || 'invisible'}
       </div>
 
       <div className="flex mt-8">
         <SidePanel
-          selectedCategory={selectedCategory}
+          selectedCategoriesByRoute={selectedCategoriesByRoute}
           productCategories={productCategories}
         />
 
@@ -67,7 +65,7 @@ function ShopPage() {
 }
 
 
-function SidePanel({ selectedCategory, productCategories }) {
+function SidePanel({ selectedCategoriesByRoute, productCategories }) {
   
   const [sidePanelState, setSidePanelState] = useState({
     categoriesOpen: true
@@ -78,13 +76,26 @@ function SidePanel({ selectedCategory, productCategories }) {
         headerName={"Categories"} 
         {...{ sidePanelState, setSidePanelState }}
         displayData={productCategories}
-        selectedCategory={selectedCategory}
+        selectedCategoriesByRoute={selectedCategoriesByRoute}
       />
   )
 }
 
-export function SidepanelList({ headerName, sidePanelState, setSidePanelState,  displayData}) {
-    const [selectedOptions, setSelectedOptions] = useState([]);
+function getShopUrlForCategory(selectedCategoriesByRoute, category) {
+  const categoryIndex = selectedCategoriesByRoute.indexOf(category);
+
+    if(categoryIndex !== -1)  {
+      // Category is already selected, remove it
+      const newCategories = selectedCategoriesByRoute.filter(cat => cat !== category);
+      return newCategories.length > 0 ? `/${ShopPathName}/${newCategories.join("_")}/` : `/${ShopPathName}/`;
+    } else {
+      // Category is not selected, add it
+      const newCategories = [...selectedCategoriesByRoute, category];
+      return `/${ShopPathName}/${newCategories.join("_")}/`;
+    }      
+}
+
+export function SidepanelList({ headerName, sidePanelState, setSidePanelState,  displayData, selectedCategoriesByRoute}) {
 
     return (
       <div className="text-left w-[30%]">
@@ -95,13 +106,14 @@ export function SidepanelList({ headerName, sidePanelState, setSidePanelState,  
             <div>{headerName}</div>
             <div className="text-3xl">{sidePanelState.categoriesOpen ? "-" : "+" }</div>
           </h1>
-          {sidePanelState.categoriesOpen &&
+          {sidePanelState.categoriesOpen && 
             <div className={"flex flex-col"}>
               {displayData.map((displayObject) => {
+                const toValue = getShopUrlForCategory(selectedCategoriesByRoute, displayObject.label);
                 return (
                   <NavLink 
                     key={displayObject.id + displayObject.label }
-                    to={`/${ShopPathName}/${displayObject.label}/`} 
+                    to={toValue} 
                     end 
                     className={({ isActive }) => { 
                       return  ( (isActive ? "text-hmc-link-active" :  "text-hmc-link") + " text-1xl ml-2 cursor-pointer font-semibold select-none" );

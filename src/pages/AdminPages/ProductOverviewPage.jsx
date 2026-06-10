@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { sortBy } from "lodash-es";
 import { PencilIcon, TrashIcon, TailwindSpinner, ArrowUpIcon, ArrowDownIcon } from "../../styles/Icons";
 import { Button_A, PageContainer } from "../../components/Resuables";
+import UploadXlsxModal from "../../components/modal/UploadXlsxModal";
 
 function sortProducts(products, sortColumnInfo){
   return sortColumnInfo.reverse ? sortBy(products, [sortColumnInfo.dataName]).reverse() : sortBy(products, [sortColumnInfo.dataName]);
@@ -14,16 +15,31 @@ export default function ProductOverviewPage() {
    const dispatch = useDispatch(); 
    const [sortColumnInfo, setSortColumnInfo] = useState({dataName: "live", reverse: false });
    const [sortedProducts, setSortedProducts] = useState(sortProducts(products, sortColumnInfo));
+   const [showUploadModal, setShowUploadModal] = useState(false);
 
    useEffect(() => {
       setSortedProducts(sortProducts(products, sortColumnInfo));
    }, [sortColumnInfo.dataName, sortColumnInfo.reverse, products]);
    
+  function handleUpload(file) {
+    console.log("Uploaded XLSX:", file);
+
+    // Later you can parse it with SheetJS/xlsx here.
+  }
+
   return (
     <PageContainer bg="alt1">
+      <UploadXlsxModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        onUpload={handleUpload}
+      />
       <div className="mx-auto bg-white rounded shadow">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Product Management</h1>
+
+          <div onClick={() => setShowUploadModal(true)}>Update via spreadsheet</div>
+           {/* <Button_A button_name="Update via spreadsheet" link_val="" button_styles_outer={{ marginTop: "1.5rem"}}/> */}
           <Button_A button_name="+ Add Product" link_val="/admin/add_product" button_styles_outer={{ marginTop: "1.5rem"}}/>
         </div>
         { productsLoading ? <TailwindSpinner/> 

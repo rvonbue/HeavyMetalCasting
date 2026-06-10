@@ -108,13 +108,13 @@ export default function HeaderDesktop({
             </Link>
           )}
 
-          <Link
+          {/* <Link
             to="/admin/overview_products"
             style={{ color: 'inherit', }}
             className="w-6 h-6 rounded-full border border-color-text-hmc-c flex items-center justify-center hmc-bounce"
           >
             A
-          </Link>
+          </Link> */}
 
           {/* Cart */}
           <div

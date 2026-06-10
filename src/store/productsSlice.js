@@ -2,15 +2,15 @@ import { createSlice } from '@reduxjs/toolkit'
 import { productData } from '../staticData/testData.js'
 
 const initialState = {
-  products: [...productData],
-  productsLoading: false,
-
+  products: [],
+  shopProducts: [],
+  productsLoading: true,
   productAttributes: {
     productCategories: [
-      { id: 1, label: 'ring' },
-      { id: 2, label: 'necklace' },
-      { id: 3, label: 'pin' },
-      { id: 4, label: 'earrings' },
+      { id: 1, label: 'rings' },
+      { id: 2, label: 'necklaces' },
+      { id: 3, label: 'earrings' },
+      { id: 4, label: 'pins' },
     ],
     sizeCharts: [
       {
@@ -48,7 +48,6 @@ const initialState = {
       },
     ],
   },
-
   productProps: [
     {
       adminDisplayName: 'ID',
@@ -110,6 +109,10 @@ const productsSlice = createSlice({
     setProductsLoading(state, action) {
       state.productsLoading = action.payload
     },
+    setProducts(state, action) {
+      state.products = action.payload;
+      state.shopProducts= action.payload.filter(prd => prd.live === true);
+    },
     updateProduct(state, action) {
       const { id, updates } = action.payload
       const product = state.products.find(p => p.id === id)
@@ -128,7 +131,11 @@ const productsSlice = createSlice({
   },
 })
 
+
+
+
 export const {
+  setProducts,
   setProductsLoading,
   updateProduct,
   addProduct,
