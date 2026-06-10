@@ -13,10 +13,12 @@ import ProductImageUploaderDropzone from "../../components/ProductImageUploaderD
 import {  TailwindSpinner } from "../../styles/Icons";
 import { productImageLinks } from "../../staticData/PathData.js";
 import { getProductImageLinks } from "../../components/Resuables.jsx";
+import DragDropProductImageGrid from "../../components/AdminPageComponents/DragDropProductImageGrid";
 
 
 function ProductEditPage(){
-  const { products, productProps, productsLoading, productAttributes } = useSelector(state => state.products);
+  const { products,  productsLoading, productAttributes } = useSelector(state => state.products);
+  const { productEditFields } = useSelector(state => state.admin);
   const location = useLocation();
   const handleFormSubmit = (data) => {
     console.log("Updated product:", data);
@@ -31,7 +33,7 @@ function ProductEditPage(){
       <TailwindSpinner/> :
       <EditProductForm 
         selectedProduct={selectedProduct}
-        productProps={productProps} 
+        productEditFields={productEditFields} 
         productAttributes={productAttributes}
         onSubmit={handleFormSubmit} 
       />
@@ -46,7 +48,7 @@ const customStyles = {
   }),
 };
 
-const EditProductForm = ({ productProps, onSubmit, selectedProduct, productAttributes  }) => {
+const EditProductForm = ({ productEditFields, onSubmit, selectedProduct, productAttributes  }) => {
   const {
     register,
     control,
@@ -54,9 +56,9 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, productAttri
     formState,
   } = useForm({
     defaultValues: 
-      productProps.reduce((acc, { dataName, userEdit }) => {
-        if(userEdit) {
-          acc[dataName] = selectedProduct[dataName];
+      productEditFields.reduce((acc, { name, editable }) => {
+        if(editable) {
+          acc[name] = selectedProduct[name];
         }
         return acc;
       },{}) || {},
@@ -76,7 +78,7 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, productAttri
     }
   }, [isDirty, dirtyFields, setFieldsUpdated]);
 
-  
+
   return (  
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -85,42 +87,42 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, productAttri
         <Button_A button_name="Update Product" button_type="form" link_val="/admin/add_product" /> {/*  button_styles_outer={{ position: "fixed", right: "24px"}} */}
       </div>
         <div className="flex flex-wrap gap-4">
-          {productProps
-            .filter((prop) => prop.userEdit)
-            .map(({ adminDisplayName, dataType, dataName, inputProps, classNames, inputStyles, divStyles }) => (
-              <div key={dataName}  className="flex flex-row items-center gap-2 box-border" style={divStyles}>
-                <FormLabel classNames={`text-left ${classNames ? classNames : ""}`} labelName={adminDisplayName}/>
-                { dataType === "textarea" ? 
+          {productEditFields
+            .filter((prop) => prop.editable)
+            .map(({ label, type, name, inputProps, classNames, inputStyles, divStyles }) => (
+              <div key={name}  className="flex flex-row items-center gap-2 box-border" style={divStyles}>
+                <FormLabel classNames={`text-left ${classNames ? classNames : ""}`} labelName={label}/>
+                { type === "textarea" ? 
                   <textarea
                     className="border border-gray-300 p-2 rounded w-full h-32 resize-none"
-                    {...register(dataName, { ...inputProps })}
+                    {...register(name, { ...inputProps })}
                   /> :
-                dataType === "list" ? 
+                type === "list" ? 
                   <CategorySelectComponent 
                     control={control}
-                    dataName={dataName}
+                    name={name}
                     inputStyles={inputStyles}
-                    listData={productAttributes[dataName]}
+                    listData={productAttributes[name]}
                   />
                   :
                 <input
-                  type={dataType}
+                  type={type}
                   className="border border-gray-300 p-2 rounded w-full"
                   style={{cursor: "pointer", ...inputStyles}}
                   {...inputProps}
-                  {...register(dataName, { ...inputProps })}
+                  {...register(name, { ...inputProps })}
                 />
                 }
-                {errors[dataName] && (
+                {errors[name] && (
                   <span className="text-red-500 text-sm">
-                    {adminDisplayName} is required.
+                    {label} is required.
                   </span>
                 )}
               </div>
             ))}
           </div>
-          {selectedProduct.product_images.length > 0  &&<ProductImageGrid product_images={selectedProduct.product_images}/>  }
-            <ProductImageUploaderDropzone product={selectedProduct} /> 
+          {selectedProduct.product_images.length > 0  && <DragDropProductImageGrid product={selectedProduct}/> }
+          <ProductImageUploaderDropzone product={selectedProduct} /> 
         { fieldsUpdated && 
           <div className="flex ">
             <ExclamationTriangleIcon className="w-6 h-6 text-yellow-500" /> 
@@ -130,12 +132,12 @@ const EditProductForm = ({ productProps, onSubmit, selectedProduct, productAttri
     </>
   );
 };
-const CategorySelectComponent = ({ control, dataName, inputStyles, listData}) => {
+const CategorySelectComponent = ({ control, name, inputStyles, listData}) => {
     
     return ( 
       <div style={inputStyles}>
         <Controller
-          name={dataName}
+          name={name}
           control={control}
           render={({ field }) => {
             const allCategories = listData.map((cat) => ({...cat, value: cat.id }));
@@ -158,29 +160,5 @@ const CategorySelectComponent = ({ control, dataName, inputStyles, listData}) =>
         />
       </div>)
 }
-
-const ProductImageGrid = ({ product_images }) => (
-  <>
-  <FormLabel labelName={"Image Gallery"}/>
-  <hr className="bg-hmc-a"/>
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-    {product_images.map(({image_url}, index) => (
-      <div
-        key={index}
-        className="w-full aspect-square bg-gray-100 rounded overflow-hidden flex items-center justify-center"
-      >
-        <img
-          src={image_url}
-          alt={`Thumbnail ${index}`}
-          className="max-w-full max-h-full object-contain"
-        />
-      </div>
-    ))}
-  </div>
-  </>
-);
-
-
-
 
 export default ProductEditPage;

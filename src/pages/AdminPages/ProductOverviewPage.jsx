@@ -11,7 +11,8 @@ function sortProducts(products, sortColumnInfo){
 }
 
 export default function ProductOverviewPage() {
-   const { products, productProps, productsLoading, productAttributes } = useSelector(state => state.products);
+   const { products, productsLoading, productAttributes } = useSelector(state => state.products);
+   const { productEditFields } = useSelector(state => state.admin);
    const dispatch = useDispatch(); 
    const [sortColumnInfo, setSortColumnInfo] = useState({dataName: "live", reverse: false });
    const [sortedProducts, setSortedProducts] = useState(sortProducts(products, sortColumnInfo));
@@ -47,14 +48,14 @@ export default function ProductOverviewPage() {
         <table className="w-full table-auto border-collapse select-none">
           <thead>
             <tr className="bg-hmc-button-text-b">
-              {productProps.map(({ adminDisplayName, dataName }, index) => (
+              {productEditFields.map(({ label, name }, index) => (
                 <th
-                  key={index + adminDisplayName}
+                  key={index + label}
                   className="pl-3 pr-6 pt-3 pb-3 border-b text-left align-top leading-none select-none relative"
-                  onClick={() => setSortColumnInfo({ dataName, reverse: !sortColumnInfo.reverse })}
+                  onClick={() => setSortColumnInfo({ name, reverse: !sortColumnInfo.reverse })}
                 >
-                  {adminDisplayName}
-                  {dataName === sortColumnInfo.dataName ? 
+                  {label}
+                  {name === sortColumnInfo.name ? 
                     (sortColumnInfo.reverse === false ? <ArrowUpIcon classNames={"absolute top-3 right-0"}/> : <ArrowDownIcon classNames={"absolute top-3 right-0"}/>)
                     : null 
                   }
@@ -68,12 +69,12 @@ export default function ProductOverviewPage() {
           <tbody>
             {sortedProducts.map((product) => (
               <tr key={product.id} className="hover:bg-gray-50 transition-colors">
-                {productProps.map(({ dataName, dataType }, index) => (
+                {productEditFields.map(({ name, type }, index) => (
                   <td
-                    key={index + dataName}
+                    key={index + name}
                     className="p-3 border-b border-hmc-button-text-b text-left align-top"
                   >
-                    {getCellValue({productAttributes, dataName, dataType, product }) }
+                    {getCellValue({productAttributes, name, type, product }) }
                   </td>
                 ))}
                 <td className="p-3 border-b border-hmc-b-500 text-left align-top">
@@ -100,14 +101,13 @@ export default function ProductOverviewPage() {
   );
 }
 
-function getCellValue({ productAttributes, dataName, dataType, product }){
-  const value = product[dataName];
-  console.log("dataType:", dataType);
+function getCellValue({ productAttributes, name, type, product }){
+  const value = product[name];
    
 
-  switch (dataType) {
+  switch (type) {
     case "list":
-      return value.map((catId) => productAttributes[dataName].find((cat) => cat.id ===  catId).label).join(", ");
+      return value.map((catId) => productAttributes[name].find((cat) => cat.id ===  catId).label).join(", ");
     case "checkbox":
       return value === true ? "Yes" : "No";
     default:

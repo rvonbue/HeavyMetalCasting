@@ -1,49 +1,77 @@
 import { supabase } from '../lib/supabase';
 
+async function createThumbnailOnFileUpload(file, maxSize = 400, quality = 0.8) {
+  const imageBitmap = await createImageBitmap(file);
+
+  const scale = Math.min(
+    maxSize / imageBitmap.width,
+    maxSize / imageBitmap.height,
+    1
+  );
+
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(imageBitmap.width * scale);
+  canvas.height = Math.round(imageBitmap.height * scale);
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+
+  return new Promise((resolve) => {
+    canvas.toBlob(
+      (blob) => resolve(blob),
+      "image/webp",
+      quality
+    );
+  });
+}
 
 export async function uploadProductImage(productId, file) {
-  const extension = file.name.split('.').pop();
+  const id = crypto.randomUUID();
 
-  const fileName = `${crypto.randomUUID()}.${extension}`;
+  const originalPath = `products/${productId}/original/${id}.webp`;
+  const thumbnailPath = `products/${productId}/thumbs/${id}.webp`;
 
-  const filePath = `products/${productId}/${fileName}`;
+  const thumbnailBlob = await createThumbnailOnFileUpload(file);
 
-  const { error: uploadError } = await supabase.storage
-    .from('product-images')
-    .upload(filePath, file);
+  const { error: originalError } = await supabase.storage
+    .from("product-images")
+    .upload(originalPath, file);
 
-  if (uploadError) {
-    throw uploadError;
-  }
+  if (originalError) throw originalError;
 
-  const { data: publicUrlData } = supabase.storage
-    .from('product-images')
-    .getPublicUrl(filePath);
+  const { error: thumbError } = await supabase.storage
+    .from("product-images")
+    .upload(thumbnailPath, thumbnailBlob, {
+      contentType: "image/webp",
+    });
 
-  const { data, error: insertError } = await supabase
-    .from('product_images')
+  if (thumbError) throw thumbError;
+
+  const { data: originalUrl } = supabase.storage
+    .from("product-images")
+    .getPublicUrl(originalPath);
+
+  const { data: thumbUrl } = supabase.storage
+    .from("product-images")
+    .getPublicUrl(thumbnailPath);
+
+  const { data, error } = await supabase
+    .from("product_images")
     .insert({
       product_id: productId,
-      image_url: publicUrlData.publicUrl,
-      image_path: filePath,
+      image_url: originalUrl.publicUrl,
+      image_path: originalPath,
+      thumbnail_url: thumbUrl.publicUrl,
+      thumbnail_path: thumbnailPath,
       sort_order: 0,
       is_primary: false,
     })
     .select()
     .single();
 
-  if (insertError) {
-    throw insertError;
-  }
+  if (error) throw error;
 
-  return {
-    id: data.id,
-    product_id: data.product_id,
-    image_url: data.image_url,
-    image_path: data.image_path,
-    sort_order: data.sort_order,
-    is_primary: data.is_primary,
-  };
+  return data;
 }
 
 export async function getProductEditFields() {
@@ -54,6 +82,50 @@ export async function getProductEditFields() {
   if (error) {
     throw error;
   }
+
+  return data;
+}
+
+export async function deleteProductImage(image) {
+  const pathsToDelete = [
+    image.image_path,
+    image.thumbnail_path,
+  ].filter(Boolean);
+
+  if (pathsToDelete.length > 0) {
+    const { error: storageError } = await supabase.storage
+      .from("product-images")
+      .remove(pathsToDelete);
+
+    if (storageError) throw storageError;
+  }
+
+  const { error: dbError } = await supabase
+    .from("product_images")
+    .delete()
+    .eq("id", image.id);
+
+  if (dbError) throw dbError;
+
+  return image.id;
+}
+
+export async function updateProductImageSortOrder(images) {
+  const image_updates = images.map((image, index) => ({
+    id: image.id,
+    sort_order: index,
+  }));
+
+  console.log("sending image_updates", image_updates);
+
+  const { data, error } = await supabase.rpc(
+    "update_product_image_sort_order",
+    { image_updates }
+  );
+
+  if (error) throw error;
+
+  console.log("updated rows from rpc", data);
 
   return data;
 }

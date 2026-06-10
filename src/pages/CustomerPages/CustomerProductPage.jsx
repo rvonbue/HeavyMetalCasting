@@ -27,15 +27,12 @@ function CustomerProductPage() {
 
 function ProductPage({ product }) {
   const dispatch = useDispatch()
-  const { heroImgLink, imgs } = getProductImageLinks(product)
 
   const shoppingCartProductQuantity = useSelector(state =>
     selectProductQuantity(state, product.id)
   )
 
-  const [selectedImage, setSelectedImage] = useState(
-    heroImgLink?.pathFile || (imgs && imgs.length ? imgs[0].pathFile : '')
-  )
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const onQuantityChange = (e) => {
     const v = parseInt(e.target.value, 10)
@@ -52,15 +49,15 @@ function ProductPage({ product }) {
         <div className="col-span-1 flex items-center justify-center">
           <div className="w-full">
             <img
-              src={selectedImage}
+              src={product.product_images[selectedImageIndex].image_url}
               alt={product.name || product.title || 'Product Image'}
               className="rounded shadow w-full max-w-full h-auto object-contain"
               style={{ display: 'block' }}
             />
             <ThumbnailCarousel
-              imgs={imgs}
-              selectedImage={selectedImage}
-              setSelectedImage={setSelectedImage}
+              imgs={product.product_images}
+              selectedImageIndex={selectedImageIndex}
+              setSelectedImageIndex={setSelectedImageIndex}
               productName={product.name || product.title}
             />
           </div>
@@ -129,23 +126,23 @@ function AddToCartWidget({ product, quantity, onQuantityChange, increment, decre
   )
 }
 
-function ThumbnailCarousel({ imgs, selectedImage, setSelectedImage, productName }) {
+function ThumbnailCarousel({ imgs, selectedImageIndex, setSelectedImageIndex, productName }) {
   return (
     <div className="mt-3">
       <div className="flex gap-2 overflow-x-auto py-1 justify-center">
-        {(imgs || []).map((thumb, idx) => {
-          const src = thumb?.pathFile || ''
-          const isActive = src === selectedImage
+        {(imgs || []).map((img, idx) => {
+  
+          const isActive = idx === selectedImageIndex
           return (
             <button
               key={idx}
               type="button"
-              onClick={() => setSelectedImage(src)}
-              onKeyDown={(e) => { if (e.key === 'Enter') setSelectedImage(src) }}
+              onClick={() => setSelectedImageIndex(idx)}
+              onKeyDown={(e) => { if (e.key === 'Enter') setSelectedImageIndex(idx) }}
               className={`flex-none rounded overflow-hidden border ${isActive ? 'ring-2 ring-hmc-b' : 'border-gray-200'} focus:outline-none ml-2 cursor-pointer`}
               aria-pressed={isActive}
             >
-              <img src={src} alt={`${productName || 'product'} thumbnail ${idx + 1}`} className="h-16 w-16 object-cover" />
+              <img src={img.thumbnail_url} alt={`${productName || 'product'} thumbnail ${idx + 1}`} className="h-16 w-16 object-cover" />
             </button>
           )
         })}

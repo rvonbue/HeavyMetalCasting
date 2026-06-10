@@ -128,7 +128,6 @@ export function SidepanelList({ headerName, sidePanelState, setSidePanelState,  
       </div>
     );
 }
-
 function ProductsContainer({ sortedFilteredProducts }) {
     return (
       <div className="text-left ml-12 w-[70%] grid grid-cols-3 gap-4">

@@ -6,8 +6,10 @@ import { supabase } from '../../lib/supabase';
 import {
   setProducts,
   setProductsLoading,
-  setProductEditFields
 } from '../../store/productsSlice';
+import {
+  setAdminProductEditFields
+} from '../../store/adminSlice';
 import { getProductEditFields } from "../../api/productEditApis";
 
 function AdminPage() {
@@ -23,7 +25,7 @@ useEffect(() => {
     const fields = await getProductEditFields();
 
     dispatch(
-      setProductEditFields(fields)
+      setAdminProductEditFields(fields)
     );
   }
 

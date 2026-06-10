@@ -1,16 +1,15 @@
 import { Link } from "react-router-dom";
-import { getProductImageLinks } from "../Resuables.jsx";
 import { CartIcon } from "../../styles/Icons.jsx";
 import { Button_A } from "../Resuables.jsx";
 
 export default function ProductCard({ product }) {
-    const { heroImgLink } = getProductImageLinks(product);
+    const thumbSrc =  product?.product_images?.[0]?.thumbnail_url;
 
     return (
       <div className="p-4 select-none">
         <Link to={`/product/${product.id}`}>
           <img
-            src={`${heroImgLink.pathFile}`}
+            src={thumbSrc}
             alt={`Thumbnail`}
             className="p-4 max-w-full max-h-full object-contain border-1 border-[var(--color-hmc-border-b)] min-h-[300px]"
           />

@@ -10,59 +10,6 @@ const initialState = {
     size_charts: [],
     metal_types: []
   },
-  productEditFields: [],
-  productProps: [
-    {
-      adminDisplayName: 'ID',
-      dataType: 'number',
-      dataName: 'id',
-      userEdit: false,
-      classNames: 'min-w-36',
-    },
-    {
-      adminDisplayName: 'Product Name',
-      dataType: 'text',
-      dataName: 'name',
-      userEdit: true,
-      classNames: 'min-w-36',
-    },
-    // {
-    //   adminDisplayName: 'Product Categories',
-    //   dataType: 'list',
-    //   dataName: 'product_categories',
-    //   userEdit: true,
-    // },
-    // {
-    //   adminDisplayName: 'Size Chart',
-    //   dataType: 'list',
-    //   dataName: 'size_charts',
-    //   userEdit: true,
-    // },
-    {
-      adminDisplayName: 'Live',
-      dataType: 'checkbox',
-      dataName: 'live',
-      userEdit: true,
-    },
-    {
-      adminDisplayName: 'Price($)',
-      dataType: 'number',
-      dataName: 'price',
-      userEdit: true,
-    },
-    {
-      adminDisplayName: 'Stock',
-      dataType: 'number',
-      dataName: 'stock',
-      userEdit: true,
-    },
-    {
-      adminDisplayName: 'Description',
-      dataType: 'textarea',
-      dataName: 'description',
-      userEdit: true,
-    },
-  ],
 }
 
 const productsSlice = createSlice({
@@ -121,6 +68,30 @@ const productsSlice = createSlice({
       product.product_images ??= [];
       product.product_images.push(...images);
     },
+    removeProductImage: (state, action) => {
+      const { productId, imageId } = action.payload;
+
+      const product = state.products.find(
+        (p) => p.id === productId
+      );
+
+      if (!product) return;
+
+      product.product_images = product.product_images.filter(
+        (image) => image.id !== imageId
+      );
+    },
+    reorderProductImages: (state, action) => {
+      const { productId, images } = action.payload;
+
+      const product = state.products.find(
+        (p) => p.id === productId
+      );
+
+      if (!product) return;
+
+      product.product_images = images;
+    },
   },
 })
 
@@ -132,7 +103,9 @@ export const {
   updateProduct,
   addProduct,
   removeProduct,
-  addProductImages
+  addProductImages,
+  removeProductImage,
+  reorderProductImages
 } = productsSlice.actions
 
 export default productsSlice.reducer
