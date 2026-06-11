@@ -78,56 +78,85 @@ const EditProductForm = ({ productEditFields, onSubmit, selectedProduct, product
     }
   }, [isDirty, dirtyFields, setFieldsUpdated]);
 
-
   return (  
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Product Edit</h1>
-        <Button_A button_name="Update Product" button_type="form" link_val="/admin/add_product" /> {/*  button_styles_outer={{ position: "fixed", right: "24px"}} */}
-      </div>
-        <div className="flex flex-wrap gap-4">
-          {productEditFields
-            .filter((prop) => prop.editable)
-            .map(({ label, type, name, inputProps, classNames, inputStyles, divStyles }) => (
-              <div key={name}  className="flex flex-row items-center gap-2 box-border" style={divStyles}>
-                <FormLabel classNames={`text-left ${classNames ? classNames : ""}`} labelName={label}/>
-                { type === "textarea" ? 
-                  <textarea
-                    className="border border-gray-300 p-2 rounded w-full h-32 resize-none"
-                    {...register(name, { ...inputProps })}
-                  /> :
-                type === "list" ? 
-                  <CategorySelectComponent 
-                    control={control}
-                    name={name}
-                    inputStyles={inputStyles}
-                    listData={productAttributes[name]}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex h-full min-h-0 flex-col"
+      >
+        {/* Header */}
+        <div className="mb-4 flex flex-none items-center justify-between">
+          <h1 className="text-xl font-bold">Product Edit</h1>
+
+          <Button_A
+            button_name="Update Product"
+            button_type="form"
+            link_val="/admin/add_product"
+          />
+        </div>
+
+        {/* Fields: content height only */}
+        <div className="flex-none">
+          <div className="flex flex-wrap gap-4">
+            {productEditFields
+              .filter((prop) => prop.editable)
+              .map(({ label, type, name, inputProps, classNames, inputStyles, divStyles }) => (
+                <div
+                  key={name}
+                  className="box-border flex flex-row items-center gap-2"
+                  style={divStyles}
+                >
+                  <FormLabel
+                    classNames={`text-left ${classNames ? classNames : ""}`}
+                    labelName={label}
                   />
-                  :
-                <input
-                  type={type}
-                  className="border border-gray-300 p-2 rounded w-full"
-                  style={{cursor: "pointer", ...inputStyles}}
-                  {...inputProps}
-                  {...register(name, { ...inputProps })}
-                />
-                }
-                {errors[name] && (
-                  <span className="text-red-500 text-sm">
-                    {label} is required.
-                  </span>
-                )}
-              </div>
-            ))}
+
+                  {type === "textarea" ? (
+                    <textarea
+                      className="h-32 w-full resize-none rounded border border-gray-300 p-2"
+                      {...register(name, { ...inputProps })}
+                    />
+                  ) : type === "list" ? (
+                    <CategorySelectComponent
+                      control={control}
+                      name={name}
+                      inputStyles={inputStyles}
+                      listData={productAttributes[name]}
+                    />
+                  ) : (
+                    <input
+                      type={type}
+                      className="w-full rounded border border-gray-300 p-2"
+                      style={{ cursor: "pointer", ...inputStyles }}
+                      {...inputProps}
+                      {...register(name, { ...inputProps })}
+                    />
+                  )}
+                </div>
+              ))}
           </div>
-          {selectedProduct.product_images.length > 0  && <DragDropProductImageGrid product={selectedProduct}/> }
-          <ProductImageUploaderDropzone product={selectedProduct} /> 
-        { fieldsUpdated && 
-          <div className="flex ">
-            <ExclamationTriangleIcon className="w-6 h-6 text-yellow-500" /> 
-            Warning unsaved changes
-          </div>}
+        </div>
+
+        {/* Gallery: takes remaining space */}
+        <div className="mt-4 flex-1 min-h-0 overflow-hidden rounded border">
+          <div className="h-full overflow-y-auto p-2">
+            {selectedProduct.product_images.length > 0 && (
+              <DragDropProductImageGrid product={selectedProduct} />
+            )}
+          </div>
+        </div>
+
+        {/* Dropzone: fixed bottom */}
+        <div className="mt-4 h-[90px] flex-none">
+          <ProductImageUploaderDropzone product={selectedProduct} />
+        </div>
+
+        {fieldsUpdated && (
+          <div className="mt-2 flex flex-none items-center gap-2">
+            <ExclamationTriangleIcon className="h-6 w-6 text-yellow-500" />
+            <span>Warning unsaved changes</span>
+          </div>
+        )}
       </form>
     </>
   );

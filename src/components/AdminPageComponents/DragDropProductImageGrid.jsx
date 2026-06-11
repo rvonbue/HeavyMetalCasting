@@ -16,32 +16,30 @@ import {
 } from "@dnd-kit/sortable";
 import { removeProductImage, reorderProductImages  } from "../../store/productsSlice";
 
-
 export default function ProductImageGrid({ product }) {
   const { product_images } = product;
   const dispatch = useDispatch();
 
-async function handleReorderImages(reorderedImages) {
-  try {
-    const updatedImages = await updateProductImageSortOrder(reorderedImages);
+  async function handleReorderImages(reorderedImages) {
+    try {
+      const updatedImages = await updateProductImageSortOrder(reorderedImages);
 
-    dispatch(
-      reorderProductImages({
-        productId: product.id,
-        images: updatedImages,
-      })
-    );
+      dispatch(
+        reorderProductImages({
+          productId: product.id,
+          images: updatedImages,
+        })
+      );
 
-    toast.success("Image order updated");
-  } catch (error) {
-    console.error(error);
+      toast.success("Image order updated");
+    } catch (error) {
+      console.error(error);
 
-    toast.error(error?.message || "Failed to update image order", {
-      duration: Infinity,
-    });
+      toast.error(error?.message || "Failed to update image order", {
+        duration: Infinity,
+      });
+    }
   }
-}
-
   async function handleDragEnd(event) {
     const { active, over } = event;
 
@@ -78,11 +76,11 @@ async function handleReorderImages(reorderedImages) {
 
     toast.success("Image deleted");
   }
- 
+   
   return (
-    <>
+  <div className="h-full overflow-y-auto">
       <FormLabel labelName="Image Gallery" />
-      <hr className="bg-hmc-a" />
+      <hr className="bg-hmc-a mb-4" />
 
       <DndContext
         collisionDetection={closestCenter}
@@ -104,6 +102,6 @@ async function handleReorderImages(reorderedImages) {
           </div>
         </SortableContext>
       </DndContext>
-    </>
+    </div>
   );
 };

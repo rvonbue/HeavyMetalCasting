@@ -18,7 +18,7 @@ export default function ProductCard({ product }) {
             <div className="text-base font-semibold">{product.name}</div>
           <div className="text-md mt-2 ">{product.price}</div>
           <div className="flex mt-4">
-            <Button_A button_name="Add to Cart" button_styles_outer={{ marginRight: "0.5rem"  }} /> 
+            {/* <Button_A button_name="Add to Cart" button_styles_outer={{ marginRight: "0.5rem"  }} />  */}
             {/* <CartIcon/> */}
           </div>
         </div>

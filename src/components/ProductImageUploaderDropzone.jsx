@@ -26,9 +26,15 @@ export default function ProductImageUploaderDropzone({ product }) {
   }
 
 async function handleUpload() {
-  const uploadPromise = Promise.all(
-    files.map(({ file }) => uploadProductImage(product.id, file))
-  );
+ const uploadPromise = Promise.all(
+  files.map(({ file }, idx) =>
+    uploadProductImage(
+      product.id,
+      file,
+      product.product_images.length + idx
+    )
+  )
+);
 
   toast.promise(uploadPromise, {
     loading: "Uploading images...",

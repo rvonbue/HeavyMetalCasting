@@ -32,13 +32,22 @@ export default function SortableImage({ image, index, onDelete }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="group relative w-full aspect-square cursor-grab rounded bg-gray-100 overflow-hidden flex items-center justify-center"
+      className="group relative w-full aspect-square cursor-grab rounded bg-gray-100 overflow-hidden flex flex-col"
     >
-      <img
-        src={image.thumbnail_url || image.image_url}
-        alt={`Thumbnail ${index}`}
-        className="max-h-full max-w-full object-contain"
-      />
+      <div className="flex-1 flex items-center justify-center overflow-hidden">
+        <img
+          src={image.thumbnail_url || image.image_url}
+          alt={`Thumbnail ${index}`}
+          className="max-h-full max-w-full object-contain"
+        />
+      </div>
+
+     <div
+      className="border-t bg-white px-2 py-1 text-xs text-center truncate"
+      title={image.label}
+    >
+      {image.label}
+    </div>
 
       <button
         type="button"
@@ -49,7 +58,7 @@ export default function SortableImage({ image, index, onDelete }) {
         }}
         className="absolute right-2 top-2 hidden rounded bg-red-600 p-2 text-white shadow group-hover:block"
       >
-        <Trash2 size={16} />
+        <Trash2 size={16} style={{ cursor: "pointer" }} />
       </button>
     </div>
   );

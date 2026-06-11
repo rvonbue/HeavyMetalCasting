@@ -13,7 +13,7 @@ import {
 import { getProductEditFields } from "../../api/productEditApis";
 
 function AdminPage() {
-  const { toolbarHeight } = useSelector(state => state.app.toolbarHeight);
+  const { toolbarHeight } = useSelector(state => state.app);
   const dispatch = useDispatch();
   const editMatch = useMatch('/admin/edit_product')
   const overviewMatch = useMatch('/admin/overview_products');
@@ -23,10 +23,7 @@ function AdminPage() {
 useEffect(() => {
   async function loadFields() {
     const fields = await getProductEditFields();
-
-    dispatch(
-      setAdminProductEditFields(fields)
-    );
+    dispatch(setAdminProductEditFields(fields));
   }
 
   loadFields();

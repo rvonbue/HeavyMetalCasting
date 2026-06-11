@@ -29,7 +29,6 @@ useEffect(() => {
       <HeaderNavbar />
       <div style={{ height: `calc(100vh - ${toolbarHeight}px)` }}>
         <Outlet />
-
         <ShoppingTab
           isOpen={showShoppingCart}
           onClose={() => dispatch(toggleShoppingCart())}

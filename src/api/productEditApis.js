@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 
-async function createThumbnailOnFileUpload(file, maxSize = 400, quality = 0.8) {
+async function createThumbnailOnFileUpload(file, maxSize = 400, quality = 0.9) {
   const imageBitmap = await createImageBitmap(file);
 
   const scale = Math.min(
@@ -25,7 +25,7 @@ async function createThumbnailOnFileUpload(file, maxSize = 400, quality = 0.8) {
   });
 }
 
-export async function uploadProductImage(productId, file) {
+export async function uploadProductImage(productId, file, new_sort_order) {
   const id = crypto.randomUUID();
 
   const originalPath = `products/${productId}/original/${id}.webp`;
@@ -55,15 +55,18 @@ export async function uploadProductImage(productId, file) {
     .from("product-images")
     .getPublicUrl(thumbnailPath);
 
+  
+  
   const { data, error } = await supabase
     .from("product_images")
     .insert({
       product_id: productId,
+      label: file.name,
       image_url: originalUrl.publicUrl,
       image_path: originalPath,
       thumbnail_url: thumbUrl.publicUrl,
       thumbnail_path: thumbnailPath,
-      sort_order: 0,
+      sort_order: new_sort_order,
       is_primary: false,
     })
     .select()

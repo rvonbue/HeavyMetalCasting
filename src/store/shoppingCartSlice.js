@@ -24,7 +24,7 @@ const cartSlice = createSlice({
       } else if (existingIndex !== -1) {
         state.shoppingCartItems[existingIndex].quantity = quantity
       } else {
-        state.shoppingCartItems.push({ id, quantity })
+        state.shoppingCartItems.push({...action.payload})
       }
     },
 

@@ -1,9 +1,11 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { getProductImageLinks, Button_A } from '../Resuables.jsx';
+import { Button_A } from '../Resuables.jsx';
+import { getProductImageLinks, getUpdateCartProduct, getProductPropDisplayLabel } from '../../helpers/dataHelper.js';
 import { updateCart } from '../../store/shoppingCartSlice.js';
 import { DeleteIcon, CartIcon } from '../../styles/Icons';
+
 
 export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }) {
   const dispatch = useDispatch()
@@ -12,7 +14,7 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
     state => state.cart.shoppingCartItems
   )
 
-  const { shoppingCartItemsList, totalCost, totalQuantities } = shoppingCartItemDetails
+  const { totalCost, totalQuantities } = shoppingCartItemDetails
   const shoppingCartEmpty = shoppingCartItems.length === 0
 
   return (
@@ -57,10 +59,10 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
                   Your shopping cart is empty.
                 </div>
               ) : (
-                shoppingCartItemsList.map(product => (
+                shoppingCartItems.map(shoppingCartItem => (
                   <ShoppingCartItemRowDisplay
-                    key={product.id}
-                    product={product}
+                    key={shoppingCartItem.id}
+                    shoppingCartItem={shoppingCartItem}
                   />
                 ))
               )}
@@ -89,36 +91,61 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
   )
 }
 
-function ShoppingCartItemRowDisplay({ product }) {
+function ShoppingCartItemRowDisplay({ shoppingCartItem }) {
   const dispatch = useDispatch()
-  const { heroImgLink } = getProductImageLinks(product)
 
-  const shoppingCartProductQuantity = useSelector(state =>
-    state.cart.shoppingCartItems.find(item => item.id === product.id)?.quantity ?? 1
-  )
+  const shoppingCartProductQuantity = shoppingCartItem.quantity
+  const product =  useSelector(state =>  state.products.products.find(item => item.id === shoppingCartItem.product_id));
+  const {size_charts, metal_types} =  useSelector(state =>  state.products.productAttributes);
+
+  if (!product) return null;
+  const { thumbnailSrc } = getProductImageLinks(product)
+  const { metalLabel, sizeLabel } = getProductPropDisplayLabel({ 
+    metal_type: shoppingCartItem.metal_type, 
+    size_chart: shoppingCartItem.size_chart, 
+    size_charts,
+    metal_types 
+  });
 
   return (
-    <div className="p-4 select-none">
-      <div className="flex gap-4 items-start">
+    <div className="p-2 select-none  mb-4">
+      <div className="flex gap-4 items-start  text-left">
         <Link to={`/product/${product.id}`} className="flex-shrink-0 w-28 h-28">
           <img
-            src={heroImgLink.pathFile}
+            src={thumbnailSrc}
             alt={product.name}
-            className="w-full h-full object-contain border border-[var(--color-hmc-border-b)]"
+            className="w-full h-full object-contain"
           />
         </Link>
-
-        <div className="flex-1 flex flex-col justify-between">
+        <div className="flex-1 flex flex-col justify-left ">
           <Link
             to={`/product/${product.id}`}
-            className="text-sm font-semibold text-hmc-text-b text-left"
+            className="text-sm font-semibold text-hmc-text-b border-b border-hmc-border-a"
             style={{ lineHeight: 1 }}
           >
             {product.name}
           </Link>
+          <div className="mt-2 grid grid-cols-[auto_1fr] gap-x-2 text-xs leading-none">
+              <div className="font-semibold">Metal:</div>
+              <div className="min-w-0 truncate">{metalLabel}</div>
 
-          <div className="flex items-center gap-2 text-base font-bold mt-2">
-            <span>{product.price}</span>
+              <div className="font-semibold">Size:</div>
+              <div className="min-w-0 truncate">{sizeLabel}</div>
+          </div>
+          <ShoppingCartQuantityUpdate product={product} shoppingCartItem={shoppingCartItem} shoppingCartProductQuantity={shoppingCartProductQuantity} />
+          {/* <DeleteIcon stroke="oklch(0.1 0.11 178)" /> */}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ShoppingCartQuantityUpdate({ shoppingCartItem, shoppingCartProductQuantity, product }) {
+   const dispatch = useDispatch()     
+
+  return (<div className="flex items-center gap-2 text-base  mt-2">
+            
+            <span className="text-sm font-bold">${product.price.toFixed(2)}</span>
             <span className="text-sm font-normal">x</span>
 
             <input
@@ -128,13 +155,8 @@ function ShoppingCartItemRowDisplay({ product }) {
               value={shoppingCartProductQuantity}
               className="w-16 text-sm border rounded px-1 py-0.5 text-center"
               onChange={e => {
-                dispatch(updateCart({ id: product.id, quantity: Number(e.target.value) }))
+                dispatch(updateCart(getUpdateCartProduct({ product, newQuantity: Number(e.target.value), metalTypeSelected: shoppingCartItem.metal_type, sizeSelected: shoppingCartItem.size_chart })))
               }}
             />
-          </div>
-          {/* <DeleteIcon stroke="oklch(0.1 0.11 178)" /> */}
-        </div>
-      </div>
-    </div>
-  )
+          </div>)
 }

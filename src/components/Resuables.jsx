@@ -2,13 +2,12 @@ import { Link } from "react-router-dom";
 import Select from 'react-select';
 
 import {productImageLinks} from "../staticData/PathData.js";
-import { toolbarHeight } from "../styles/App.jsx";
 
-export function Button_A({button_name, link_val, button_type, button_styles_outer }) {
+export function Button_A({button_name, link_val, button_type, button_styles_outer, isActive, extraClassNames }) {
   return (
     <>      
       {button_type === "form" ? 
-        <div className="text-hmc-a hover:text-hmc-b bg-hmc-button-a hover:bg-hmc-button-b hover:text-avocado-600 px-5 py-2 rounded transition font-bold cursor-pointer"
+        <div className="text-hmc-a hover:text-hmc-b bg-hmc-button-a hover:bg-hmc-button-b hover:text-avocado-600 px-2 py-1 rounded transition font-bold cursor-pointer"
           style={button_styles_outer}
         >
           <button 
@@ -20,15 +19,21 @@ export function Button_A({button_name, link_val, button_type, button_styles_oute
           </button> 
         </div>
         : button_type === "onClick" ?
-          <div className="text-hmc-a hover:text-hmc-b font-bold">
+          <div className="flex text-hmc-a hover:text-hmc-b font-bold">
             {button_name}
           </div> 
         :
-          <div className="text-hmc-a hover:text-hmc-b font-bold">
+          <div className="flex text-hmc-a hover:text-hmc-b font-bold">
             <Link
               to={link_val}
-              className="bg-hmc-button-a hover:bg-hmc-button-b hover:text-avocado-600 px-5 py-2 rounded transition font-bold"
-              style={{ color: "inherit" , ...button_styles_outer}}
+              className={`
+                ${extraClassNames}
+                px-2 py-2 text-sm font-bold transition
+                ${isActive
+                  ? "bg-hmc-button-b text-hmc-b border border-hmc-b"
+                  : "bg-hmc-button-a text-hmc-a border border-hmc-button-a hover:bg-hmc-button-b hover:text-hmc-b hover:border-hmc-button-b"
+                }
+              `}
             >
               {button_name}
             </Link>
@@ -73,7 +78,20 @@ export function FolderTab({ label, labelStatus, selected, onClick }) {
 }
 export const PageContainer = ({ children, bg }) => {
   return (
-    <div className={`max-w-[1280px] mx-auto ${bg === "alt1" ? "bg-white" : "bg-hmc-bg-a"} rounded shadow p-6 overflow-auto h-full`} > 
+    <div
+      className={`
+        max-w-[1280px]
+        mx-auto
+        ${bg === "alt1" ? "bg-white" : "bg-hmc-bg-a"}
+        rounded
+        shadow
+        p-6
+        h-full
+        flex
+        flex-col
+        overflow-auto
+      `}
+    >
       {children}
     </div>
   );

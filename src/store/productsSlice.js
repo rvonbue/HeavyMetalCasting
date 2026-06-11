@@ -23,6 +23,7 @@ const productsSlice = createSlice({
         size_charts,
         metal_types,
       } = action.payload;
+      
       console.log("setAppData:action", action);
       state.products = products ?? [];
       state.shopProducts = state.products.filter(prd => prd.live);
