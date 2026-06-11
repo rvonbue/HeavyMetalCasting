@@ -78,7 +78,7 @@ export default function ProductImageGrid({ product }) {
   }
    
   return (
-  <div className="h-full overflow-y-auto">
+  <div className="h-full overflow-y-auto ">
       <FormLabel labelName="Image Gallery" />
       <hr className="bg-hmc-a mb-4" />
 

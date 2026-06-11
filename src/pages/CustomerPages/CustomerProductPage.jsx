@@ -38,21 +38,24 @@ function LeftColumn({ product }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   return (
-    <div className="lg:col-span-9">
-      <div className="flex min-h-[500px] w-full items-center justify-center rounded border border-hmc-c shadow">
-        <img
-          src={product.product_images[selectedImageIndex].image_url}
-          alt={product.name || product.title || "Product Image"}
-          className="max-h-[500px] max-w-full object-contain"
-        />
-      </div>
-      <ThumbnailCarousel
-        imgs={product.product_images}
-        selectedImageIndex={selectedImageIndex}
-        setSelectedImageIndex={setSelectedImageIndex}
-        productName={product.name || product.title}
-      />
-    </div>
+<div className="lg:col-span-9 flex h-[calc(100vh-90px)] min-h-0 flex-col">
+  <div className="min-h-0 flex-1 overflow-hidden rounded border border-hmc-c shadow">
+    <img
+      src={product.product_images[selectedImageIndex].image_url}
+      alt={product.name || product.title || "Product Image"}
+      className="h-full w-full object-contain"
+    />
+  </div>
+
+  <div className="shrink-0">
+    <ThumbnailCarousel
+      imgs={product.product_images}
+      selectedImageIndex={selectedImageIndex}
+      setSelectedImageIndex={setSelectedImageIndex}
+      productName={product.name || product.title}
+    />
+  </div>
+</div>
   )
 }
 function RightColumn({ product }) {
@@ -173,7 +176,6 @@ function SizeChartSelectorWidget({
     </div>
   );
 }
-
 function AddToCartWidget({ product, shoppingCartItemQuantity, shoppingCartProps }) {
     const dispatch = useDispatch()
   const onQuantityChange = (e) => {
