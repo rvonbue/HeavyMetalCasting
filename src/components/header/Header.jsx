@@ -16,9 +16,7 @@ function Header() {
     state => state.app.appSizeMode
   )
 
-  const user = useSelector(
-    state => state.app.user
-  )
+  const {user, hasAdminAccess}  = useSelector(state => state.user);
 
   const totalItemsInCart = shoppingCartItems.reduce(
     (total, item) => total + item.quantity,
@@ -34,6 +32,7 @@ function Header() {
           totalItemsInCart={totalItemsInCart}
           showShoppingCart={showShoppingCart}
           user={user}
+          hasAdminAccess={hasAdminAccess}
           loggedIn={loggedIn}
         />
       ) : (
@@ -42,6 +41,7 @@ function Header() {
           showShoppingCart={showShoppingCart}
           user={user}
           loggedIn={loggedIn}
+          hasAdminAccess={hasAdminAccess}
         />
       )}
     </>

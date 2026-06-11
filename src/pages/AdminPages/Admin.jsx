@@ -31,7 +31,7 @@ useEffect(() => {
 
   return (
     <div className={`flex flex-col h-[calc(100vh-${toolbarHeight}px)] `}>
-      <nav className="flex-none flex justify-center space-x-4 overflow-hidden">
+      {/* <nav className="flex-none flex justify-center space-x-4 overflow-hidden">
         <NavLink to="/admin/orders" end style={{ color: 'inherit' }}>
           {({ isActive }) => <FolderTab label="Orders" selected={isActive} />}
         </NavLink>
@@ -42,7 +42,7 @@ useEffect(() => {
               selected={editMatch || overviewMatch || addingMatch} 
            />
         </NavLink>
-      </nav>
+      </nav> */}
 
       <main className="flex-1 min-h-0 overflow-y-auto p-0">
         <Outlet />

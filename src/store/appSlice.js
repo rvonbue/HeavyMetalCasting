@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  user: {},
   theme: 'light',
   loading: false,
   initialLoading: false,

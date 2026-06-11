@@ -1,47 +1,15 @@
-update admin_product_fields
-set
-  group_id = 1,
-  field_sort_order = 10
-where column_name = 'name';
+create table order_items (
+  id bigint generated always as identity primary key,
+  order_id bigint not null references orders(id) on delete cascade,
 
-update admin_product_fields
-set
-  group_id = 1,
-  field_sort_order = 20
-where column_name = 'price';
+  product_id bigint references products(id) on delete set null,
 
-update admin_product_fields
-set
-  group_id = 1,
-  field_sort_order = 30
-where column_name = 'live';
+  product_name text not null,
+  product_price numeric(10,2) not null,
+  quantity int2 not null default 1,
 
-update admin_product_fields
-set
-  group_id = 2,
-  field_sort_order = 10
-where column_name = 'size_chart';
+  metal_type bigint,
+  size_chart bigint,
 
-update admin_product_fields
-set
-  group_id = 2,
-  field_sort_order = 20
-where column_name = 'product_categories';
-
-update admin_product_fields
-set
-  group_id = 2,
-  field_sort_order = 30
-where column_name = 'metal_types';
-
-update admin_product_fields
-set
-  group_id = 3,
-  field_sort_order = 10
-where column_name = 'description';
-
-update admin_product_fields
-set
-  group_id = 4,
-  field_sort_order = 10
-where column_name = 'max_quantity_per_order';
+  line_total numeric(10,2) not null
+);

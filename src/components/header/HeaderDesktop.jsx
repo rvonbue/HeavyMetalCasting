@@ -5,17 +5,19 @@ import { CartIcon, SkullIcon } from '../../styles/Icons.jsx'
 import { activeBorder, inactiveBorder } from '../../styles/App.jsx'
 import { toggleShoppingCart } from '../../store/shoppingCartSlice'
 
+import AdminDropDownMenu from "../../components/AdminPageComponents/AdminDropDownMenu.jsx"
+
 export default function HeaderDesktop({
   totalItemsInCart,
   showShoppingCart,
   user,
   loggedIn,
+  hasAdminAccess
 }) {
   const dispatch = useDispatch()
 
-  const toolbarHeight = useSelector(
-    state => state.app.toolbarHeight
-  )
+  const toolbarHeight = useSelector(state => state.app.toolbarHeight);
+
   return (
     <header
       className="bg-hmc-a select-none"
@@ -93,6 +95,7 @@ export default function HeaderDesktop({
           >
             ABOUT US
           </NavLink>
+          {hasAdminAccess === true &&<AdminDropDownMenu/> }
         </div>
 
         {/* Right */}
@@ -108,13 +111,6 @@ export default function HeaderDesktop({
             </Link>
           )}
 
-          {/* <Link
-            to="/admin/overview_products"
-            style={{ color: 'inherit', }}
-            className="w-6 h-6 rounded-full border border-color-text-hmc-c flex items-center justify-center hmc-bounce"
-          >
-            A
-          </Link> */}
 
           {/* Cart */}
           <div

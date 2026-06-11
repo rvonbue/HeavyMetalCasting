@@ -79,29 +79,27 @@ export default function ProductImageGrid({ product }) {
    
   return (
   <div className="h-full overflow-y-auto ">
-      <FormLabel labelName="Image Gallery" />
-      <hr className="bg-hmc-a mb-4" />
-
-      <DndContext
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
+    <label className={`mb-1 block font-bold text-left underline`}>{"Image Gallery"}</label>
+    <DndContext
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext
+        items={product_images.map((image) => image.id)}
+        strategy={rectSortingStrategy}
       >
-        <SortableContext
-          items={product_images.map((image) => image.id)}
-          strategy={rectSortingStrategy}
-        >
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
-            {product_images.map((image, index) => (
-              <SortableImage
-                key={image.id}
-                image={image}
-                index={index}
-                onDelete={handleDeleteImage}
-              />
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
-    </div>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-3">
+          {product_images.map((image, index) => (
+            <SortableImage
+              key={image.id}
+              image={image}
+              index={index}
+              onDelete={handleDeleteImage}
+            />
+          ))}
+        </div>
+      </SortableContext>
+    </DndContext>
+  </div>
   );
 };

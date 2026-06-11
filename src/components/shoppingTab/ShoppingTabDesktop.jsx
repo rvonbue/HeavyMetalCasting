@@ -1,3 +1,4 @@
+import { useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
@@ -41,7 +42,6 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
               className="flex justify-between items-center border-b select-none cursor-pointer pl-4"
               onClick={onClose}
             >
-              <CartIcon stroke="#000" size={24} />
               <div className="text-lg">SHOPPING CART</div>
               
               <button
@@ -80,8 +80,8 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
               </div>
                 <Button_A
                   button_name="CHECK OUT"
-                  link_val="/"
-                  button_type="form"
+                  link_val="/checkout"
+                  extraClassNames={" w-full"}
                 />
             </div>
           </>
@@ -93,7 +93,7 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
 
 function ShoppingCartItemRowDisplay({ shoppingCartItem }) {
   const dispatch = useDispatch()
-
+  const [isRemoving, setIsRemoving] = useState(false);
   const shoppingCartProductQuantity = shoppingCartItem.quantity
   const product =  useSelector(state =>  state.products.products.find(item => item.id === shoppingCartItem.product_id));
   const {size_charts, metal_types} =  useSelector(state =>  state.products.productAttributes);
@@ -108,8 +108,10 @@ function ShoppingCartItemRowDisplay({ shoppingCartItem }) {
   });
 
   return (
-    <div className="p-2 select-none  mb-4">
-      <div className="flex gap-4 items-start  text-left">
+    <div className={`my-2 cart-item-row ${
+        isRemoving ? "cart-item-fall-out" : ""
+      }`}>
+      <div className="flex gap-4 items-start text-left">
         <Link to={`/product/${product.id}`} className="flex-shrink-0 w-28 h-28">
           <img
             src={thumbnailSrc}
@@ -117,7 +119,7 @@ function ShoppingCartItemRowDisplay({ shoppingCartItem }) {
             className="w-full h-full object-contain"
           />
         </Link>
-        <div className="flex-1 flex flex-col justify-left ">
+        <div className="flex-1 flex flex-col justify-left h-full">
           <Link
             to={`/product/${product.id}`}
             className="text-sm font-semibold text-hmc-text-b border-b border-hmc-border-a"
@@ -133,7 +135,11 @@ function ShoppingCartItemRowDisplay({ shoppingCartItem }) {
               <div className="min-w-0 truncate">{sizeLabel}</div>
           </div>
           <ShoppingCartQuantityUpdate product={product} shoppingCartItem={shoppingCartItem} shoppingCartProductQuantity={shoppingCartProductQuantity} />
-          {/* <DeleteIcon stroke="oklch(0.1 0.11 178)" /> */}
+           <ShoppingCartRemoveButton
+              product={product}
+              shoppingCartItem={shoppingCartItem}
+              onStartRemove={() => setIsRemoving(true)}
+            />
         </div>
       </div>
     </div>
@@ -159,4 +165,41 @@ function ShoppingCartQuantityUpdate({ shoppingCartItem, shoppingCartProductQuant
               }}
             />
           </div>)
+}
+
+function ShoppingCartRemoveButton({
+  product,
+  shoppingCartItem,
+  onStartRemove,
+}) {
+  const dispatch = useDispatch();
+
+  const handleRemove = () => {
+    onStartRemove?.();
+
+    setTimeout(() => {
+      dispatch(
+        updateCart(
+          getUpdateCartProduct({
+            product,
+            newQuantity: 0,
+            metalTypeSelected: shoppingCartItem.metal_type,
+            sizeSelected: shoppingCartItem.size_chart,
+          })
+        )
+      );
+    }, 650);
+  };
+
+  return (
+    <div className="justify-end mt-auto">
+      <button
+        type="button"
+        onClick={handleRemove}
+        className="text-xs font-bold text-left uppercase tracking-wide text-hmc-a transition hover:text-hmc-b cursor-pointer"
+      >
+        Remove
+      </button>
+    </div>
+  );
 }

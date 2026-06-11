@@ -22,7 +22,7 @@ useEffect(() => {
   return (
     <>
       <Toaster
-        position="top-right"
+        position="bottom-right"
         richColors
         closeButton
       />

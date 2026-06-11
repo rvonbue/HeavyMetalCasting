@@ -24,7 +24,6 @@ async function createThumbnailOnFileUpload(file, maxSize = 400, quality = 0.9) {
     );
   });
 }
-
 export async function uploadProductImage(productId, file, new_sort_order) {
   const id = crypto.randomUUID();
 
@@ -76,9 +75,6 @@ export async function uploadProductImage(productId, file, new_sort_order) {
 
   return data;
 }
-
-
-
 export async function deleteProductImage(image) {
   const pathsToDelete = [
     image.image_path,
@@ -102,7 +98,6 @@ export async function deleteProductImage(image) {
 
   return image.id;
 }
-
 export async function updateProductImageSortOrder(images) {
   const image_updates = images.map((image, index) => ({
     id: image.id,
@@ -119,6 +114,25 @@ export async function updateProductImageSortOrder(images) {
   if (error) throw error;
 
   console.log("updated rows from rpc", data);
+
+  return data;
+}
+
+export async function updateProductAPI({
+  productId,
+  productUpdates,
+}) {
+  const { data, error } = await supabase
+    .from("products")
+    .update(productUpdates)
+    .eq("id", productId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("updateProduct error:", error);
+    throw error;
+  }
 
   return data;
 }

@@ -24,10 +24,10 @@
   --color-hmc-link: oklch(0.96 0.0 1);
   --color-hmc-link-active: oklch(0.87 0.22 105.85);
   --color-hmc-text-a: oklch(0.96 0.0 1);
-  
+  --color-hmc-error: red;
   --font-family: "Cinzel"; 
   --breakpoint-3xl: 120rem; 
-  
+    
   --color-avocado-100: oklch(0.99 0 0);
   --color-avocado-200: oklch(0.98 0.04 113.22);
   --color-avocado-300: oklch(0.94 0.11 115.03);

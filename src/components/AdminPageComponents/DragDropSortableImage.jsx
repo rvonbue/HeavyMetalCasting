@@ -43,7 +43,7 @@ export default function SortableImage({ image, index, onDelete }) {
       </div>
 
      <div
-      className="border-t bg-white px-2 py-1 text-xs text-center truncate"
+      className="border-t bg-white px-2 py-2 text-xs text-center truncate"
       title={image.label}
     >
       {image.label}

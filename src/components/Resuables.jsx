@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Select from 'react-select';
+import { Controller } from "react-hook-form";
 
 import {productImageLinks} from "../staticData/PathData.js";
 
@@ -85,7 +86,8 @@ export const PageContainer = ({ children, bg }) => {
         ${bg === "alt1" ? "bg-white" : "bg-hmc-bg-a"}
         rounded
         shadow
-        p-6
+        py-[12px] 
+        px-[24px]
         h-full
         flex
         flex-col
@@ -138,3 +140,85 @@ export function getProductImageLinks(product) {
 
   } : { heroImgLink: { filename: 'placeholder.png' }, imgs: [] };
 } 
+
+
+
+const hmcSelectStyles = {
+  control: (base, state) => ({
+    ...base,
+    minHeight: "38px",
+    borderColor: state.isFocused
+      ? "var(--color-hmc-c)"
+      : "rgba(107, 91, 75, 0.35)",
+    boxShadow: state.isFocused
+      ? "0 0 0 1px rgba(176, 141, 87, 0.35)"
+      : "none",
+    "&:hover": {
+      borderColor: "var(--color-hmc-c)",
+    },
+  }),
+
+  option: (base, state) => ({
+    ...base,
+    fontSize: "13px",
+    backgroundColor: state.isSelected
+      ? "var(--color-hmc-c)"
+      : state.isFocused
+        ? "rgba(176, 141, 87, 0.12)"
+        : "white",
+    color: state.isSelected ? "white" : "var(--color-hmc-a)",
+  }),
+
+  multiValue: (base) => ({
+    ...base,
+    backgroundColor: "rgba(176, 141, 87, 0.15)",
+  }),
+
+  multiValueLabel: (base) => ({
+    ...base,
+    color: "var(--color-hmc-a)",
+    fontSize: "11px",
+  }),
+
+  multiValueRemove: (base) => ({
+    ...base,
+    color: "var(--color-hmc-c)",
+    ":hover": {
+      backgroundColor: "var(--color-hmc-c)",
+      color: "white",
+    },
+  }),
+};
+
+export function HmcSelect({
+  options = [],
+  value,
+  onChange,
+  isMulti = false,
+  placeholder = "Select...",
+  className = "",
+}) {
+  return (
+    <Select
+      isMulti={isMulti}
+      options={options}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      menuPortalTarget={document.body}
+      styles={{
+        ...hmcSelectStyles,
+        menuPortal: (base) => ({
+          ...base,
+          zIndex: 9999,
+        }),
+        menu: (base) => ({
+          ...base,
+          zIndex: 9999,
+        }),
+      }}
+      className={`text-sm ${className}`}
+      classNamePrefix="hmc-select"
+    />
+  );
+}

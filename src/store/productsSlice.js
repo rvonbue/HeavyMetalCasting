@@ -43,10 +43,17 @@ const productsSlice = createSlice({
       state.productEditFields = action.payload;
     },
     updateProduct(state, action) {
-      const { id, updates } = action.payload
-      const product = state.products.find(p => p.id === id)
-      if (product) {
-        Object.assign(product, updates)
+      const updatedProduct = action.payload;
+
+      const index = state.products.findIndex(
+        (product) => product.id === updatedProduct.id
+      );
+
+      if (index !== -1) {
+        state.products[index] = {
+          ...state.products[index],
+          ...updatedProduct,
+        };
       }
     },
     addProduct(state, action) {

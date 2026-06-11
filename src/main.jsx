@@ -10,6 +10,8 @@ import Home from "./pages/CustomerPages/Home.jsx";
 import ShopPage from "./pages/CustomerPages/ShopPage.jsx";
 import CustomerProductPage from "./pages/CustomerPages/CustomerProductPage.jsx";
 import AboutUsPage from "./pages/CustomerPages/AboutUsPage.jsx";
+import CheckoutPage from "./pages/CustomerPages/CheckoutPage.jsx";
+import PaymentPage from "./pages/CustomerPages/PaymentPage.jsx";
 
 import Admin from "./pages/AdminPages/Admin.jsx";
 import ProductOverviewPage from "./pages/AdminPages/ProductOverviewPage.jsx";
@@ -35,6 +37,8 @@ createRoot(document.getElementById('root')).render(
             <Route path={`${ShopPathName}/:category?`} element={<ShopPage />} />
             <Route path=":product/:product_id" element={<CustomerProductPage />} />
             <Route path="about_us" element={<AboutUsPage />} />
+            <Route path="checkout" element={<CheckoutPage />} />
+            <Route path="payment" element={<PaymentPage />} />
 
             <Route path="admin" element={<Admin />}>
               <Route index element={<ProductOrdersPage />} />
