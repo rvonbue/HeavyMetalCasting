@@ -77,17 +77,7 @@ export async function uploadProductImage(productId, file, new_sort_order) {
   return data;
 }
 
-export async function getProductEditFields() {
-  const { data, error } = await supabase.rpc(
-    'get_product_edit_fields'
-  );
 
-  if (error) {
-    throw error;
-  }
-
-  return data;
-}
 
 export async function deleteProductImage(image) {
   const pathsToDelete = [

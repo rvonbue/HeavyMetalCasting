@@ -8,14 +8,14 @@ const adminSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    setAdminProductEditFields(state, action) {
-      state.productEditFields = action.payload
+    setAdminInitialData(state, action) {
+      Object.assign(state, action.payload);
     },
   },
 })
 
 export const {
-  setAdminProductEditFields,
+  setAdminInitialData,
 } = adminSlice.actions
 
 export default adminSlice.reducer

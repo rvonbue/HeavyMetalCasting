@@ -55,28 +55,28 @@ const EditProductForm = ({ productEditFields, onSubmit, selectedProduct, product
     handleSubmit,
     formState,
   } = useForm({
-    defaultValues: 
-      productEditFields.reduce((acc, { name, editable }) => {
-        if(editable) {
-          acc[name] = selectedProduct[name];
-        }
-        return acc;
-      },{}) || {},
+    defaultValues: productEditFields.reduce((acc, field) => {
+      const { column_name, is_editable } = field;
+
+      if (is_editable) {
+        acc[column_name] = selectedProduct[column_name];
+      }
+
+      return acc;
+    }, {}),
   });
 
-  const [fieldsUpdated, setFieldsUpdated] = useState();
-  const { errors } = formState;
-  const isDirty = formState.isDirty; // true if any field has changed
-  const dirtyFields = formState.dirtyFields; // which fields changed
+  const [fieldsUpdated, setFieldsUpdated] = useState(false);
+
+  const { errors, isDirty, dirtyFields } = formState;
 
   useEffect(() => {
+    setFieldsUpdated(isDirty);
+
     if (isDirty) {
-      setFieldsUpdated(true);
-      console.log('Some data changed:', dirtyFields);
-    } else {
-      setFieldsUpdated(false);
+      console.log("Some data changed:", dirtyFields);
     }
-  }, [isDirty, dirtyFields, setFieldsUpdated]);
+  }, [isDirty, dirtyFields]);
 
   return (  
     <>
@@ -99,40 +99,15 @@ const EditProductForm = ({ productEditFields, onSubmit, selectedProduct, product
         <div className="flex-none">
           <div className="flex flex-wrap gap-4">
             {productEditFields
-              .filter((prop) => prop.editable)
-              .map(({ label, type, name, inputProps, classNames, inputStyles, divStyles }) => (
-                <div
-                  key={name}
-                  className="box-border flex flex-row items-center gap-2"
-                  style={divStyles}
-                >
-                  <FormLabel
-                    classNames={`text-left ${classNames ? classNames : ""}`}
-                    labelName={label}
-                  />
-
-                  {type === "textarea" ? (
-                    <textarea
-                      className="h-32 w-full resize-none rounded border border-gray-300 p-2"
-                      {...register(name, { ...inputProps })}
-                    />
-                  ) : type === "list" ? (
-                    <CategorySelectComponent
-                      control={control}
-                      name={name}
-                      inputStyles={inputStyles}
-                      listData={productAttributes[name]}
-                    />
-                  ) : (
-                    <input
-                      type={type}
-                      className="w-full rounded border border-gray-300 p-2"
-                      style={{ cursor: "pointer", ...inputStyles }}
-                      {...inputProps}
-                      {...register(name, { ...inputProps })}
-                    />
-                  )}
-                </div>
+              .filter((field) => field.is_editable)
+              .map((field) => (
+                <ProductEditField
+                  key={field.id}
+                  field={field}
+                  register={register}
+                  control={control}
+                  productAttributes={productAttributes}
+                />
               ))}
           </div>
         </div>
@@ -161,33 +136,88 @@ const EditProductForm = ({ productEditFields, onSubmit, selectedProduct, product
     </>
   );
 };
-const CategorySelectComponent = ({ control, name, inputStyles, listData}) => {
-    
-    return ( 
-      <div style={inputStyles}>
-        <Controller
-          name={name}
-          control={control}
-          render={({ field }) => {
-            const allCategories = listData.map((cat) => ({...cat, value: cat.id }));
-            console.log("allCategories:", allCategories);
-            const selectedOptions = field.value.map((id) => allCategories.find((cat) => cat.id === id ));
-            return (
-              <Select
-                  {...field} 
-                  isMulti
-                  onChange={(changeOptions) => field.onChange(changeOptions.map((opt) => opt.value))} // Update the value in react-hook-form
-                  options={allCategories}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
-                  value={selectedOptions}
-                  styles={customStyles}
-              />
-            )
-          }}
-          
+function ProductEditField({
+  field,
+  register,
+  control,
+  productAttributes,
+}) {
+  const { column_name, label, input_type } = field;
+
+  const lookupData = productAttributes?.[column_name] || [];
+
+  return (
+    <div className="box-border flex flex-row items-center gap-2">
+      <FormLabel
+        classNames="text-left min-w-[150px]"
+        labelName={label}
+      />
+
+      {input_type === "textarea" ? (
+        <textarea
+          className="h-32 w-full resize-none rounded border border-gray-300 p-2"
+          {...register(column_name)}
         />
-      </div>)
+      ) : input_type === "array_lookup" ? (
+        <ArrayLookupSelect
+          control={control}
+          name={column_name}
+          listData={lookupData}
+        />
+      ) : input_type === "checkbox" ? (
+        <input
+          type="checkbox"
+          className="h-5 w-5 cursor-pointer"
+          {...register(column_name)}
+        />
+      ) : (
+        <input
+          type={input_type === "float" ? "number" : input_type}
+          step={input_type === "float" ? "0.01" : undefined}
+          className="w-full rounded border border-gray-300 p-2"
+          {...register(column_name)}
+        />
+      )}
+    </div>
+  );
 }
+
+const ArrayLookupSelect = ({ control, name, listData = [] }) => {
+  return (
+    <div className="w-full">
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => {
+          const allOptions = listData.map((item) => ({
+            ...item,
+            value: item.id,
+            label: item.label ?? item.name ?? item.value ?? item.id,
+          }));
+
+          const selectedOptions = Array.isArray(field.value)
+            ? field.value
+                .map((id) => allOptions.find((option) => option.id === id))
+                .filter(Boolean)
+            : [];
+
+          return (
+            <Select
+              isMulti
+              options={allOptions}
+              value={selectedOptions}
+              onChange={(selected) =>
+                field.onChange(selected.map((option) => option.value))
+              }
+              className="basic-multi-select"
+              classNamePrefix="select"
+              styles={customStyles}
+            />
+          );
+        }}
+      />
+    </div>
+  );
+};
 
 export default ProductEditPage;

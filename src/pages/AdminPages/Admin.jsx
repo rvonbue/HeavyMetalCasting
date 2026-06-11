@@ -8,9 +8,9 @@ import {
   setProductsLoading,
 } from '../../store/productsSlice';
 import {
-  setAdminProductEditFields
+  setAdminInitialData
 } from '../../store/adminSlice';
-import { getProductEditFields } from "../../api/productEditApis";
+import { getAdminInitialData } from "../../api/adminApis";
 
 function AdminPage() {
   const { toolbarHeight } = useSelector(state => state.app);
@@ -22,8 +22,8 @@ function AdminPage() {
 
 useEffect(() => {
   async function loadFields() {
-    const fields = await getProductEditFields();
-    dispatch(setAdminProductEditFields(fields));
+    const fields = await getAdminInitialData();
+    dispatch(setAdminInitialData(fields));
   }
 
   loadFields();
@@ -31,22 +31,19 @@ useEffect(() => {
 
   return (
     <div className={`flex flex-col h-[calc(100vh-${toolbarHeight}px)] `}>
-      {/* Component-local header (if you still want one) */}
-      {/* <header className="flex-none p-1">
-        <h1 className="text-4xl text-hmc-a font-bold">Admin Dashboard</h1>
-      </header> */}
-
-      {/* Tabs */}
       <nav className="flex-none flex justify-center space-x-4 overflow-hidden">
         <NavLink to="/admin/orders" end style={{ color: 'inherit' }}>
           {({ isActive }) => <FolderTab label="Orders" selected={isActive} />}
         </NavLink>
         <NavLink to="/admin/overview_products" end style={{ color: 'inherit' }}>
-           <FolderTab label={"Product Management"} labelStatus={productManagementLabelStatus} selected={editMatch || overviewMatch || addingMatch} />
+           <FolderTab 
+              label={"Product Management"} 
+              labelStatus={productManagementLabelStatus} 
+              selected={editMatch || overviewMatch || addingMatch} 
+           />
         </NavLink>
       </nav>
 
-      {/* This will now be exactly (100vh - 56px) minus the nav height, and scroll internally */}
       <main className="flex-1 min-h-0 overflow-y-auto p-0">
         <Outlet />
       </main>

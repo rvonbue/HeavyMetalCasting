@@ -1,8 +1,9 @@
-update size_charts
-set options = '[
-  {"value":"7","label":"7in"},
-  {"value":"8","label":"8in"},
-  {"value":"9","label":"9in"},
-  {"value":"10","label":"10in"}
-]'::jsonb
-where id = 1;
+alter table admin_product_fields
+drop constraint admin_product_fields_pkey;
+
+alter table admin_product_fields
+add column id bigint generated always as identity primary key;
+
+alter table admin_product_fields
+add constraint admin_product_fields_column_name_unique
+unique (column_name);

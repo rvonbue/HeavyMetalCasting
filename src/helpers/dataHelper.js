@@ -12,7 +12,7 @@ export function getCartItemId({ productId, metalTypeSelected, sizeSelected }) {
 }
 export function getProductPropDisplayLabel({ metal_type, size_chart, size_charts, metal_types }) { 
   return {  
-    metalLabel: metal_types ? metal_types.find(option => option.id === metal_type).label || metal_type : metal_type, 
+    metalLabel: metal_types ? metal_types.find(option => option.id === metal_type)?.label || metal_type : metal_type, 
     sizeLabel: size_charts ? size_charts.find(option => option.id === size_chart)?.label || size_chart : size_chart
   }
 }
