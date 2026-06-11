@@ -13,28 +13,32 @@ function Root() {
   const dispatch = useDispatch()
 
   const showShoppingCart = useSelector(state => state.cart.showShoppingCart);
-  const toolbarHeight = useSelector(state => state.app.toolbarHeight);
-
+  const { toolbarHeight, themeName } = useSelector(state => state.app);
+  let theme = themeName === "dark" ? "" : "theme-hmc-inverted"
+  
 useEffect(() => {
   loadAppData(dispatch);
 }, []);
 
   return (
-    <>
+    <div className={theme} >
       <Toaster
         position="bottom-right"
         richColors
         closeButton
       />
       <HeaderNavbar />
-      <div style={{ height: `calc(100vh - ${toolbarHeight}px)` }}>
+      <div 
+        style={{ height: `calc(100vh - ${toolbarHeight}px)`} }
+        className="bg-hmc-bodybackground"
+      >
         <Outlet />
         <ShoppingTab
           isOpen={showShoppingCart}
           onClose={() => dispatch(toggleShoppingCart())}
         />
       </div>
-    </>
+    </div>
   )
 }
 

@@ -39,7 +39,7 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
           <>
             {/* Header */}
             <div
-              className="flex justify-between items-center border-b select-none cursor-pointer pl-4"
+              className="flex justify-between items-center border-b select-none cursor-pointer pl-4 text-hmc-textprimary"
               onClick={onClose}
             >
               <div className="text-lg">SHOPPING CART</div>
@@ -108,7 +108,7 @@ function ShoppingCartItemRowDisplay({ shoppingCartItem }) {
   });
 
   return (
-    <div className={`my-2 cart-item-row ${
+    <div className={`text-hmc-textprimary my-2 cart-item-row ${
         isRemoving ? "cart-item-fall-out" : ""
       }`}>
       <div className="flex gap-4 items-start text-left">
@@ -122,7 +122,7 @@ function ShoppingCartItemRowDisplay({ shoppingCartItem }) {
         <div className="flex-1 flex flex-col justify-left h-full">
           <Link
             to={`/product/${product.id}`}
-            className="text-sm font-semibold text-hmc-text-b border-b border-hmc-border-a"
+            className="text-sm font-semibold text-hmc-textprimary border-b border-hmc-border-a"
             style={{ lineHeight: 1 }}
           >
             {product.name}
@@ -196,7 +196,7 @@ function ShoppingCartRemoveButton({
       <button
         type="button"
         onClick={handleRemove}
-        className="text-xs font-bold text-left uppercase tracking-wide text-hmc-a transition hover:text-hmc-b cursor-pointer"
+        className="text-xs font-bold text-left uppercase tracking-wide text-hmc-textprimary transition hover:text-hmc-b cursor-pointer"
       >
         Remove
       </button>

@@ -10,7 +10,7 @@ import {
 import {
   setAdminInitialData
 } from '../../store/adminSlice';
-import { getAdminInitialData } from "../../api/adminApis";
+import { getAdminInitialData } from "../../api/adminAPI.js";
 
 function AdminPage() {
   const { toolbarHeight } = useSelector(state => state.app);

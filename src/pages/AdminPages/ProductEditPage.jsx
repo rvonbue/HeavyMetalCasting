@@ -7,7 +7,7 @@ import { toNumber } from 'lodash-es';
 import { toast } from "sonner";
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 
-import { updateProductAPI } from "../../api/productEditApis";
+import { updateProductAPI } from "../../api/productEditAPI.js";
 import { updateProduct } from "../../store/productsSlice";
 
 import { PageContainer, Button_A, FormLabel, getProductImageLinks, HmcSelect } from "../../components/Resuables"; // MultiSelectDropdown
@@ -59,6 +59,7 @@ function ProductEditPage(){
     }
   </PageContainer>)
 }
+
 const adminSelectStyles = {
   control: (base, state) => ({
     ...base,
@@ -111,8 +112,6 @@ const adminSelectStyles = {
   },
 }),
 };
-
-
 const EditProductForm = ({
   productEditFields,
   onSubmit,
@@ -234,7 +233,6 @@ const EditProductForm = ({
     </form>
   );
 };
-
 function ProductEditField({
   field,
   register,

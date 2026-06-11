@@ -1,4 +1,46 @@
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { createOrder } from "../../api/ordersAPI.js";
+
 export default function PaymentPage() {
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const shoppingCartItems = useSelector(
+    (state) => state.cart.shoppingCartItems
+  );
+
+  async function handlePlaceOrder() {
+    if (!shoppingCartItems.length) {
+      toast.error("Your cart is empty.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      const order = await createOrder({
+        customer_name: "Test Customer",
+        customer_email: "test@example.com",
+        customer_phone: "",
+        shipping: 0,
+        tax: 0,
+        shoppingCartItems,
+      });
+
+      toast.success("Order placed successfully!");
+
+      navigate(`/order_status/${order.order_token}`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Could not place order. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-6 text-hmc-c">
       <h1 className="mb-6 text-center text-3xl font-bold">Payment</h1>
@@ -6,8 +48,9 @@ export default function PaymentPage() {
       <div className="rounded border border-hmc-c/60 bg-hmc-a/20 p-5">
         <h2 className="mb-4 text-xl font-bold">Payment Details</h2>
 
-        <form className="space-y-4">
-          <div>
+        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          {/* your inputs here */}
+      <div>
             <label className="mb-1 block text-xs font-bold uppercase">
               Name on Card
             </label>
@@ -52,12 +95,13 @@ export default function PaymentPage() {
               />
             </div>
           </div>
-
           <button
             type="button"
-            className="mt-4 w-full rounded bg-hmc-button-a px-4 py-2 font-bold text-hmc-a transition hover:bg-hmc-button-b"
+            onClick={handlePlaceOrder}
+            disabled={isSubmitting}
+            className="mt-4 w-full rounded bg-hmc-button-a px-4 py-2 font-bold text-hmc-a transition hover:bg-hmc-button-b disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Place Fake Order
+            {isSubmitting ? "Placing Order..." : "Place Fake Order"}
           </button>
         </form>
       </div>

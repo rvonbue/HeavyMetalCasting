@@ -30,9 +30,10 @@ export function Button_A({button_name, link_val, button_type, button_styles_oute
               className={`
                 ${extraClassNames}
                 px-2 py-2 text-sm font-bold transition
+                
                 ${isActive
-                  ? "bg-hmc-button-b text-hmc-b border border-hmc-b"
-                  : "bg-hmc-button-a text-hmc-a border border-hmc-button-a hover:bg-hmc-button-b hover:text-hmc-b hover:border-hmc-button-b"
+                  ? "bg-hmc-button-b text-hmc-textprimary  border border-hmc-textprimary"
+                  : "bg-hmc-button-a text-hmc-a border border-hmc-button-a hover:bg-hmc-button-b hover:text-hmc-textprimary hover:border-text-hmc-textsecondary"
                 }
               `}
             >

@@ -97,7 +97,7 @@ function RightColumn({ product }) {
   )
 }
 
- function MetalTypeSelectorWidget({
+function MetalTypeSelectorWidget({
   metal_types = [],
   metalTypeSelected,
   setMetalTypeSelected

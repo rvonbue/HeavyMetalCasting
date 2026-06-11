@@ -47,7 +47,7 @@ export default function HeaderDesktop({
       `}</style>
 
       <div
-        className="text-hmc-b"
+        className="text-hmc-textprimary"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -118,7 +118,7 @@ export default function HeaderDesktop({
             style={{ cursor: 'pointer' }}
           >
             <div className="flex items-center justify-center text-xs font-bold">
-              <CartIcon stroke='#FFFF'/>
+              {/* <CartIcon stroke='#FFFF'/> */}
               <div
                 key={totalItemsInCart}
                 className="w-6 h-6 rounded-full border border-color-text-hmc-c flex items-center justify-center hmc-bounce"

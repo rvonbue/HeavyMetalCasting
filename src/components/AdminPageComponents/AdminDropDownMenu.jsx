@@ -3,7 +3,7 @@ import { HmcSelect } from "../Resuables";
 
 export const ADMIN_ROUTES = [
   {
-    value: "/admin",
+    value: "/admin/overview_orders",
     label: "Orders",
   },
   {

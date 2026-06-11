@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  theme: 'light',
+  themeName: 'light',
   loading: false,
   initialLoading: false,
   appSizeMode: 'desktop',
@@ -13,7 +13,7 @@ const appSlice = createSlice({
   initialState,
   reducers: {
     setTheme(state, action) {
-      state.theme = action.payload
+      state.themeName = action.payload
     },
     setLoading(state, action) {
       state.loading = action.payload

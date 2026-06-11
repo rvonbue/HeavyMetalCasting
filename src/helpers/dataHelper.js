@@ -23,39 +23,20 @@ export function getUpdateCartProduct({ product, newQuantity, metalTypeSelected, 
   return {
      id: cartItemId, 
      product_id: product.id,
+     product_price: product.price,
+     product_name: product.name,
      quantity: newQuantity, 
      metal_type: metalTypeSelected, 
      size_chart: sizeSelected 
   }
 }
 
-export function getShoppingCartItemDetails({
-  products,
-  shoppingCartItems,
-}) {
-  const productMap = Object.fromEntries(
-    products.map((product) => [product.id, product])
-  );
-
-  const shoppingCartItemsList = shoppingCartItems
-    .map((cartItem) => {
-      const product = productMap[cartItem.product_id];
-
-      if (!product) {
-        return null;
-      }
-
-      return {
-        ...product,
-        ...cartItem,
-      };
-    })
-    .filter(Boolean);
-
-  const { totalQuantities, totalCost } = shoppingCartItemsList.reduce(
+export function getShoppingCartTotals(shoppingCartItems) {
+  return shoppingCartItems.reduce(
     (acc, item) => {
       acc.totalQuantities += item.quantity;
-      acc.totalCost += item.price * item.quantity;
+      acc.totalCost += item.product_price * item.quantity;
+
       return acc;
     },
     {
@@ -63,10 +44,15 @@ export function getShoppingCartItemDetails({
       totalCost: 0,
     }
   );
-
-  return {
-    shoppingCartItemsList,
-    totalQuantities,
-    totalCost: Number(totalCost.toFixed(2)),
-  };
 }
+
+
+
+// order status
+    // 'pending',
+    // 'paid',
+    // 'processing',
+    // 'shipped',
+    // 'completed',
+    // 'cancelled',
+    // 'refunded'

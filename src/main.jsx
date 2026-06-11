@@ -12,18 +12,19 @@ import CustomerProductPage from "./pages/CustomerPages/CustomerProductPage.jsx";
 import AboutUsPage from "./pages/CustomerPages/AboutUsPage.jsx";
 import CheckoutPage from "./pages/CustomerPages/CheckoutPage.jsx";
 import PaymentPage from "./pages/CustomerPages/PaymentPage.jsx";
+import OrderStatusPage from "./pages/CustomerPages/OrderStatusPage.jsx";
 
 import Admin from "./pages/AdminPages/Admin.jsx";
 import ProductOverviewPage from "./pages/AdminPages/ProductOverviewPage.jsx";
-import ProductOrdersPage from "./pages/AdminPages/ProductOrdersPage.jsx";
+import OrdersOverviewPage from "./pages/AdminPages/OrdersOverviewPage.jsx";
 import ProductEditPage from "./pages/AdminPages/ProductEditPage.jsx";
 import ProductAddPage from "./pages/AdminPages/ProductAddPage.jsx";
+
 import './styles/App.css';
 import './styles/index.css';
 import NotFound from "./pages/NotFound.jsx";
 import { ShopPathName } from "./staticData/PathData.js";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
-
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -39,9 +40,10 @@ createRoot(document.getElementById('root')).render(
             <Route path="about_us" element={<AboutUsPage />} />
             <Route path="checkout" element={<CheckoutPage />} />
             <Route path="payment" element={<PaymentPage />} />
+            <Route path="/order_status/:orderToken" element={<OrderStatusPage />} />
 
             <Route path="admin" element={<Admin />}>
-              <Route index element={<ProductOrdersPage />} />
+              <Route path="overview_orders" element={<OrdersOverviewPage />} />
               <Route path="overview_products" element={<ProductOverviewPage />} />
               <Route path="edit_product" element={<ProductEditPage />} />
               <Route path="add_product" element={<ProductAddPage />} />

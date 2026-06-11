@@ -2,7 +2,7 @@ import SortableImage from "./DragDropSortableImage";
 import { useDispatch } from 'react-redux';
 import { toast } from "sonner";
 
-import { deleteProductImage, updateProductImageSortOrder } from '../../api/productEditApis';
+import { deleteProductImage, updateProductImageSortOrder } from '../../api/productEditAPI';
 import { FormLabel } from "../../components/Resuables";
 import {
   DndContext,
