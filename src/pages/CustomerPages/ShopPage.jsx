@@ -95,42 +95,53 @@ function getShopUrlForCategory(selectedCategoriesByRoute, category) {
     }
 }
 
-export function SidepanelList({ headerName, sidePanelState, setSidePanelState,  displayData, selectedCategoriesByRoute}) {
-
-    return (
-      <div className="text-left w-[30%]">
-          <h1 className="text-1xl font-bold text-hmc-c uppercase flex justify-between items-center
-                        cursor-pointer select-none border-b-2 border-[var(--color-hmc-border-a)] mb-4"
-            onClick={() => setSidePanelState((old) => ({...old, categoriesOpen: !old.categoriesOpen }))}
+export function SidepanelList({ headerName, sidePanelState, setSidePanelState, displayData, selectedCategoriesByRoute }) {
+  return (
+    <div className="text-left w-[30%]">
+      <h1
+        className="text-1xl font-bold text-hmc-c uppercase flex justify-between items-center
+                   cursor-pointer select-none border-b-2 border-[var(--color-hmc-border-a)] mb-4"
+        onClick={() => setSidePanelState((old) => ({ ...old, categoriesOpen: !old.categoriesOpen }))}
+      >
+        <div>{headerName}</div>
+        <div className="text-3xl">{sidePanelState.categoriesOpen ? "-" : "+"}</div>
+      </h1>
+      {sidePanelState.categoriesOpen && (
+        <div className="flex flex-col">
+          <NavLink
+            to={`/${ShopPathName}`}
+            end
+            className={({ isActive }) =>
+              (isActive ? "text-hmc-link-active" : "text-hmc-link") +
+              " text-1xl ml-2 cursor-pointer font-semibold select-none"
+            }
           >
-            <div>{headerName}</div>
-            <div className="text-3xl">{sidePanelState.categoriesOpen ? "-" : "+" }</div>
-          </h1>
-          {sidePanelState.categoriesOpen &&
-            <div className={"flex flex-col"}>
-              {displayData.map((displayObject) => {
-                const toValue = getShopUrlForCategory(selectedCategoriesByRoute, displayObject.label);
-                return (
-                  <NavLink
-                    key={displayObject.id + displayObject.label }
-                    to={toValue}
-                    end
-                    className={({ isActive }) => {
-                      return  ( (isActive ? "text-hmc-link-active" :  "text-hmc-link") + " text-1xl ml-2 cursor-pointer font-semibold select-none" );
-                    }}
-                  >
-                    {displayObject.label}
-                  </NavLink>
-                )
-              })}
-            </div>
-          }
-      </div>
-    );
+            All
+          </NavLink>
+          {displayData.map((displayObject) => {
+            const toValue = `/${ShopPathName}/${displayObject.label}`;
+            return (
+              <NavLink
+                key={displayObject.id + displayObject.label}
+                to={toValue}
+                end
+                className={({ isActive }) =>
+                  (isActive ? "text-hmc-link-active" : "text-hmc-link") +
+                  " text-1xl ml-2 cursor-pointer font-semibold select-none"
+                }
+              >
+                {displayObject.label}
+              </NavLink>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 function ProductsContainer({ sortedFilteredProducts }) {
     return (
-      <div className="text-left ml-12 w-[70%] grid grid-cols-3 gap-4">
+      <div className="text-left ml-12 w-[70%] grid grid-cols-2 gap-4">
           {sortedFilteredProducts.map((product) => {
             return <ProductCard key={product.id} product={product} />
           })}

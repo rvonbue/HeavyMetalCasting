@@ -11,7 +11,7 @@ export default function ProductCard({ product }) {
           <img
             src={thumbSrc}
             alt={`Thumbnail`}
-            className="p-4 max-w-full max-h-full object-contain border-1 border-[var(--color-hmc-border-b)] min-h-[300px]"
+            className="w-full h-full object-contain border-1 border-[var(--color-hmc-border-b)]"
           />
         </Link>
         <div className="text-hmc-text-a mt-2">

@@ -281,6 +281,15 @@ export function PriceComponent({price}) {
   else return <span>{price}</span>
 }
 
+export function TwoColumnLayout({ left, right }) {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div>{left}</div>
+      <div>{right}</div>
+    </div>
+  );
+}
+
 export function OptionButton({button_name, button_styles_outer, isActive, isDisabled, extraClassNames, onClick }) {
   return (
     <button
