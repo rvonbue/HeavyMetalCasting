@@ -66,14 +66,14 @@ function ShopPage() {
 
 
 function SidePanel({ selectedCategoriesByRoute, product_categories }) {
-  
+
   const [sidePanelState, setSidePanelState] = useState({
     categoriesOpen: true
   });
-  
+
   return (
-      <SidepanelList 
-        headerName={"Categories"} 
+      <SidepanelList
+        headerName={"Categories"}
         {...{ sidePanelState, setSidePanelState }}
         displayData={product_categories}
         selectedCategoriesByRoute={selectedCategoriesByRoute}
@@ -92,30 +92,30 @@ function getShopUrlForCategory(selectedCategoriesByRoute, category) {
       // Category is not selected, add it
       const newCategories = [...selectedCategoriesByRoute, category];
       return `/${ShopPathName}/${newCategories.join("_")}/`;
-    }      
+    }
 }
 
 export function SidepanelList({ headerName, sidePanelState, setSidePanelState,  displayData, selectedCategoriesByRoute}) {
 
     return (
       <div className="text-left w-[30%]">
-          <h1 className="text-1xl font-bold text-hmc-c uppercase flex justify-between items-center 
+          <h1 className="text-1xl font-bold text-hmc-c uppercase flex justify-between items-center
                         cursor-pointer select-none border-b-2 border-[var(--color-hmc-border-a)] mb-4"
             onClick={() => setSidePanelState((old) => ({...old, categoriesOpen: !old.categoriesOpen }))}
           >
             <div>{headerName}</div>
             <div className="text-3xl">{sidePanelState.categoriesOpen ? "-" : "+" }</div>
           </h1>
-          {sidePanelState.categoriesOpen && 
+          {sidePanelState.categoriesOpen &&
             <div className={"flex flex-col"}>
               {displayData.map((displayObject) => {
                 const toValue = getShopUrlForCategory(selectedCategoriesByRoute, displayObject.label);
                 return (
-                  <NavLink 
+                  <NavLink
                     key={displayObject.id + displayObject.label }
-                    to={toValue} 
-                    end 
-                    className={({ isActive }) => { 
+                    to={toValue}
+                    end
+                    className={({ isActive }) => {
                       return  ( (isActive ? "text-hmc-link-active" :  "text-hmc-link") + " text-1xl ml-2 cursor-pointer font-semibold select-none" );
                     }}
                   >

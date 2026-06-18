@@ -15,8 +15,12 @@ import {
 } from "../../styles/Icons";
 
 import { Button_A, PageContainer } from "../../components/Resuables";
+import { removeProduct } from "../../store/productsSlice";
+import { deleteProductAPI } from "../../api/adminAPI";
+import { toast } from "sonner";
 import UploadXlsxModal from "../../components/modal/UploadXlsxModal";
 import AddProductTemplateModal from "../../components/modal/AddProductModal";
+import Modal from "../../components/modal/Modal";
 
 export default function ProductOverviewPage() {
   const dispatch = useDispatch();
@@ -36,6 +40,7 @@ export default function ProductOverviewPage() {
 
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   function handleUpload(file) {
     console.log("Uploaded XLSX:", file);
@@ -76,12 +81,7 @@ export default function ProductOverviewPage() {
 
               <button
                 type="button"
-                onClick={() =>
-                  dispatch({
-                    type: "DELETE_PRODUCT",
-                    payload: product.id,
-                  })
-                }
+                onClick={() => setDeleteTarget(product)}
                 className="text-hmc-textprimary transition hover:text-hmc-error"
               >
                 <TrashIcon />
@@ -106,6 +106,46 @@ export default function ProductOverviewPage() {
 
   return (
     <PageContainer bg="alt1">
+      <Modal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete Product"
+        maxWidth="max-w-sm"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setDeleteTarget(null)}
+              className="rounded border border-hmc-border-a px-4 py-2 text-sm font-bold text-hmc-textprimary transition hover:bg-hmc-button-a/20"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  await deleteProductAPI(deleteTarget.id);
+                  dispatch(removeProduct(deleteTarget.id));
+                  toast.success("Product deleted");
+                } catch (err) {
+                  console.error(err);
+                  toast.error("Failed to delete product");
+                } finally {
+                  setDeleteTarget(null);
+                }
+              }}
+              className="rounded bg-red-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-700"
+            >
+              Delete
+            </button>
+          </>
+        }
+      >
+        <p className="text-sm text-gray-600">
+          Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteTarget?.name}</span>? This action cannot be undone.
+        </p>
+      </Modal>
+
       <AddProductTemplateModal
         isOpen={showAddProductModal}
         onClose={() => setShowAddProductModal(false)}

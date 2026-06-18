@@ -1,4 +1,4 @@
-import { useEffect, useState  } from 'react';
+import { useEffect, useState, useRef  } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm, Controller } from "react-hook-form";
 import { useSelector, useDispatch } from 'react-redux'
@@ -155,7 +155,7 @@ const EditProductForm = ({
   }, [isDirty, dirtyFields]);
 
   const editableFields = productEditFields
-    .filter((field) => field.is_editable)
+    .filter((field) => field.is_editable && field.column_name !== 'live')
     .sort((a, b) => {
       const groupA = a.group_id ?? 999;
       const groupB = b.group_id ?? 999;
@@ -183,59 +183,101 @@ const EditProductForm = ({
       <div className="mb-4 flex flex-none items-center justify-between">
         <h1 className="text-xl font-bold text-hmc-textprimary">Product Edit</h1>
 
-        {fieldsUpdated && (
-          <div className="flex flex-none items-center gap-2 text-sm text-hmc-textprimary">
-            <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500" />
-            <span>Warning unsaved changes</span>
-          </div>
-        )}
+        <div className="flex items-center gap-4">
+          {fieldsUpdated && (
+            <div className="flex flex-none items-center gap-2 text-sm text-hmc-textprimary">
+              <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500" />
+              <span>Warning unsaved changes</span>
+            </div>
+          )}
 
-        <Button_A
-          button_name="Update Product"
-          button_type="form"
-          link_val="/admin/add_product"
-        />
-      </div>
-
-      <div className="flex-none space-y-4">
-        {Object.entries(groupedFields).map(([groupId, fields]) => (
-          <div
-            key={groupId}
-            className="flex flex-wrap items-start gap-x-4 gap-y-3"
-          >
-            {fields.map((field) => (
-              <ProductEditField
-                key={field.id}
-                field={field}
-                register={register}
-                control={control}
-                productAttributes={productAttributes}
-                error={errors[field.column_name]}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-4">
-        <VariantStockGrid
-          product={selectedProduct}
-          productAttributes={productAttributes}
-        />
-      </div>
-
-      <div className="grid grid-cols-[80%_20%] gap-4 mt-4">
-        <div className=" overflow-hidden border">
-          <div className="h-full overflow-y-auto px-2">
-            {selectedProduct.product_images.length > 0 && (
-              <DragDropProductImageGrid product={selectedProduct} />
+          <Controller
+            name="live"
+            control={control}
+            render={({ field }) => (
+              <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-hmc-textprimary">
+                <input
+                  type="checkbox"
+                  checked={Boolean(field.value)}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                  className="h-4 w-4 cursor-pointer rounded border-hmc-b text-hmc-c focus:ring-hmc-c"
+                />
+                Live
+              </label>
             )}
-          </div>
-        </div>
+          />
 
-        <div className="h-[90px] w-full pr-2 ">
-          <ProductImageUploaderDropzone product={selectedProduct} />
+          <Button_A
+            button_name="Update Product"
+            button_type="form"
+            link_val="/admin/add_product"
+          />
         </div>
+      </div>
+
+      <div className="space-y-2 overflow-y-auto flex-1 min-h-0">
+        <CollapsibleSection title="Product Details" defaultOpen>
+          <div className="grid grid-cols-2 gap-6 items-start">
+            <div className="flex flex-col gap-4">
+              {Object.entries(groupedFields)
+                .filter(([, fields]) => fields.every(f => f.input_type !== 'textarea'))
+                .map(([groupId, fields]) => (
+                  <div key={groupId} className="flex flex-wrap items-start gap-x-4 gap-y-3">
+                    {fields.map((field) => (
+                      <ProductEditField
+                        key={field.id}
+                        field={field}
+                        register={register}
+                        control={control}
+                        productAttributes={productAttributes}
+                        error={errors[field.column_name]}
+                      />
+                    ))}
+                  </div>
+                ))}
+            </div>
+            <div className="flex flex-col gap-4 min-w-0">
+              {Object.entries(groupedFields)
+                .filter(([, fields]) => fields.some(f => f.input_type === 'textarea'))
+                .map(([groupId, fields]) => (
+                  <div key={groupId}>
+                    {fields.map((field) => (
+                      <ProductEditField
+                        key={field.id}
+                        field={field}
+                        register={register}
+                        control={control}
+                        productAttributes={productAttributes}
+                        error={errors[field.column_name]}
+                      />
+                    ))}
+                  </div>
+                ))}
+            </div>
+          </div>
+        </CollapsibleSection>
+
+        <CollapsibleSection title="Stock & Pricing" defaultOpen>
+          <VariantStockGrid
+            product={selectedProduct}
+            productAttributes={productAttributes}
+          />
+        </CollapsibleSection>
+
+        <CollapsibleSection title="Image Gallery" defaultOpen>
+          <div className="grid grid-cols-[80%_20%] gap-4">
+            <div className="overflow-hidden border">
+              <div className="h-full overflow-y-auto px-2">
+                {selectedProduct.product_images.length > 0 && (
+                  <DragDropProductImageGrid product={selectedProduct} />
+                )}
+              </div>
+            </div>
+            <div className="h-[90px] w-full pr-2">
+              <ProductImageUploaderDropzone product={selectedProduct} />
+            </div>
+          </div>
+        </CollapsibleSection>
       </div>
     </form>
   );
@@ -259,7 +301,7 @@ function ProductEditField({
 
   const widthClassMap = {
     tiny: "w-[50px]",
-    small: "w-[140px]",
+    small: "w-[80px]",
     medium: "w-[260px]",
     large: "w-[420px]",
     xlarge: "w-[650px]",
@@ -281,7 +323,7 @@ function ProductEditField({
   const validationRules = buildValidation(field);
 
   return (
-    <div className={widthClass + " max-w-full"}>
+    <div className={widthClass + " max-w-full min-w-0"}>
       <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-hmc-textprimary">
         {label}
       </label>
@@ -289,7 +331,7 @@ function ProductEditField({
       {input_type === "textarea" ? (
         <textarea
           autoComplete="off"
-          className={`${inputClassName} h-28 resize-none leading-relaxed`}
+          className={`${inputClassName} h-48 resize-none leading-relaxed`}
           {...register(column_name, validationRules)}
         />
       ) : input_type === "array_lookup" ? (
@@ -300,6 +342,13 @@ function ProductEditField({
           fieldWidth={field_width}
           rules={validationRules}
           hasError={Boolean(error)}
+        />
+      ) : input_type === "single_lookup" ? (
+        <SingleLookupSelect
+          control={control}
+          name={column_name}
+          listData={lookupData}
+          rules={validationRules}
         />
       ) : input_type === "checkbox" ? (
         <Controller
@@ -374,6 +423,33 @@ const ArrayLookupSelect = ({ control, name, listData = [] }) => {
   );
 };
 
+const SingleLookupSelect = ({ control, name, listData = [], rules }) => {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      render={({ field }) => {
+        const options = listData.map((item) => ({
+          value: item.id,
+          label: item.label ?? item.name ?? item.id,
+        }));
+
+        const currentValue = Array.isArray(field.value) ? field.value[0] : field.value;
+        const selected = options.find((o) => o.value === currentValue) ?? null;
+
+        return (
+          <HmcSelect
+            options={options}
+            value={selected}
+            onChange={(option) => field.onChange(option ? [option.value] : [])}
+          />
+        );
+      }}
+    />
+  );
+};
+
 function VariantStockGrid({ product, productAttributes }) {
   const dispatch = useDispatch();
   const { size_charts, metal_types } = productAttributes;
@@ -398,23 +474,23 @@ function VariantStockGrid({ product, productAttributes }) {
 
   if (!sizeOptions.length || !productMetalTypes.length) return null;
 
-  async function handleStockBlur({ sizeChartId, sizeValue, metalTypeId, stock }) {
+  async function handleVariantBlur({ sizeChartId, sizeValue, metalTypeId, stock, price }) {
     try {
       const saved = await upsertProductVariantsAPI({
         productId: product.id,
-        variants: [{ size_chart_id: sizeChartId, size_value: sizeValue, metal_type_id: metalTypeId, stock }],
+        variants: [{ size_chart_id: sizeChartId, size_value: sizeValue, metal_type_id: metalTypeId, stock, price }],
       });
       dispatch(upsertProductVariants({ productId: product.id, variants: saved }));
     } catch (err) {
-      console.error('Failed to save variant stock', err);
-      toast.error('Failed to save stock');
+      console.error('Failed to save variant', err);
+      toast.error('Failed to save variant');
     }
   }
 
   return (
     <div>
       <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-hmc-textprimary">
-        Stock
+        Stock &amp; Pricing
       </h2>
       <div className="overflow-x-auto rounded border border-hmc-border-a">
         <table className="text-sm">
@@ -422,9 +498,18 @@ function VariantStockGrid({ product, productAttributes }) {
             <tr>
               <th className="px-3 py-2 text-left font-bold uppercase text-xs">Size</th>
               {productMetalTypes.map((mt) => (
-                <th key={mt.id} className="px-3 py-2 text-left font-bold uppercase text-xs">
+                <th key={mt.id} className="px-3 py-2 text-left font-bold uppercase text-xs" colSpan={2}>
                   {mt.label}
                 </th>
+              ))}
+            </tr>
+            <tr>
+              <th className="px-3 py-1" />
+              {productMetalTypes.map((mt) => (
+                <>
+                  <th key={`${mt.id}-stock`} className="px-3 py-1 text-left font-normal text-xs opacity-70">Stock</th>
+                  <th key={`${mt.id}-price`} className="px-3 py-1 text-left font-normal text-xs opacity-70">Price</th>
+                </>
               ))}
             </tr>
           </thead>
@@ -436,22 +521,46 @@ function VariantStockGrid({ product, productAttributes }) {
                   const key = `${size.chartId}:${size.value}:${mt.id}`;
                   const variant = variantMap[key];
                   return (
-                    <td key={mt.id} className="px-3 py-2">
-                      <input
-                        type="number"
-                        min="0"
-                        defaultValue={variant?.stock ?? 0}
-                        onBlur={(e) =>
-                          handleStockBlur({
-                            sizeChartId: size.chartId,
-                            sizeValue: size.value,
-                            metalTypeId: mt.id,
-                            stock: parseInt(e.target.value) || 0,
-                          })
-                        }
-                        className="w-20 rounded border border-hmc-b/30 px-2 py-1 text-sm text-hmc-textprimary focus:border-hmc-c focus:outline-none focus:ring-1 focus:ring-hmc-c/30"
-                      />
-                    </td>
+                    <>
+                      <td key={`${mt.id}-stock`} className="px-2 py-2">
+                        <input
+                          type="number"
+                          min="0"
+                          defaultValue={variant?.stock ?? 0}
+                          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); e.target.focus(); } }}
+                          onBlur={(e) =>
+                            handleVariantBlur({
+                              sizeChartId: size.chartId,
+                              sizeValue: size.value,
+                              metalTypeId: mt.id,
+                              stock: parseInt(e.target.value) || 0,
+                              price: variant?.price ?? null,
+                            })
+                          }
+                          className="w-16 rounded border border-hmc-b/30 px-2 py-1 text-sm text-hmc-textprimary focus:border-hmc-c focus:outline-none focus:ring-1 focus:ring-hmc-c/30"
+                        />
+                      </td>
+                      <td key={`${mt.id}-price`} className="px-2 py-2">
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          defaultValue={variant?.price ?? ''}
+                          placeholder={`${product.price ?? '—'}`}
+                          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); e.target.focus(); } }}
+                          onBlur={(e) =>
+                            handleVariantBlur({
+                              sizeChartId: size.chartId,
+                              sizeValue: size.value,
+                              metalTypeId: mt.id,
+                              stock: variant?.stock ?? 0,
+                              price: e.target.value === '' ? null : parseFloat(e.target.value),
+                            })
+                          }
+                          className="w-20 rounded border border-hmc-b/30 px-2 py-1 text-sm text-hmc-textprimary focus:border-hmc-c focus:outline-none focus:ring-1 focus:ring-hmc-c/30"
+                        />
+                      </td>
+                    </>
                   );
                 })}
               </tr>
@@ -459,6 +568,29 @@ function VariantStockGrid({ product, productAttributes }) {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+function CollapsibleSection({ title, children, defaultOpen = true }) {
+  const [open, setOpen] = useState(defaultOpen);
+  const contentRef = useRef(null);
+
+  return (
+    <div className="rounded border border-hmc-border-a">
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold uppercase tracking-wide text-hmc-textprimary hover:bg-hmc-button-a/10 transition"
+      >
+        {title}
+        <span className="text-xs text-hmc-textprimary opacity-50">{open ? '▲' : '▼'}</span>
+      </button>
+      {open && (
+        <div ref={contentRef} className="px-4 pb-4 pt-2">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

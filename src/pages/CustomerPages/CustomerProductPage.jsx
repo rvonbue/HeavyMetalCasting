@@ -83,7 +83,9 @@ function RightColumn({ product }) {
   const shoppingCartProps = { product, metalTypeSelected, sizeSelected };
   const shoppingCartItems = useSelector(state => state.cart.shoppingCartItems);
   const shoppingCartItemQuantity = shoppingCartItems.find(item => item.id === getCartItemId({ productId: product.id, metalTypeSelected, sizeSelected }))?.quantity || 0;
-  const stockAvailable = getProductVariant({ productVariants: product.product_variants, sizeChartId, sizeSelected, metalTypeSelected })?.stock ?? 0;
+  const selectedVariant = getProductVariant({ productVariants: product.product_variants, sizeChartId, sizeSelected, metalTypeSelected });
+  const stockAvailable = selectedVariant?.stock ?? 0;
+  const displayPrice = selectedVariant?.price ?? product.price;
 
   return (
     <div className="text-left lg:col-span-3">
@@ -92,7 +94,7 @@ function RightColumn({ product }) {
       </h1>
 
       <p className="mb-4 text-md font-bold text-hmc-c">
-        <PriceComponent price={product.price}/>
+        <PriceComponent price={displayPrice}/>
       </p>
      <MetalTypeSelectorWidget
         metal_types={product.metal_types}

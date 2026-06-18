@@ -15,6 +15,15 @@ export async function getAdminInitialData() {
   };
 }
 
+export async function deleteProductAPI(productId) {
+  const { error } = await supabase
+    .from("products")
+    .delete()
+    .eq("id", productId);
+
+  if (error) throw error;
+}
+
 export async function getCustomerOrders() {
   const { data, error } = await supabase
     .from("orders")
