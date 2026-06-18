@@ -2,7 +2,7 @@ import { useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { Button_A } from '../Resuables.jsx';
+import { Button_A, ImgPlaceholder } from '../Resuables.jsx';
 import { getProductImageLinks, getUpdateCartProduct, getProductPropDisplayLabel } from '../../helpers/dataHelper.js';
 import { updateCart } from '../../store/shoppingCartSlice.js';
 import { DeleteIcon, CartIcon } from '../../styles/Icons';
@@ -113,11 +113,14 @@ function ShoppingCartItemRowDisplay({ shoppingCartItem }) {
       }`}>
       <div className="flex gap-4 items-start text-left">
         <Link to={`/product/${product.id}`} className="flex-shrink-0 w-28 h-28">
+        {thumbnailSrc ?
           <img
             src={thumbnailSrc}
             alt={product.name}
             className="w-full h-full object-contain"
-          />
+          /> : 
+          <ImgPlaceholder/>
+        }
         </Link>
         <div className="flex-1 flex flex-col justify-left h-full">
           <Link

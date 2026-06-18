@@ -13,4 +13,7 @@ If you are developing a production application, we recommend using TypeScript wi
 
 
 Supabase URL 
+Go into supabase folder 
+~npx supabase start
+
 http://localhost:54323

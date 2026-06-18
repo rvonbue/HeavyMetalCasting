@@ -20,7 +20,7 @@ export default function HeaderDesktop({
 
   return (
     <header
-      className="bg-hmc-a select-none"
+      className="bg-hmc-headercolor select-none"
       style={{
         position: 'sticky',
         top: 0,

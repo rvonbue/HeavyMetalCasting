@@ -4,15 +4,11 @@ import { HmcSelect } from "../Resuables";
 export const ADMIN_ROUTES = [
   {
     value: "/admin/overview_orders",
-    label: "Orders",
+    label: "Orders Overview",
   },
   {
     value: "/admin/overview_products",
-    label: "Products Overview",
-  },
-  {
-    value: "/admin/add_product",
-    label: "Add Product",
+    label: "Products Management",
   },
   {
     value: "/admin/product_fields",
@@ -28,7 +24,7 @@ export default function AdminMenu() {
   const navigate = useNavigate();
 
   return (
-    <div className="w-[175px]">
+    <div className="w-[350px]">
       <HmcSelect
         options={ADMIN_ROUTES}
         value={undefined}

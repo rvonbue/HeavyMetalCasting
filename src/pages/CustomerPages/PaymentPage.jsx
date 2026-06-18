@@ -57,7 +57,7 @@ export default function PaymentPage() {
             <input
               type="text"
               placeholder="John Doe"
-              className="w-full rounded border border-hmc-c/50 bg-white px-3 py-2 text-hmc-a"
+              className="w-full rounded border border-hmc-c/50 bg-white px-3 py-2 text-hmc-textprimary"
             />
           </div>
 
@@ -68,7 +68,7 @@ export default function PaymentPage() {
             <input
               type="text"
               placeholder="4242 4242 4242 4242"
-              className="w-full rounded border border-hmc-c/50 bg-white px-3 py-2 text-hmc-a"
+              className="w-full rounded border border-hmc-c/50 bg-white px-3 py-2 text-hmc-textprimary"
             />
           </div>
 
@@ -80,7 +80,7 @@ export default function PaymentPage() {
               <input
                 type="text"
                 placeholder="12/30"
-                className="w-full rounded border border-hmc-c/50 bg-white px-3 py-2 text-hmc-a"
+                className="w-full rounded border border-hmc-c/50 bg-white px-3 py-2 text-hmc-textprimary"
               />
             </div>
 
@@ -91,7 +91,7 @@ export default function PaymentPage() {
               <input
                 type="text"
                 placeholder="123"
-                className="w-full rounded border border-hmc-c/50 bg-white px-3 py-2 text-hmc-a"
+                className="w-full rounded border border-hmc-c/50 bg-white px-3 py-2 text-hmc-textprimary"
               />
             </div>
           </div>
@@ -99,7 +99,7 @@ export default function PaymentPage() {
             type="button"
             onClick={handlePlaceOrder}
             disabled={isSubmitting}
-            className="mt-4 w-full rounded bg-hmc-button-a px-4 py-2 font-bold text-hmc-a transition hover:bg-hmc-button-b disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-4 w-full rounded bg-hmc-button-a px-4 py-2 font-bold text-hmc-textprimary transition hover:bg-hmc-button-b disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting ? "Placing Order..." : "Place Fake Order"}
           </button>

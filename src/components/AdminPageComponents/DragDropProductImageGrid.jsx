@@ -79,7 +79,7 @@ export default function ProductImageGrid({ product }) {
    
   return (
   <div className="h-full overflow-y-auto ">
-    <label className={`mb-1 block font-bold text-left underline`}>{"Image Gallery"}</label>
+    <label className={`mb-1 block font-bold text-left underline text-hmc-textprimary`}>{"Image Gallery"}</label>
     <DndContext
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}

@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
 import { useDispatch } from 'react-redux'
-import { uploadProductImage } from "../api/productEditAPI";
-import { addProductImages } from '../store/productsSlice';
 import { toast } from "sonner";
+import { uploadProductImage } from "../../api/productEditAPI";
+import { addProductImages } from '../../store/productsSlice';
+
 
 export default function ProductImageUploaderDropzone({ product }) {
   const inputRef = useRef(null);

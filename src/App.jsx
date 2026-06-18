@@ -21,7 +21,7 @@ useEffect(() => {
 }, []);
 
   return (
-    <div className={theme} >
+    <div id="hmc-theme-root" className={theme}  >
       <Toaster
         position="bottom-right"
         richColors

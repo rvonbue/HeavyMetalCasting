@@ -4,43 +4,83 @@ import { Controller } from "react-hook-form";
 
 import {productImageLinks} from "../staticData/PathData.js";
 
-export function Button_A({button_name, link_val, button_type, button_styles_outer, isActive, extraClassNames }) {
+export function Button_A({button_name, link_val, button_type, button_styles_outer, isActive, extraClassNames, onClick }) {
   return (
     <>      
-      {button_type === "form" ? 
-        <div className="text-hmc-a hover:text-hmc-b bg-hmc-button-a hover:bg-hmc-button-b hover:text-avocado-600 px-2 py-1 rounded transition font-bold cursor-pointer"
-          style={button_styles_outer}
-        >
-          <button 
-            type="submit"
-            className="cursor-pointer"
-            style={ { color: "inherit", backgroundColor: "inherit",}}
-          >
-            {button_name}
-          </button> 
-        </div>
-        : button_type === "onClick" ?
-          <div className="flex text-hmc-a hover:text-hmc-b font-bold">
-            {button_name}
-          </div> 
-        :
-          <div className="flex text-hmc-a hover:text-hmc-b font-bold">
-            <Link
-              to={link_val}
-              className={`
-                ${extraClassNames}
-                px-2 py-2 text-sm font-bold transition
-                
-                ${isActive
-                  ? "bg-hmc-button-b text-hmc-textprimary  border border-hmc-textprimary"
-                  : "bg-hmc-button-a text-hmc-a border border-hmc-button-a hover:bg-hmc-button-b hover:text-hmc-textprimary hover:border-text-hmc-textsecondary"
-                }
-              `}
-            >
-              {button_name}
-            </Link>
-          </div>
-      }
+      {button_type === "form" ? (
+  <div
+    className=" bg-hmc-button-a px-2 py-1 font-bold transition hover:bg-hmc-button-b hover:text-hmc-b"
+    style={button_styles_outer}
+  >
+    <button
+      type="submit"
+      className="cursor-pointer"
+      style={{ color: "inherit", backgroundColor: "inherit" }}
+    >
+      {button_name}
+    </button>
+  </div>
+) : button_type === "onClick" ? (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`
+        ${extraClassNames}
+        px-2 py-2
+        text-sm font-bold
+        transition
+        cursor-pointer
+
+        ${
+          isActive
+            ? `
+              bg-hmc-button-a
+              text-hmc-textsecondary
+            `
+            : `
+              bg-hmc-button-b
+              text-hmc-textprimary
+              hover:border-hmc-textsecondary
+              hover:bg-hmc-button-b
+              hover:text-hmc-textsecondary
+            `
+        }
+      `}
+    style={button_styles_outer}
+  >
+    {button_name}
+  </button>
+) : (
+  <div className="flex font-bold hover:text-hmc-b">
+    <Link
+      to={link_val}
+      className={`
+        ${extraClassNames}
+        px-2 py-2
+        text-sm font-bold
+        transition
+        cursor-pointer
+
+        ${
+          isActive
+            ? `
+              bg-hmc-button-a
+              text-hmc-textsecondary
+            `
+            : `
+              bg-hmc-button-b
+              text-hmc-textprimary
+              hover:border-hmc-textsecondary
+              hover:bg-hmc-button-b
+              hover:text-hmc-textsecondary
+            `
+        }
+      `}
+    >
+      {button_name}
+    </Link>
+  </div>
+)}
     </>
 
   )
@@ -55,19 +95,19 @@ export function FolderTab({ label, labelStatus, selected, onClick }) {
     >
       {/* Left Skew */}
       <div
-        className={`absolute left-[-20px] top-0 h-10 w-8 z-[-1] rounded-t-md transform -skew-x-[20deg] ${
+        className={`absolute left-[-20px] top-0 h-10 w-8 z-[-1] -t-md transform -skew-x-[20deg] ${
           selected ? 'bg-hmc-button-b' : 'bg-hmc-button-a'
         }`}
       />
       {/* Right Skew */}
       <div
-        className={`absolute right-[-20px] top-0 h-10 w-8 z-[-1] rounded-t-md transform skew-x-[20deg] ${
+        className={`absolute right-[-20px] top-0 h-10 w-8 z-[-1] -t-md transform skew-x-[20deg] ${
           selected ? 'bg-hmc-button-b' : 'bg-hmc-button-a'
         }`}
       />
       {/* Main Tab */}
       <div
-        className={`h-10 px-4 flex items-center rounded-t-md z-[1] relative ${
+        className={`h-10 px-4 flex items-center -t-md z-[1] relative ${
           selected
             ? 'bg-hmc-button-b text-hmc-button-text-b font-semibold'
             : 'bg-hmc-button-a text-hmc-button-text-a'
@@ -85,7 +125,7 @@ export const PageContainer = ({ children, bg }) => {
         max-w-[1280px]
         mx-auto
         ${bg === "alt1" ? "bg-white" : "bg-hmc-bg-a"}
-        rounded
+        
         shadow
         py-[12px] 
         px-[24px]
@@ -163,11 +203,11 @@ const hmcSelectStyles = {
     ...base,
     fontSize: "13px",
     backgroundColor: state.isSelected
-      ? "var(--color-hmc-c)"
+      ? "var(--color-hmc-panelbackground)"
       : state.isFocused
-        ? "rgba(176, 141, 87, 0.12)"
+        ? "var(--color-hmc-panelbackground)"
         : "white",
-    color: state.isSelected ? "white" : "var(--color-hmc-a)",
+    color: state.isSelected ? "var(--color-hmc-textprimary)" : "var(--color-hmc-textprimary)",
   }),
 
   multiValue: (base) => ({
@@ -177,7 +217,7 @@ const hmcSelectStyles = {
 
   multiValueLabel: (base) => ({
     ...base,
-    color: "var(--color-hmc-a)",
+    color: "var(--color-hmc-textprimary)",
     fontSize: "11px",
   }),
 
@@ -206,7 +246,7 @@ export function HmcSelect({
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      menuPortalTarget={document.body}
+      menuPortalTarget={document.getElementById("hmc-theme-root")}
       styles={{
         ...hmcSelectStyles,
         menuPortal: (base) => ({
@@ -222,4 +262,46 @@ export function HmcSelect({
       classNamePrefix="hmc-select"
     />
   );
+}
+
+export function ImgPlaceholder({}) {
+
+  return (
+
+    <div className="flex h-full w-full items-center justify-center border border-hmc-border-a bg-hmc-panelbackground">
+  <span className="text-sm text-hmc-textprimary">
+    No Image Available
+  </span>
+</div>
+  )
+}
+
+export function PriceComponent({price}) {
+  if(price === 0 ) return <span> Price Unavailable</span>
+  else return <span>{price}</span>
+}
+
+export function OptionButton({button_name, button_styles_outer, isActive, isDisabled, extraClassNames, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={isDisabled}
+      className={`
+        ${extraClassNames}
+        px-2 py-2
+        text-sm font-bold
+        transition
+        ${isDisabled ? 'opacity-40 pointer-events-none' : 'cursor-pointer'}
+        ${
+          isActive
+            ? 'bg-hmc-button-a text-hmc-textsecondary'
+            : 'bg-hmc-button-b text-hmc-textprimary hover:border-hmc-textsecondary hover:bg-hmc-button-b hover:text-hmc-textsecondary'
+        }
+      `}
+      style={button_styles_outer}
+    >
+      {button_name}
+    </button>
+  )
 }

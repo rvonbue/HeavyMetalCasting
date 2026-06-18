@@ -1,32 +1,180 @@
+import { useForm, Controller } from "react-hook-form";
+import { toast } from "sonner";
+import { supabase } from "../../lib/supabase";
+import { Button_A, PageContainer } from "../../components/Resuables";
+import { HmcSelect } from "../../components/Resuables";
 
+export default function AddProductPage({ productAttributes }) {
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      price: "",
+      description: "",
+      live: false,
+      max_quantity_per_order: 10,
+      product_categories: [],
+      size_chart: [],
+      metal_types: [],
+    },
+  });
 
-export default function ProductAddPage() {
+  async function onSubmit(formData) {
+    try {
+      const newProduct = {
+        name: formData.name,
+        price: Number(formData.price),
+        description: formData.description,
+        live: formData.live,
+        max_quantity_per_order: Number(formData.max_quantity_per_order),
+        product_categories: formData.product_categories,
+        size_chart: formData.size_chart,
+        metal_types: formData.metal_types,
+      };
 
-// const { data, error } = await supabase
-//   .from('products')
-//   .insert([
-//     {
-//       name: 'Silver Skull Ring',
-//       product_categories: ['rings'],
-//       size_chart: 'ring_sizes',
-//       live: true,
-//       price: 49.99,
-//       stock: 10,
-//       description: 'Sterling silver skull ring',
-//     },
-//   ])
-//   .select();
+      const { error } = await supabase
+        .from("products")
+        .insert(newProduct);
 
-// console.log(data);
-// console.log(error);
+      if (error) throw error;
 
-
-
+      toast.success("Product added successfully.");
+      reset();
+    } catch (error) {
+      console.error(error);
+      toast.error("Could not add product.");
+    }
+  }
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-2">Orders</h2>
-      <p>List of recent orders will go here.</p>
-    </div>
-  )
+    <PageContainer bg="alt1">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mx-auto max-w-3xl space-y-4 rounded border border-hmc-border-a bg-hmc-panelbackground p-6 shadow"
+      >
+        <h1 className="text-2xl font-bold text-hmc-a">Add Product</h1>
+
+        <div>
+          <label className="mb-1 block text-xs font-bold uppercase text-hmc-a">
+            Product Name
+          </label>
+          <input
+            {...register("name", { required: true })}
+            className="w-full rounded border border-hmc-border-a px-3 py-2 text-hmc-a"
+          />
+        </div>
+
+        <div>
+          <label className="mb-1 block text-xs font-bold uppercase text-hmc-a">
+            Price
+          </label>
+          <input
+            type="number"
+            step="0.01"
+            {...register("price", { required: true })}
+            className="w-full rounded border border-hmc-border-a px-3 py-2 text-hmc-a"
+          />
+        </div>
+
+        <div>
+          <label className="mb-1 block text-xs font-bold uppercase text-hmc-a">
+            Description
+          </label>
+          <textarea
+            {...register("description")}
+            className="h-32 w-full resize-none rounded border border-hmc-border-a px-3 py-2 text-hmc-a"
+          />
+        </div>
+
+        <Controller
+          name="product_categories"
+          control={control}
+          render={({ field }) => (
+            <HmcSelect
+              isMulti
+              options={(productAttributes?.product_categories ?? []).map((x) => ({
+                value: x.id,
+                label: x.label,
+              }))}
+              value={(productAttributes?.product_categories ?? [])
+                .filter((x) => field.value.includes(x.id))
+                .map((x) => ({ value: x.id, label: x.label }))}
+              onChange={(selected) =>
+                field.onChange(selected.map((x) => x.value))
+              }
+              placeholder="Product Categories"
+            />
+          )}
+        />
+
+        <Controller
+          name="size_chart"
+          control={control}
+          render={({ field }) => (
+            <HmcSelect
+              isMulti
+              options={(productAttributes?.size_charts ?? []).map((x) => ({
+                value: x.id,
+                label: x.label,
+              }))}
+              value={(productAttributes?.size_charts ?? [])
+                .filter((x) => field.value.includes(x.id))
+                .map((x) => ({ value: x.id, label: x.label }))}
+              onChange={(selected) =>
+                field.onChange(selected.map((x) => x.value))
+              }
+              placeholder="Size Charts"
+            />
+          )}
+        />
+
+        <Controller
+          name="metal_types"
+          control={control}
+          render={({ field }) => (
+            <HmcSelect
+              isMulti
+              options={(productAttributes?.metal_types ?? []).map((x) => ({
+                value: x.id,
+                label: x.label,
+              }))}
+              value={(productAttributes?.metal_types ?? [])
+                .filter((x) => field.value.includes(x.id))
+                .map((x) => ({ value: x.id, label: x.label }))}
+              onChange={(selected) =>
+                field.onChange(selected.map((x) => x.value))
+              }
+              placeholder="Metal Types"
+            />
+          )}
+        />
+
+        <div>
+          <label className="mb-1 block text-xs font-bold uppercase text-hmc-a">
+            Max Quantity Per Order
+          </label>
+          <input
+            type="number"
+            {...register("max_quantity_per_order")}
+            className="w-full rounded border border-hmc-border-a px-3 py-2 text-hmc-a"
+          />
+        </div>
+
+        <label className="flex items-center gap-2 text-sm font-bold text-hmc-a">
+          <input type="checkbox" {...register("live")} />
+          Live
+        </label>
+
+        <Button_A
+          button_name={isSubmitting ? "Adding..." : "Add Product"}
+          button_type="form"
+        />
+      </form>
+    </PageContainer>
+  );
 }

@@ -15,7 +15,7 @@ import PaymentPage from "./pages/CustomerPages/PaymentPage.jsx";
 import OrderStatusPage from "./pages/CustomerPages/OrderStatusPage.jsx";
 
 import Admin from "./pages/AdminPages/Admin.jsx";
-import ProductOverviewPage from "./pages/AdminPages/ProductOverviewPage.jsx";
+import ProductOverviewPage from "./pages/AdminPages/ProductManagementPage.jsx";
 import OrdersOverviewPage from "./pages/AdminPages/OrdersOverviewPage.jsx";
 import ProductEditPage from "./pages/AdminPages/ProductEditPage.jsx";
 import ProductAddPage from "./pages/AdminPages/ProductAddPage.jsx";

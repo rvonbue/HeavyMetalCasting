@@ -16,6 +16,7 @@ import {
 
 import { Button_A, PageContainer } from "../../components/Resuables";
 import UploadXlsxModal from "../../components/modal/UploadXlsxModal";
+import AddProductTemplateModal from "../../components/modal/AddProductModal";
 
 export default function ProductOverviewPage() {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ export default function ProductOverviewPage() {
   ]);
 
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
 
   function handleUpload(file) {
     console.log("Uploaded XLSX:", file);
@@ -67,7 +69,7 @@ export default function ProductOverviewPage() {
               <NavLink
                 to={`/admin/edit_product?product_id=${product.id}`}
                 end
-                className="text-hmc-a transition hover:text-hmc-b"
+                className="text-hmc-textprimary transition hover:text-hmc-b"
               >
                 <PencilIcon classes="mr-1" />
               </NavLink>
@@ -80,7 +82,7 @@ export default function ProductOverviewPage() {
                     payload: product.id,
                   })
                 }
-                className="text-hmc-a transition hover:text-hmc-error"
+                className="text-hmc-textprimary transition hover:text-hmc-error"
               >
                 <TrashIcon />
               </button>
@@ -104,6 +106,10 @@ export default function ProductOverviewPage() {
 
   return (
     <PageContainer bg="alt1">
+      <AddProductTemplateModal
+        isOpen={showAddProductModal}
+        onClose={() => setShowAddProductModal(false)}
+      /> 
       <UploadXlsxModal
         isOpen={showUploadModal}
         onClose={() => setShowUploadModal(false)}
@@ -120,14 +126,15 @@ export default function ProductOverviewPage() {
             {/* <button
               type="button"
               onClick={() => setShowUploadModal(true)}
-              className="text-sm font-bold text-hmc-a underline-offset-4 hover:underline"
+              className="text-sm font-bold text-hmc-textprimary underline-offset-4 hover:underline"
             >
               Update via spreadsheet
             </button> */}
 
             <Button_A
               button_name="+ Add Product"
-              link_val="/admin/add_product"
+              button_type = "onClick"
+              onClick={() => setShowAddProductModal(true)}
               button_styles_outer={{ marginTop: "1.5rem" }}
             />
           </div>

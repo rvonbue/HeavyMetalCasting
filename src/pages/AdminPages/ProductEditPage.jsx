@@ -7,11 +7,11 @@ import { toNumber } from 'lodash-es';
 import { toast } from "sonner";
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 
-import { updateProductAPI } from "../../api/productEditAPI.js";
-import { updateProduct } from "../../store/productsSlice";
+import { updateProductAPI, upsertProductVariantsAPI } from "../../api/productEditAPI.js";
+import { updateProduct, upsertProductVariants } from "../../store/productsSlice";
 
 import { PageContainer, Button_A, FormLabel, getProductImageLinks, HmcSelect } from "../../components/Resuables"; // MultiSelectDropdown
-import ProductImageUploaderDropzone from "../../components/ProductImageUploaderDropzone"; // MultiSelectDropdown
+import ProductImageUploaderDropzone from "../../components/AdminPageComponents/ProductImageUploaderDropzone"; // MultiSelectDropdown
 import {  TailwindSpinner } from "../../styles/Icons";
 import { productImageLinks } from "../../staticData/PathData.js";
 import DragDropProductImageGrid from "../../components/AdminPageComponents/DragDropProductImageGrid";
@@ -181,10 +181,10 @@ const EditProductForm = ({
       className="flex h-full min-h-0 flex-col"
     >
       <div className="mb-4 flex flex-none items-center justify-between">
-        <h1 className="text-xl font-bold text-hmc-a">Product Edit</h1>
+        <h1 className="text-xl font-bold text-hmc-textprimary">Product Edit</h1>
 
         {fieldsUpdated && (
-          <div className="flex flex-none items-center gap-2 text-sm text-hmc-a">
+          <div className="flex flex-none items-center gap-2 text-sm text-hmc-textprimary">
             <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500" />
             <span>Warning unsaved changes</span>
           </div>
@@ -215,6 +215,13 @@ const EditProductForm = ({
             ))}
           </div>
         ))}
+      </div>
+
+      <div className="mt-4">
+        <VariantStockGrid
+          product={selectedProduct}
+          productAttributes={productAttributes}
+        />
       </div>
 
       <div className="grid grid-cols-[80%_20%] gap-4 mt-4">
@@ -263,7 +270,7 @@ function ProductEditField({
   const widthClass = widthClassMap[field_width] || "w-[260px]";
 
   const inputClassName = `
-    w-full rounded-md border bg-white px-3 py-2 text-sm text-hmc-a shadow-sm transition focus:outline-none focus:ring-1
+    w-full rounded-md border bg-white px-3 py-2 text-sm text-hmc-textprimary shadow-sm transition focus:outline-none focus:ring-1
     ${
       error
         ? "border-red-500 focus:border-red-500 focus:ring-red-300"
@@ -275,7 +282,7 @@ function ProductEditField({
 
   return (
     <div className={widthClass + " max-w-full"}>
-      <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-hmc-a">
+      <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-hmc-textprimary">
         {label}
       </label>
 
@@ -366,6 +373,95 @@ const ArrayLookupSelect = ({ control, name, listData = [] }) => {
     />
   );
 };
+
+function VariantStockGrid({ product, productAttributes }) {
+  const dispatch = useDispatch();
+  const { size_charts, metal_types } = productAttributes;
+
+  const sizeOptions = (product.size_chart ?? []).flatMap((chartId) => {
+    const chart = size_charts.find((sc) => sc.id === chartId);
+    return (chart?.options ?? []).map((opt) => ({
+      chartId,
+      value: String(opt.value),
+      label: opt.label,
+    }));
+  });
+
+  const productMetalTypes = (product.metal_types ?? [])
+    .map((mtId) => metal_types.find((mt) => mt.id === mtId))
+    .filter(Boolean);
+
+  const variantMap = (product.product_variants ?? []).reduce((acc, v) => {
+    acc[`${v.size_chart_id}:${v.size_value}:${v.metal_type_id}`] = v;
+    return acc;
+  }, {});
+
+  if (!sizeOptions.length || !productMetalTypes.length) return null;
+
+  async function handleStockBlur({ sizeChartId, sizeValue, metalTypeId, stock }) {
+    try {
+      const saved = await upsertProductVariantsAPI({
+        productId: product.id,
+        variants: [{ size_chart_id: sizeChartId, size_value: sizeValue, metal_type_id: metalTypeId, stock }],
+      });
+      dispatch(upsertProductVariants({ productId: product.id, variants: saved }));
+    } catch (err) {
+      console.error('Failed to save variant stock', err);
+      toast.error('Failed to save stock');
+    }
+  }
+
+  return (
+    <div>
+      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-hmc-textprimary">
+        Stock
+      </h2>
+      <div className="overflow-x-auto rounded border border-hmc-border-a">
+        <table className="text-sm">
+          <thead className="bg-hmc-button-a text-hmc-button-text-a">
+            <tr>
+              <th className="px-3 py-2 text-left font-bold uppercase text-xs">Size</th>
+              {productMetalTypes.map((mt) => (
+                <th key={mt.id} className="px-3 py-2 text-left font-bold uppercase text-xs">
+                  {mt.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sizeOptions.map((size) => (
+              <tr key={`${size.chartId}:${size.value}`} className="border-t border-hmc-border-b">
+                <td className="px-3 py-2 font-medium text-hmc-textprimary">{size.label}</td>
+                {productMetalTypes.map((mt) => {
+                  const key = `${size.chartId}:${size.value}:${mt.id}`;
+                  const variant = variantMap[key];
+                  return (
+                    <td key={mt.id} className="px-3 py-2">
+                      <input
+                        type="number"
+                        min="0"
+                        defaultValue={variant?.stock ?? 0}
+                        onBlur={(e) =>
+                          handleStockBlur({
+                            sizeChartId: size.chartId,
+                            sizeValue: size.value,
+                            metalTypeId: mt.id,
+                            stock: parseInt(e.target.value) || 0,
+                          })
+                        }
+                        className="w-20 rounded border border-hmc-b/30 px-2 py-1 text-sm text-hmc-textprimary focus:border-hmc-c focus:outline-none focus:ring-1 focus:ring-hmc-c/30"
+                      />
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
 
 function buildValidation(field) {
   const rules = {};

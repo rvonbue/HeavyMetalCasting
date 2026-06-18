@@ -2,7 +2,7 @@
 export const getProductImageLinks = (product) => {
   if (!product) return   { originalImageSrc: '', thumbnailSrc: '' };
   const heroImage = product.product_images?.[0];
-  const originalImageSrc = heroImage.image_url;
+  const originalImageSrc = heroImage?.image_url;
   const thumbnailSrc = product.product_images?.[0]?.thumbnail_url || originalImageSrc;
 
   return { originalImageSrc, thumbnailSrc };

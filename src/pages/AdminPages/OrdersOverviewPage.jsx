@@ -23,7 +23,7 @@ export default function OrdersOverviewPage() {
   }, []);
 
   if (isLoading) {
-    return <div className="p-4 text-hmc-a">Loading orders...</div>;
+    return <div className="p-4 text-hmc-textprimary">Loading orders...</div>;
   }
 
   return (

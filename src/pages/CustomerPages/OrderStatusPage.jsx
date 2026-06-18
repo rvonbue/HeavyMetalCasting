@@ -51,7 +51,7 @@ export default function OrderStatusPage() {
 
           <Link
             to="/shop"
-            className="mt-4 inline-block  bg-hmc-button-a px-4 py-2 font-bold text-hmc-a transition hover:bg-hmc-button-b"
+            className="mt-4 inline-block  bg-hmc-button-a px-4 py-2 font-bold text-hmc-textprimary transition hover:bg-hmc-button-b"
           >
             Continue Shopping
           </Link>
@@ -180,7 +180,7 @@ export default function OrderStatusPage() {
         <div className="mt-8 text-center">
           <Link
             to="/shop"
-            className=" bg-hmc-button-a px-4 py-2 font-bold text-hmc-a transition hover:bg-hmc-button-b"
+            className=" bg-hmc-button-a px-4 py-2 font-bold text-hmc-textprimary transition hover:bg-hmc-button-b"
           >
             Continue Shopping
           </Link>

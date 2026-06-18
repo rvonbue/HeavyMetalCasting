@@ -28,7 +28,8 @@
   --color-hmc-text-a: oklch(0.96 0.0 1);
   --color-hmc-textprimary: oklch(0.87 0.22 105.85);
   --color-hmc-textsecondary: oklch(0.96 0 1);
-
+  --color-hmc-headercolor: oklch(0.1 0.11 178);
+   
   --color-hmc-error: red;
   --font-family: "Cinzel"; 
   --breakpoint-3xl: 120rem; 
@@ -48,7 +49,8 @@
   --color-hmc-a: oklch(0.96 0 1);
   --color-hmc-b: oklch(0.87 0.22 105.85);
   --color-hmc-c: oklch(0.1 0.11 178);
-
+ 
+  
   --color-hmc-bg-a: oklch(0.96 0 1);
   --color-hmc-inputbox-a: oklch(0.1 0.11 178);
   --color-hmc-bodybackground: oklch(0.99 0 0);
@@ -57,6 +59,7 @@
   --color-hmc-button-b: oklch(86.9% 0.022 252.894);
   --color-hmc-button-text-a: oklch(0.96 0 1);
   --color-hmc-button-text-b: oklch(0.1 0.11 178);
+  --color-hmc-button-border-a: oklch(0.1 0.11 178);
   --color-hmc-border-a: oklch(86.9% 0.022 252.894);
   --color-hmc-border-b: oklch(55.4% 0.046 257.417);
   --color-hmc-link: oklch(0.1 0.11 178);
@@ -64,7 +67,10 @@
   --color-hmc-text-a: oklch(0.1 0.11 178);
   --color-hmc-textprimary: oklch(0.1 0.11 178);   
   --color-hmc-textsecondary: oklch(0.96 0 1);
+  --color-hmc-headercolor: oklch(86.9% 0.022 252.894);
 }
+
+
 
 
 :root {

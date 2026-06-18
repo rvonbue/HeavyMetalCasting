@@ -117,6 +117,23 @@ export async function updateProductImageSortOrder(images) {
 
   return data;
 }
+export async function upsertProductVariantsAPI({ productId, variants }) {
+  const rows = variants.map((v) => ({
+    product_id: productId,
+    size_chart_id: v.size_chart_id,
+    size_value: v.size_value,
+    metal_type_id: v.metal_type_id,
+    stock: v.stock,
+  }));
+
+  const { data, error } = await supabase
+    .from('product_variants')
+    .upsert(rows, { onConflict: 'product_id,size_chart_id,size_value,metal_type_id' })
+    .select();
+
+  if (error) throw error;
+  return data;
+}
 
 export async function updateProductAPI({
   productId,

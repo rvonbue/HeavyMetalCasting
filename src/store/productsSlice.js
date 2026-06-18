@@ -57,7 +57,7 @@ const productsSlice = createSlice({
       }
     },
     addProduct(state, action) {
-      state.products.push(action.payload)
+      state.products.push({ product_images: [], product_variants: [], ...action.payload})
     },
     removeProduct(state, action) {
       state.products = state.products.filter(
@@ -100,6 +100,29 @@ const productsSlice = createSlice({
 
       product.product_images = images;
     },
+    upsertProductVariants: (state, action) => {
+      const { productId, variants } = action.payload;
+
+      const product = state.products.find((p) => p.id === productId);
+      if (!product) return;
+
+      product.product_variants ??= [];
+
+      for (const incoming of variants) {
+        const idx = product.product_variants.findIndex(
+          (v) =>
+            v.size_chart_id === incoming.size_chart_id &&
+            v.size_value === incoming.size_value &&
+            v.metal_type_id === incoming.metal_type_id
+        );
+
+        if (idx !== -1) {
+          product.product_variants[idx] = { ...product.product_variants[idx], ...incoming };
+        } else {
+          product.product_variants.push(incoming);
+        }
+      }
+    },
   },
 })
 
@@ -113,7 +136,8 @@ export const {
   removeProduct,
   addProductImages,
   removeProductImage,
-  reorderProductImages
+  reorderProductImages,
+  upsertProductVariants,
 } = productsSlice.actions
 
 export default productsSlice.reducer
