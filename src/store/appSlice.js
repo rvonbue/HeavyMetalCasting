@@ -6,6 +6,7 @@ const initialState = {
   initialLoading: false,
   appSizeMode: 'desktop',
   toolbarHeight: 56,
+  headerTransparent: false,
 }
 
 const appSlice = createSlice({
@@ -27,6 +28,9 @@ const appSlice = createSlice({
     setToolbarHeight(state, action) {
       state.toolbarHeight = action.payload
     },
+    setHeaderTransparent(state, action) {
+      state.headerTransparent = action.payload
+    },
   },
 })
 
@@ -36,6 +40,7 @@ export const {
   setInitialLoading,
   setAppSizeMode,
   setToolbarHeight,
+  setHeaderTransparent,
 } = appSlice.actions
 
 export default appSlice.reducer

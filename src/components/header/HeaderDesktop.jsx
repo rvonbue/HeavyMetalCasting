@@ -1,5 +1,6 @@
 import { NavLink, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { useState, useEffect } from 'react'
 
 import { CartIcon, SkullIcon } from '../../styles/Icons.jsx'
 import { activeBorder, inactiveBorder } from '../../styles/App.jsx'
@@ -17,18 +18,41 @@ export default function HeaderDesktop({
   const dispatch = useDispatch()
 
   const toolbarHeight = useSelector(state => state.app.toolbarHeight);
+  const headerTransparent = useSelector(state => state.app.headerTransparent);
+  const isHome = window.location.pathname === '/';
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!headerTransparent && !isHome) { setScrolled(false); return; }
+    const attach = () => {
+      const el = document.getElementById('home-scroll-container');
+      if (!el) return;
+      const onScroll = () => setScrolled(el.scrollTop > 20);
+      el.addEventListener('scroll', onScroll);
+      return () => el.removeEventListener('scroll', onScroll);
+    };
+    // home-scroll-container may not exist yet on first render — retry once
+    const cleanup = attach();
+    if (cleanup) return cleanup;
+    const t = setTimeout(() => attach(), 100);
+    return () => clearTimeout(t);
+  }, [headerTransparent, isHome]);
 
   return (
     <header
-      className="bg-hmc-headercolor select-none"
+      className="select-none transition-colors duration-300"
       style={{
-        position: 'sticky',
+        position: (headerTransparent || isHome) ? 'fixed' : 'sticky',
         top: 0,
         width: '100%',
         height: `${toolbarHeight}px`,
         maxHeight: `${toolbarHeight}px`,
         fontWeight: 700,
         overflow: 'visible',
+        backgroundColor: (headerTransparent || isHome) && !scrolled
+          ? 'transparent'
+          : 'var(--color-hmc-header-opaque)',
+        zIndex: 50,
       }}
     >
       {/* Bounce animation */}
@@ -105,7 +129,7 @@ export default function HeaderDesktop({
           >
             ABOUT US
           </NavLink>
-          {hasAdminAccess === true &&<AdminDropDownMenu/> }
+          {/* {hasAdminAccess === true &&<AdminDropDownMenu/> } */}
         </div>
 
         {/* Right */}

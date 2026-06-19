@@ -4,7 +4,7 @@
 @import "tailwindcss"; 
 
 
-@source inline("lg:grid-cols-2 sm:grid-cols-2 sm:grid-cols-4 sm:block sm:flex text-left text-center text-right");
+@source inline("lg:grid-cols-2 sm:grid-cols-2 sm:grid-cols-4 sm:block sm:flex text-left text-center text-right landscape:hidden landscape:block hidden order-1 order-2 sm:order-1 sm:order-2 grid-cols-1 sm:grid-cols-2 sm:gap-12");
 
 @layer base {
   body {
@@ -39,6 +39,7 @@
   --color-hmc-textprimary: oklch(0.87 0.22 105.85);
   --color-hmc-textsecondary: oklch(0.96 0 1);
   --color-hmc-headercolor: oklch(0.1 0.11 178);
+  --color-hmc-header-opaque: oklch(0.96 0.0 1);
    
   --color-hmc-error: red;
   --font-family: "Cinzel"; 
@@ -81,6 +82,7 @@
   --color-hmc-textprimary: oklch(0.1 0.11 178);   
   --color-hmc-textsecondary: oklch(0.96 0 1);
   --color-hmc-headercolor: oklch(86.9% 0.022 252.894);
+  --color-hmc-header-opaque: oklch(0.96 0 1);
 }
 
 
