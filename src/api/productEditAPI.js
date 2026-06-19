@@ -1,8 +1,6 @@
 import { supabase } from '../lib/supabase';
 
-async function createThumbnailOnFileUpload(file, maxSize = 400, quality = 0.9) {
-  const imageBitmap = await createImageBitmap(file);
-
+async function createThumbnailFromBitmap(imageBitmap, maxSize = 400, quality = 0.9) {
   const scale = Math.min(
     maxSize / imageBitmap.width,
     maxSize / imageBitmap.height,
@@ -30,7 +28,13 @@ export async function uploadProductImage(productId, file, new_sort_order) {
   const originalPath = `products/${productId}/original/${id}.webp`;
   const thumbnailPath = `products/${productId}/thumbs/${id}.webp`;
 
-  const thumbnailBlob = await createThumbnailOnFileUpload(file);
+  const fileExtension = file.name.split('.').pop().toLowerCase();
+
+  const imageBitmap = await createImageBitmap(file);
+  const imageWidth = imageBitmap.width;
+  const imageHeight = imageBitmap.height;
+
+  const thumbnailBlob = await createThumbnailFromBitmap(imageBitmap);
 
   const { error: originalError } = await supabase.storage
     .from("product-images")
@@ -67,6 +71,10 @@ export async function uploadProductImage(productId, file, new_sort_order) {
       thumbnail_path: thumbnailPath,
       sort_order: new_sort_order,
       is_primary: false,
+      file_size: file.size,
+      file_extension: fileExtension,
+      width: imageWidth,
+      height: imageHeight,
     })
     .select()
     .single();
