@@ -47,7 +47,7 @@ function ProductEditPage(){
   const selectedProduct = products.find((prd) => prd.id === productId);
 
   return  (
-  <PageContainer bg="alt1" classNames={"relative"}>
+  <PageContainer bg="admin" classNames={"relative"}>
     {(productsLoading || selectedProduct === undefined || !adminDataLoaded) ?
       <TailwindSpinner/> :
       <EditProductForm 

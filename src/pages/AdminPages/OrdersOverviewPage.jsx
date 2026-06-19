@@ -24,11 +24,11 @@ export default function OrdersOverviewPage() {
   }, []);
 
   if (isLoading) {
-    return <PageContainer><div className="text-hmc-textprimary">Loading orders...</div></PageContainer>;
+    return <PageContainer bg="admin"><div className="text-hmc-textprimary">Loading orders...</div></PageContainer>;
   }
 
   return (
-    <PageContainer>
+    <PageContainer bg="admin">
       <AdminPageHeader title="Orders Overview" />
       <OrdersTable orders={orders} />
     </PageContainer>

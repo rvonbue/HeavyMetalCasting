@@ -84,7 +84,7 @@ export default function StoreSettingsPage() {
   }
 
   return (
-    <PageContainer>
+    <PageContainer bg="admin">
       <form onSubmit={handleSubmit(onSubmit)}>
         <AdminPageHeader
           title="Store Settings"

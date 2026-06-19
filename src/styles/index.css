@@ -4,7 +4,7 @@
 @import "tailwindcss"; 
 
 
-@source inline("lg:grid-cols-2 sm:grid-cols-2 sm:grid-cols-4 sm:block sm:flex");
+@source inline("lg:grid-cols-2 sm:grid-cols-2 sm:grid-cols-4 sm:block sm:flex text-left text-center text-right");
 
 @layer base {
   body {
@@ -20,8 +20,9 @@
   --color-hmc-b: oklch(0.87 0.22 105.85);
   --color-hmc-c: oklch(0.96 0.0 1);
   --color-hmc-bg-a: #2c2b2b;
+  --color-hmc-bg-admin: oklch(0.95 0.005 178);
   --color-hmc-inputbox-a: oklch(86.9% 0.022 252.894);
-  --color-hmc-bodybackground: oklch(0.1 0.11 178); 
+  --color-hmc-bodybackground: oklch(0.94 0.005 178);
   --color-hmc-panelbackground: oklch(0.96 0.0 1);
   --color-hmc-button-a: oklch(86.9% 0.022 252.894);
   --color-hmc-button-b: oklch(55.4% 0.046 257.417);

@@ -52,7 +52,7 @@ export default function AddProductPage({ productAttributes }) {
   }
 
   return (
-    <PageContainer bg="alt1">
+    <PageContainer bg="admin">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="mx-auto max-w-3xl space-y-4 rounded border border-hmc-border-a bg-hmc-panelbackground p-6 shadow"

@@ -124,7 +124,7 @@ export const PageContainer = ({ children, bg }) => {
       className={`
         max-w-[1280px]
         mx-auto
-        ${bg === "alt1" ? "bg-white" : "bg-hmc-bg-a"}
+        ${bg === "alt1" ? "bg-white" : bg === "admin" ? "bg-hmc-bodybackground" : "bg-hmc-bg-a"}
         
         shadow
         py-[12px] 

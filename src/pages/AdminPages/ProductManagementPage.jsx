@@ -105,7 +105,7 @@ export default function ProductOverviewPage() {
   });
 
   return (
-    <PageContainer bg="alt1">
+    <PageContainer bg="admin">
       <Modal
         isOpen={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}

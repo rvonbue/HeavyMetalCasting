@@ -1,6 +1,12 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'sonner';
+import {
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 import { PageContainer, AdminPageHeader } from '../../components/Resuables';
 import { TrashIcon, PencilIcon } from '../../styles/Icons';
 import Modal from '../../components/modal/Modal';
@@ -15,11 +21,16 @@ import {
 } from '../../api/eventsAPI';
 
 const inputClass = "w-full bg-hmc-panelbackground text-hmc-textprimary text-sm px-3 py-2 border border-hmc-border-b focus:outline-none focus:border-hmc-border-a";
+const labelClass = "text-xs font-bold text-hmc-textprimary uppercase mb-1 block";
 
 function EventForm({ initial = {}, onSave, onCancel, saving }) {
   const [title, setTitle] = useState(initial.title ?? '');
   const [description, setDescription] = useState(initial.description ?? '');
   const [url, setUrl] = useState(initial.url ?? '');
+  const [startDate, setStartDate] = useState(initial.start_date ?? '');
+  const [endDate, setEndDate] = useState(initial.end_date ?? '');
+  const [startTime, setStartTime] = useState(initial.start_time ?? '');
+  const [endTime, setEndTime] = useState(initial.end_time ?? '');
   const [active, setActive] = useState(initial.active ?? true);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(initial.image?.image_url ?? null);
@@ -34,25 +45,52 @@ function EventForm({ initial = {}, onSave, onCancel, saving }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    onSave({ title, description, url, active, imageFile, existingImageId: initial.image?.id, existingImagePath: initial.image?.image_path });
+    onSave({
+      title, description, url, active,
+      start_date: startDate || null,
+      end_date: endDate || null,
+      start_time: startTime || null,
+      end_time: endTime || null,
+      imageFile,
+      existingImageId: initial.image?.id,
+      existingImagePath: initial.image?.image_path,
+    });
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div>
-        <label className="text-xs font-bold text-hmc-textprimary uppercase mb-1 block">Title</label>
+        <label className={labelClass}>Title</label>
         <input className={inputClass} value={title} onChange={e => setTitle(e.target.value)} required />
       </div>
       <div>
-        <label className="text-xs font-bold text-hmc-textprimary uppercase mb-1 block">Description</label>
+        <label className={labelClass}>Description</label>
         <RichTextEditor value={description} onChange={setDescription} placeholder="Enter event description…" />
       </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className={labelClass}>Start Date</label>
+          <input type="date" className={inputClass} value={startDate} onChange={e => setStartDate(e.target.value)} />
+        </div>
+        <div>
+          <label className={labelClass}>End Date</label>
+          <input type="date" className={inputClass} value={endDate} onChange={e => setEndDate(e.target.value)} />
+        </div>
+        <div>
+          <label className={labelClass}>Start Time</label>
+          <input type="time" className={inputClass} value={startTime} onChange={e => setStartTime(e.target.value)} />
+        </div>
+        <div>
+          <label className={labelClass}>End Time</label>
+          <input type="time" className={inputClass} value={endTime} onChange={e => setEndTime(e.target.value)} />
+        </div>
+      </div>
       <div>
-        <label className="text-xs font-bold text-hmc-textprimary uppercase mb-1 block">Link URL</label>
+        <label className={labelClass}>Link URL</label>
         <input className={inputClass} value={url} onChange={e => setUrl(e.target.value)} placeholder="https://" />
       </div>
       <div>
-        <label className="text-xs font-bold text-hmc-textprimary uppercase mb-1 block">Image</label>
+        <label className={labelClass}>Image</label>
         {preview && <img src={preview} alt="preview" className="mb-2 max-h-40 object-contain border border-hmc-border-b" />}
         <input ref={fileRef} type="file" accept="image/*" onChange={onFileChange} className="hidden" />
         <button type="button" onClick={() => fileRef.current.click()} className="text-xs border border-hmc-border-b px-3 py-1 text-hmc-textprimary hover:border-hmc-border-a">
@@ -75,6 +113,19 @@ function EventForm({ initial = {}, onSave, onCancel, saving }) {
   );
 }
 
+function formatDate(val) {
+  if (!val) return '—';
+  return new Date(val + 'T00:00:00').toLocaleDateString();
+}
+
+function formatTime(val) {
+  if (!val) return '—';
+  const [h, m] = val.split(':');
+  const d = new Date();
+  d.setHours(+h, +m);
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 export default function EventOverviewPage() {
   const dispatch = useDispatch();
   const events = useSelector(state => state.events.events);
@@ -83,8 +134,9 @@ export default function EventOverviewPage() {
   const [editTarget, setEditTarget] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [sorting, setSorting] = useState([]);
 
-  async function handleSave({ title, description, url, active, imageFile, existingImageId, existingImagePath }) {
+  async function handleSave({ title, description, url, active, start_date, end_date, start_time, end_time, imageFile, existingImageId, existingImagePath }) {
     setSaving(true);
     try {
       let image_id = editTarget?.image_id ?? null;
@@ -95,12 +147,14 @@ export default function EventOverviewPage() {
         image_id = img.id;
       }
 
+      const fields = { title, description, url, active, start_date, end_date, start_time, end_time, image_id };
+
       if (editTarget) {
-        const updated = await updateEventAPI(editTarget.id, { title, description, url, active, image_id });
+        const updated = await updateEventAPI(editTarget.id, fields);
         dispatch(updateEvent(updated));
         toast.success('Event updated');
       } else {
-        const created = await createEventAPI({ title, description, url, active, image_id, sort_order: events.length });
+        const created = await createEventAPI({ ...fields, sort_order: events.length });
         dispatch(addEvent(created));
         toast.success('Event created');
       }
@@ -127,18 +181,87 @@ export default function EventOverviewPage() {
     }
   }
 
-  function openEdit(event) {
-    setEditTarget(event);
-    setShowForm(true);
-  }
+  function openEdit(event) { setEditTarget(event); setShowForm(true); }
+  function openAdd() { setEditTarget(null); setShowForm(true); }
 
-  function openAdd() {
-    setEditTarget(null);
-    setShowForm(true);
-  }
+  const columns = useMemo(() => [
+    {
+      id: 'image',
+      header: 'Image',
+      enableSorting: false,
+      size: 25,
+      cell: ({ row }) => {
+        const event = row.original;
+        return event.image
+          ? <img src={event.image.image_url} alt={event.title} className="w-full object-contain border border-hmc-border-b" style={{ minHeight: '150px' }} />
+          : <div className="w-full bg-hmc-button-a/20 border border-hmc-border-b" style={{ minHeight: '150px' }} />;
+      },
+    },
+    {
+      accessorKey: 'title',
+      header: 'Title',
+      cell: ({ getValue }) => <span className="font-semibold text-hmc-textprimary">{getValue()}</span>,
+    },
+    {
+      accessorKey: 'start_date',
+      header: () => <span>Start<br/>Date</span>,
+      meta: { align: 'center' },
+      cell: ({ getValue }) => formatDate(getValue()),
+    },
+    {
+      accessorKey: 'end_date',
+      header: () => <span>End<br/>Date</span>,
+      meta: { align: 'center' },
+      cell: ({ getValue }) => formatDate(getValue()),
+    },
+    {
+      accessorKey: 'start_time',
+      header: () => <span>Start<br/>Time</span>,
+      meta: { align: 'center' },
+      cell: ({ getValue }) => formatTime(getValue()),
+    },
+    {
+      accessorKey: 'end_time',
+      header: () => <span>End<br/>Time</span>,
+      meta: { align: 'center' },
+      cell: ({ getValue }) => formatTime(getValue()),
+    },
+    {
+      accessorKey: 'active',
+      header: 'Status',
+      meta: { align: 'center' },
+      cell: ({ getValue }) => (
+        <span className={`text-xs px-2 py-0.5 ${getValue() ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+          {getValue() ? 'Active' : 'Inactive'}
+        </span>
+      ),
+    },
+    {
+      id: 'actions',
+      header: '',
+      enableSorting: false,
+      size: 0,
+      meta: { align: 'right' },
+      cell: ({ row }) => (
+        <div className="flex gap-3 justify-end">
+          <button onClick={() => openEdit(row.original)} className="text-hmc-textprimary hover:text-hmc-b transition"><PencilIcon /></button>
+          <button onClick={() => setDeleteTarget(row.original)} className="text-hmc-textprimary hover:text-hmc-error transition"><TrashIcon /></button>
+        </div>
+      ),
+    },
+  ], []);
+
+  const table = useReactTable({
+    data: events,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
 
   return (
-    <PageContainer bg="alt1">
+    <PageContainer bg="admin">
       <Modal isOpen={showForm} onClose={() => { setShowForm(false); setEditTarget(null); }} title={editTarget ? 'Edit Event' : 'Add Event'} maxWidth="max-w-lg">
         <EventForm
           initial={editTarget ?? {}}
@@ -163,43 +286,66 @@ export default function EventOverviewPage() {
         <p className="text-sm text-gray-600">Delete <span className="font-semibold text-gray-900">{deleteTarget?.title}</span>? This cannot be undone.</p>
       </Modal>
 
-      <div className="mx-auto rounded bg-white p-4 shadow">
-        <AdminPageHeader
-          title="Event Overview"
-          action={
-            <button onClick={openAdd} className="px-4 py-2 text-sm bg-hmc-button-a text-hmc-button-text-a font-bold hover:opacity-90">
-              + Add Event
-            </button>
-          }
-        />
+      <AdminPageHeader
+        title="Event Overview"
+        action={
+          <button onClick={openAdd} className="px-4 py-2 text-sm bg-hmc-button-a text-hmc-button-text-a font-bold hover:opacity-90">
+            + Add Event
+          </button>
+        }
+      />
 
-        {events.length === 0 ? (
-          <p className="text-sm text-hmc-textprimary">No events yet.</p>
-        ) : (
-          <div className="flex flex-col divide-y divide-hmc-border-b">
-            {events.map(event => (
-              <div key={event.id} className="flex items-center gap-4 py-4">
-                {event.image ? (
-                  <img src={event.image.image_url} alt={event.title} className="w-20 h-16 object-cover border border-hmc-border-b shrink-0" />
-                ) : (
-                  <div className="w-20 h-16 bg-hmc-button-a/20 border border-hmc-border-b shrink-0" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="font-bold text-hmc-textprimary truncate">{event.title}</div>
-                  {event.description && <p className="text-xs text-hmc-textsecondary line-clamp-2 mt-0.5">{event.description}</p>}
-                  {event.url && <a href={event.url} target="_blank" rel="noopener noreferrer" className="text-xs text-hmc-b hover:underline truncate block mt-0.5">{event.url}</a>}
-                </div>
-                <span className={`text-xs px-2 py-0.5 ${event.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                  {event.active ? 'Active' : 'Inactive'}
-                </span>
-                <div className="flex gap-3 shrink-0">
-                  <button onClick={() => openEdit(event)} className="text-hmc-textprimary hover:text-hmc-b transition"><PencilIcon /></button>
-                  <button onClick={() => setDeleteTarget(event)} className="text-hmc-textprimary hover:text-hmc-error transition"><TrashIcon /></button>
-                </div>
-              </div>
+      <div className="overflow-hidden border border-hmc-border-a">
+        <table className="w-full border-collapse text-sm table-fixed">
+          <colgroup>
+            <col style={{ width: '25%' }} />
+            <col />
+            <col style={{ width: '8rem' }} />
+            <col style={{ width: '8rem' }} />
+            <col style={{ width: '7rem' }} />
+            <col style={{ width: '7rem' }} />
+            <col style={{ width: '7rem' }} />
+            <col style={{ width: '5rem' }} />
+          </colgroup>
+          <thead className="bg-hmc-button-a text-hmc-button-text-a">
+            {table.getHeaderGroups().map(hg => (
+              <tr key={hg.id}>
+                {hg.headers.map(header => {
+                  const canSort = header.column.getCanSort();
+                  const sorted = header.column.getIsSorted();
+                  return (
+                    <th
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      className={`px-3 py-3 text-xs font-bold uppercase tracking-wide border-b border-hmc-border-a ${canSort ? 'cursor-pointer select-none' : ''} text-${header.column.columnDef.meta?.align ?? 'left'}`}
+                    >
+                      <div className={`flex items-center gap-1 ${header.column.columnDef.meta?.align === 'center' ? 'justify-center' : header.column.columnDef.meta?.align === 'right' ? 'justify-end' : ''}`}>
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {sorted === 'asc' && <span>▲</span>}
+                        {sorted === 'desc' && <span>▼</span>}
+                      </div>
+                    </th>
+                  );
+                })}
+              </tr>
             ))}
-          </div>
-        )}
+          </thead>
+          <tbody>
+            {events.length === 0 ? (
+              <tr><td colSpan={8} className="px-3 py-6 text-center text-sm text-hmc-textprimary opacity-50">No events yet.</td></tr>
+            ) : (
+              table.getRowModel().rows.map(row => (
+                <tr key={row.id} className="border-b border-hmc-border-b hover:bg-hmc-button-a/10 transition">
+                  {row.getVisibleCells().map(cell => (
+                    <td key={cell.id} className={`px-3 py-3 align-middle text-hmc-textprimary text-${cell.column.columnDef.meta?.align ?? 'left'}`}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </PageContainer>
   );
