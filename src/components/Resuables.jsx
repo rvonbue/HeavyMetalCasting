@@ -277,8 +277,8 @@ export function ImgPlaceholder({}) {
 }
 
 export function PriceComponent({price}) {
-  if(price === 0 ) return <span> Price Unavailable</span>
-  else return <span>{price}</span>
+  if(price === 0 ) return <span>Price Unavailable</span>
+  else return <span>${Number(price).toFixed(2)}</span>
 }
 
 export function TwoColumnLayout({ left, right }) {

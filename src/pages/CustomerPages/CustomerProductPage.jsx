@@ -37,24 +37,47 @@ function CustomerProductPageMainContainer({ product }) {
 }
 function LeftColumn({ product }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-
+  const images = product.product_images;
+  const hasPrev = selectedImageIndex > 0;
+  const hasNext = selectedImageIndex < images.length - 1;
 
   return (
   <div className="lg:col-span-9 flex h-[calc(100vh-90px)] min-h-0 flex-col">
-    <div className="min-h-0 flex-1 overflow-hidden border border-hmc-c shadow">
-      {product.product_images[selectedImageIndex] ? 
+    <div className="relative min-h-0 flex-1 overflow-hidden border border-hmc-c shadow">
+      {images[selectedImageIndex] ?
         <img
-          src={product.product_images[selectedImageIndex].image_url}
+          src={images[selectedImageIndex].image_url}
           alt={product.name || product.title || "Product Image"}
           className="h-full w-full object-contain"
-        /> : 
+        /> :
         <ImgPlaceholder/>
       }
+
+      {hasPrev && (
+        <button
+          onClick={() => setSelectedImageIndex(i => i - 1)}
+          className="absolute left-[1%] top-1/2 -translate-y-1/2 text-hmc-c/75 hover:text-hmc-c transition-colors leading-none select-none"
+          style={{ fontSize: 'clamp(6rem, 15vw, 14rem)' }}
+          aria-label="Previous image"
+        >
+          ‹
+        </button>
+      )}
+      {hasNext && (
+        <button
+          onClick={() => setSelectedImageIndex(i => i + 1)}
+          className="absolute right-[1%] top-1/2 -translate-y-1/2 text-hmc-c/75 hover:text-hmc-c transition-colors leading-none select-none"
+          style={{ fontSize: 'clamp(6rem, 15vw, 14rem)' }}
+          aria-label="Next image"
+        >
+          ›
+        </button>
+      )}
     </div>
 
   <div className="shrink-0">
     <ThumbnailCarousel
-      imgs={product.product_images}
+      imgs={images}
       selectedImageIndex={selectedImageIndex}
       setSelectedImageIndex={setSelectedImageIndex}
       productName={product.name || product.title}

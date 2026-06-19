@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-import { Button_A, PageContainer } from '../../components/Resuables'
+import { Button_A, PageContainer, OptionButton } from '../../components/Resuables'
 import BreadCrumb from '../../components/BreadCrumb'
 import ProductCard from '../../components/CustomerPageComponents/ProductCard.jsx'
 import { ShopPathName } from '../../staticData/PathData.js'
@@ -37,6 +37,8 @@ function ShopPage() {
     )
   }, [shopProducts, selectedCategoryId])
 
+  const [columns, setColumns] = useState(2);
+
   return (
     <PageContainer>
       <BreadCrumb />
@@ -50,14 +52,18 @@ function ShopPage() {
         {selectedCategoriesByRoute.join(" ") || 'invisible'}
       </div>
 
-      <div className="flex mt-8">
-        <SidePanel
-          selectedCategoriesByRoute={selectedCategoriesByRoute}
-          product_categories={product_categories}
-        />
+      <div className="flex mt-8 gap-8">
+        <div className="hidden sm:block w-40 shrink-0">
+          <SidePanel
+            selectedCategoriesByRoute={selectedCategoriesByRoute}
+            product_categories={product_categories}
+          />
+        </div>
 
         <ProductsContainer
           sortedFilteredProducts={sortedFilteredProducts}
+          columns={columns}
+          setColumns={setColumns}
         />
       </div>
     </PageContainer>
@@ -97,7 +103,7 @@ function getShopUrlForCategory(selectedCategoriesByRoute, category) {
 
 export function SidepanelList({ headerName, sidePanelState, setSidePanelState, displayData, selectedCategoriesByRoute }) {
   return (
-    <div className="text-left w-[30%]">
+    <div className="text-left">
       <h1
         className="text-1xl font-bold text-hmc-c uppercase flex justify-between items-center
                    cursor-pointer select-none border-b-2 border-[var(--color-hmc-border-a)] mb-4"
@@ -139,14 +145,28 @@ export function SidepanelList({ headerName, sidePanelState, setSidePanelState, d
     </div>
   );
 }
-function ProductsContainer({ sortedFilteredProducts }) {
-    return (
-      <div className="text-left ml-12 w-[70%] grid grid-cols-2 gap-4">
-          {sortedFilteredProducts.map((product) => {
-            return <ProductCard key={product.id} product={product} />
-          })}
+function ProductsContainer({ sortedFilteredProducts, columns, setColumns }) {
+  return (
+    <div className="text-left sm:ml-8 flex-1 min-w-0">
+      <div className="hidden sm:flex justify-end gap-3 mb-4 items-center">
+        {[2, 4].map(n => (
+          <button key={n} onClick={() => setColumns(n)} className="flex gap-1.5 items-center p-1">
+            {Array.from({ length: n }).map((_, i) => (
+              <span
+                key={i}
+                className={`block w-3 h-3 rounded-full border border-[#b08d57] transition-colors ${columns === n ? 'bg-[#b08d57]' : 'bg-transparent'}`}
+              />
+            ))}
+          </button>
+        ))}
       </div>
-    );
+      <div className={columns === 4 ? 'grid grid-cols-1 sm:grid-cols-4 gap-4' : 'grid grid-cols-1 sm:grid-cols-2 gap-4'}>
+        {sortedFilteredProducts.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default ShopPage

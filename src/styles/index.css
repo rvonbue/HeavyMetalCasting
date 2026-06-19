@@ -4,11 +4,14 @@
 @import "tailwindcss"; 
 
 
-@source inline("lg:grid-cols-2");
+@source inline("lg:grid-cols-2 sm:grid-cols-2 sm:grid-cols-4 sm:block sm:flex");
 
 @layer base {
   body {
     font-family: "Cinzel";
+  }
+  button {
+    cursor: pointer;
   }
 }
 
