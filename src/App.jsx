@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { Toaster } from "sonner";
 import HeaderNavbar from './components/header/Header'
@@ -13,24 +13,26 @@ function Root() {
   const dispatch = useDispatch()
 
   const showShoppingCart = useSelector(state => state.cart.showShoppingCart);
-  const { toolbarHeight, themeName, headerTransparent } = useSelector(state => state.app);
+  const { toolbarHeight, themeName } = useSelector(state => state.app);
   const theme = themeName === "dark" ? "" : "theme-hmc-inverted"
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
   useEffect(() => {
     loadAppData(dispatch);
   }, []);
 
-  // When headerTransparent, the header is position:fixed (out of flow),
-  // so the outlet must fill the full 100vh rather than subtracting toolbar height.
-  const outletHeight = headerTransparent
-    ? '100vh'
-    : `calc(100vh - ${toolbarHeight}px)`;
+  // On home, header is position:fixed (out of flow) so outlet fills full 100vh.
+  // overflow:hidden forces scrolling to happen inside #home-scroll-container.
+  const outletStyle = isHome
+    ? { height: '100vh', overflow: 'hidden' }
+    : { height: `calc(100vh - ${toolbarHeight}px)` };
 
   return (
     <div id="hmc-theme-root" className={theme}>
       <Toaster position="bottom-right" richColors closeButton />
       <HeaderNavbar />
-      <div style={{ height: outletHeight }} className="bg-hmc-bodybackground">
+      <div style={outletStyle} className="bg-hmc-bodybackground">
         <Outlet />
         <ShoppingTab
           isOpen={showShoppingCart}

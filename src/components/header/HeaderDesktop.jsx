@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useState, useEffect } from 'react'
 
 import { CartIcon, SkullIcon } from '../../styles/Icons.jsx'
+import { UserCircle } from 'lucide-react'
 import { activeBorder, inactiveBorder } from '../../styles/App.jsx'
 import { toggleShoppingCart } from '../../store/shoppingCartSlice'
 
@@ -24,18 +25,19 @@ export default function HeaderDesktop({
 
   useEffect(() => {
     if (!headerTransparent && !isHome) { setScrolled(false); return; }
-    const attach = () => {
+    // Defer one tick so Home's scroll container is in the DOM
+    const t = setTimeout(() => {
       const el = document.getElementById('home-scroll-container');
       if (!el) return;
       const onScroll = () => setScrolled(el.scrollTop > 20);
-      el.addEventListener('scroll', onScroll);
-      return () => el.removeEventListener('scroll', onScroll);
+      el.addEventListener('scroll', onScroll, { passive: true });
+      // store cleanup on the timeout ref so we can call it on unmount
+      t._cleanup = () => el.removeEventListener('scroll', onScroll);
+    }, 0);
+    return () => {
+      clearTimeout(t);
+      t._cleanup?.();
     };
-    // home-scroll-container may not exist yet on first render — retry once
-    const cleanup = attach();
-    if (cleanup) return cleanup;
-    const t = setTimeout(() => attach(), 100);
-    return () => clearTimeout(t);
   }, [headerTransparent, isHome]);
 
   return (
@@ -84,8 +86,8 @@ export default function HeaderDesktop({
         }}
       >
         {/* Left: brand */}
-        <div>
-          <NavLink to="/" end style={{ color: 'inherit' }}>
+        <div className="flex items-center">
+          <NavLink to="/" end className={({ isActive }) => isActive ? activeBorder : inactiveBorder} style={{ color: 'inherit' }}>
             HMC
           </NavLink>
         </div>
@@ -102,9 +104,7 @@ export default function HeaderDesktop({
         >
           <NavLink
             to="/shop"
-            className={({ isActive }) =>
-              isActive ? activeBorder : inactiveBorder
-            }
+            className={({ isActive }) => isActive ? activeBorder : inactiveBorder}
             style={{ color: 'inherit' }}
           >
             SHOP
@@ -112,9 +112,7 @@ export default function HeaderDesktop({
 
           <NavLink
             to="/events"
-            className={({ isActive }) =>
-              isActive ? activeBorder : inactiveBorder
-            }
+            className={({ isActive }) => isActive ? activeBorder : inactiveBorder}
             style={{ color: 'inherit' }}
           >
             EVENTS
@@ -122,9 +120,7 @@ export default function HeaderDesktop({
 
           <NavLink
             to="/about_us"
-            className={({ isActive }) =>
-              isActive ? activeBorder : inactiveBorder
-            }
+            className={({ isActive }) => isActive ? activeBorder : inactiveBorder}
             style={{ color: 'inherit' }}
           >
             ABOUT US
@@ -140,8 +136,9 @@ export default function HeaderDesktop({
           {loggedIn ? (
             <SkullIcon />
           ) : (
-            <Link to="/login" style={{ color: 'inherit' }}>
-              SIGN IN
+            <Link to="/login" className={inactiveBorder} style={{ color: 'inherit', display: 'inline-flex', alignItems: 'center' }}>
+              <span className="hidden sm:inline">SIGN IN</span>
+              <UserCircle className="sm:hidden" size={24} strokeWidth={0.75} />
             </Link>
           )}
 

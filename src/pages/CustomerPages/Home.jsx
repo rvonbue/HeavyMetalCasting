@@ -1,10 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setHeaderTransparent } from '../../store/appSlice';
 import heroSrc from '../../assets/images/hmc_hero.png';
-import heroPortraitSrc from '../../assets/images/Hmc_color.jpg';
+import heroPortraitSrc from '../../assets/images/hmc_hero_portrait.png';
 import illustrationSrc from '../../assets/images/hmc_illustration.jpg';
-
 
 const SECTION_ONE = {
   heading: 'Handcrafted in Metal',
@@ -28,10 +27,20 @@ export default function Home() {
   const dispatch = useDispatch();
   const heroRef = useRef(null);
   const rafRef = useRef(null);
+  const [isLandscape, setIsLandscape] = useState(
+    () => window.matchMedia('(orientation: landscape)').matches
+  );
 
   useEffect(() => {
     dispatch(setHeaderTransparent(true));
     return () => dispatch(setHeaderTransparent(false));
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(orientation: landscape)');
+    const handler = (e) => setIsLandscape(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
   }, []);
 
   useEffect(() => {
@@ -40,8 +49,9 @@ export default function Home() {
     const onScroll = () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
-        if (!heroRef.current) return;
-        heroRef.current.style.transform = `translateY(${el.scrollTop * 0.35}px)`;
+        if (heroRef.current) {
+          heroRef.current.style.transform = `translateY(${el.scrollTop * 0.35}px)`;
+        }
       });
     };
     el.addEventListener('scroll', onScroll, { passive: true });
@@ -51,49 +61,29 @@ export default function Home() {
     };
   }, []);
 
-
   return (
     <div id="home-scroll-container" className="overflow-y-auto overflow-x-hidden" style={{ height: '100vh' }}>
 
       {/* Hero */}
       <div className="relative overflow-hidden" style={{ height: '100vh' }}>
-        {/* Portrait image (shown in portrait orientation, hidden in landscape) */}
         <div
           ref={heroRef}
-          className="absolute inset-x-0 will-change-transform landscape:hidden"
+          className="absolute inset-x-0 will-change-transform"
           style={{
-            backgroundImage: `url(${heroPortraitSrc})`,
+            backgroundImage: `url(${isLandscape ? heroSrc : heroPortraitSrc})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center top',
             top: 0,
             height: '140%',
           }}
         />
-        {/* Landscape image (hidden in portrait orientation) */}
-        <div
-          className="absolute inset-x-0 hidden landscape:block"
-          style={{
-            backgroundImage: `url(${heroSrc})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center top',
-            top: 0,
-            height: '140%',
-          }}
-        />
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/70 animate-bounce">
-          <span className="text-xs tracking-widest uppercase">Scroll</span>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 5v14M5 12l7 7 7-7" />
-          </svg>
-        </div>
       </div>
 
       {/* Content layer */}
       <div className="relative bg-hmc-bodybackground z-10">
         <div className="max-w-[1280px] mx-auto px-8 py-16 flex flex-col gap-24">
 
-          {/* Row 1: text left, image right (stacks to text then image on mobile) */}
+          {/* Row 1: text left, image right */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div className="flex flex-col gap-5">
               <h2 className="text-3xl font-bold text-hmc-textprimary">{SECTION_ONE.heading}</h2>
@@ -106,7 +96,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Row 2: image left, text right (stacks to text then image on mobile via order) */}
+          {/* Row 2: image left, text right */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div className="order-2 sm:order-1">
               <img src={illustrationSrc} alt="The casting process" className="w-full object-contain" />
