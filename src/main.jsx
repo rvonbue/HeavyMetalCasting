@@ -19,6 +19,7 @@ import ProductOverviewPage from "./pages/AdminPages/ProductManagementPage.jsx";
 import OrdersOverviewPage from "./pages/AdminPages/OrdersOverviewPage.jsx";
 import ProductEditPage from "./pages/AdminPages/ProductEditPage.jsx";
 import ProductAddPage from "./pages/AdminPages/ProductAddPage.jsx";
+import StoreSettingsPage from "./pages/AdminPages/StoreSettingsPage.jsx";
 
 import './styles/App.css';
 import './styles/index.css';
@@ -47,6 +48,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="overview_products" element={<ProductOverviewPage />} />
               <Route path="edit_product" element={<ProductEditPage />} />
               <Route path="add_product" element={<ProductAddPage />} />
+              <Route path="store_settings" element={<StoreSettingsPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Route>

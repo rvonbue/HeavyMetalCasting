@@ -4,6 +4,7 @@ import productsReducer from './productsSlice'
 import cartReducer from './shoppingCartSlice'
 import adminReducer from "./adminSlice"
 import userReducer from "./userSlice"
+import settingsReducer from "./settingsSlice"
 
 export const store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
     products: productsReducer,
     admin: adminReducer,
     cart: cartReducer,
-    user: userReducer
+    user: userReducer,
+    settings: settingsReducer,
   },
 })
 export default store;
