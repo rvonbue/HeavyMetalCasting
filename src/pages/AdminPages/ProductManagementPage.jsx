@@ -14,7 +14,7 @@ import {
   TailwindSpinner,
 } from "../../styles/Icons";
 
-import { Button_A, PageContainer } from "../../components/Resuables";
+import { Button_A, PageContainer, AdminPageHeader } from "../../components/Resuables";
 import { removeProduct } from "../../store/productsSlice";
 import { deleteProductAPI } from "../../api/adminAPI";
 import { toast } from "sonner";
@@ -157,28 +157,16 @@ export default function ProductOverviewPage() {
       />
 
       <div className="mx-auto rounded bg-white p-4 shadow">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-hmc-textprimary">
-            Product Management
-          </h1>
-
-          <div className="flex items-center gap-4">
-            {/* <button
-              type="button"
-              onClick={() => setShowUploadModal(true)}
-              className="text-sm font-bold text-hmc-textprimary underline-offset-4 hover:underline"
-            >
-              Update via spreadsheet
-            </button> */}
-
+        <AdminPageHeader
+          title="Product Overview"
+          action={
             <Button_A
               button_name="+ Add Product"
-              button_type = "onClick"
+              button_type="onClick"
               onClick={() => setShowAddProductModal(true)}
-              button_styles_outer={{ marginTop: "1.5rem" }}
             />
-          </div>
-        </div>
+          }
+        />
 
         {productsLoading ? (
           <TailwindSpinner />

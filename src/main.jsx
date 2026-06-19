@@ -20,6 +20,8 @@ import OrdersOverviewPage from "./pages/AdminPages/OrdersOverviewPage.jsx";
 import ProductEditPage from "./pages/AdminPages/ProductEditPage.jsx";
 import ProductAddPage from "./pages/AdminPages/ProductAddPage.jsx";
 import StoreSettingsPage from "./pages/AdminPages/StoreSettingsPage.jsx";
+import EventOverviewPage from "./pages/AdminPages/EventOverviewPage.jsx";
+import EventsPage from "./pages/CustomerPages/EventsPage.jsx";
 
 import './styles/App.css';
 import './styles/index.css';
@@ -39,6 +41,7 @@ createRoot(document.getElementById('root')).render(
             <Route path={`${ShopPathName}/:category?`} element={<ShopPage />} />
             <Route path=":product/:product_id" element={<CustomerProductPage />} />
             <Route path="about_us" element={<AboutUsPage />} />
+            <Route path="events" element={<EventsPage />} />
             <Route path="checkout" element={<CheckoutPage />} />
             <Route path="payment" element={<PaymentPage />} />
             <Route path="/order_status/:orderToken" element={<OrderStatusPage />} />
@@ -49,6 +52,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="edit_product" element={<ProductEditPage />} />
               <Route path="add_product" element={<ProductAddPage />} />
               <Route path="store_settings" element={<StoreSettingsPage />} />
+              <Route path="event_overview" element={<EventOverviewPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Route>

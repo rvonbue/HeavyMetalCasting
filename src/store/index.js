@@ -5,6 +5,7 @@ import cartReducer from './shoppingCartSlice'
 import adminReducer from "./adminSlice"
 import userReducer from "./userSlice"
 import settingsReducer from "./settingsSlice"
+import eventsReducer from "./eventsSlice"
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     cart: cartReducer,
     user: userReducer,
     settings: settingsReducer,
+    events: eventsReducer,
   },
 })
 export default store;

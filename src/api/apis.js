@@ -4,6 +4,7 @@ import {
   setProductsLoading,
 } from '../store/productsSlice';
 import { setSettings } from '../store/settingsSlice';
+import { setEvents } from '../store/eventsSlice';
 import { getStoreSettingsAPI } from './storeSettingsAPI';
 
 export async function loadAppData(dispatch) {
@@ -29,6 +30,7 @@ export async function loadAppData(dispatch) {
         metal_types: data.metal_types,
       })
     );
+    dispatch(setEvents(data.events ?? []));
     dispatch(setSettings(settingsRows));
   } catch (error) {
     console.error('Failed loading app data', error);

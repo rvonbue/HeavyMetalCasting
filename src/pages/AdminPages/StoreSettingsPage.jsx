@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { PageContainer } from '../../components/Resuables';
+import { PageContainer, AdminPageHeader } from '../../components/Resuables';
 import { updateSetting } from '../../store/settingsSlice';
 import { updateStoreSettingAPI } from '../../api/storeSettingsAPI';
 
@@ -86,19 +86,19 @@ export default function StoreSettingsPage() {
   return (
     <PageContainer>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex items-center justify-between mb-6 border-b border-hmc-border-b pb-4">
-          <div>
-            <h1 className="text-2xl font-bold text-hmc-textprimary">Store Settings</h1>
-            <p className="text-xs text-hmc-textprimary opacity-60 mt-1">Edit fields then save all at once.</p>
-          </div>
-          <button
-            type="submit"
-            disabled={!isDirty || isSubmitting}
-            className="px-5 py-2 text-sm font-bold bg-hmc-button-a text-hmc-button-text-a border border-hmc-border-b disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed hover:bg-hmc-button-b hover:text-hmc-button-text-b transition"
-          >
-            {isSubmitting ? 'Saving...' : 'Save All'}
-          </button>
-        </div>
+        <AdminPageHeader
+          title="Store Settings"
+          subtitle="Edit fields then save all at once."
+          action={
+            <button
+              type="submit"
+              disabled={!isDirty || isSubmitting}
+              className="px-5 py-2 text-sm font-bold bg-hmc-button-a text-hmc-button-text-a border border-hmc-border-b disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed hover:bg-hmc-button-b hover:text-hmc-button-text-b transition"
+            >
+              {isSubmitting ? 'Saving...' : 'Save All'}
+            </button>
+          }
+        />
 
         <div className="flex flex-col gap-6">
           {GROUPS.map((group) => (

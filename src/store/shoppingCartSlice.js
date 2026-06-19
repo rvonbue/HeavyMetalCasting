@@ -3,16 +3,6 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   showShoppingCart: false,
   shoppingCartItems: [
-     {
-      id: '3_1_7',
-      product_id: 3,
-      product_name: "Dragon Sccale Ring Z",
-      product_price: 89.99,
-      quantity: 1,
-      metal_type: 1,
-      size_chart: '7'
-    }
-
   ] // { id, quantity }
 }
 

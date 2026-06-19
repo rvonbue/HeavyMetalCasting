@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { HmcSelect } from "../Resuables";
 
 export const ADMIN_ROUTES = [
@@ -8,7 +8,11 @@ export const ADMIN_ROUTES = [
   },
   {
     value: "/admin/overview_products",
-    label: "Products Management",
+    label: "Product Overview",
+  },
+  {
+    value: "/admin/event_overview",
+    label: "Event Overview",
   },
   {
     value: "/admin/product_fields",
@@ -22,13 +26,16 @@ export const ADMIN_ROUTES = [
 
 export default function AdminMenu() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const selectedOption = ADMIN_ROUTES.find(r => pathname.startsWith(r.value)) ?? null;
 
   return (
     <div className="w-[350px]">
       <HmcSelect
         options={ADMIN_ROUTES}
-        value={undefined}
-        onChange={(option)=> navigate((option.value))}
+        value={selectedOption}
+        onChange={(option) => navigate(option.value)}
         placeholder="ADMIN"
       />
     </div>

@@ -10,7 +10,7 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { updateProductAPI, upsertProductVariantsAPI } from "../../api/productEditAPI.js";
 import { updateProduct, upsertProductVariants } from "../../store/productsSlice";
 
-import { PageContainer, Button_A, FormLabel, getProductImageLinks, HmcSelect } from "../../components/Resuables"; // MultiSelectDropdown
+import { PageContainer, Button_A, FormLabel, getProductImageLinks, HmcSelect, AdminPageHeader } from "../../components/Resuables"; // MultiSelectDropdown
 import ProductImageUploaderDropzone from "../../components/AdminPageComponents/ProductImageUploaderDropzone"; // MultiSelectDropdown
 import {  TailwindSpinner } from "../../styles/Icons";
 import { productImageLinks } from "../../staticData/PathData.js";
@@ -180,40 +180,39 @@ const EditProductForm = ({
       onSubmit={handleSubmit(onSubmit)}
       className="flex h-full min-h-0 flex-col"
     >
-      <div className="mb-4 flex flex-none items-center justify-between">
-        <h1 className="text-xl font-bold text-hmc-textprimary">Product Edit</h1>
-
-        <div className="flex items-center gap-4">
-          {fieldsUpdated && (
-            <div className="flex flex-none items-center gap-2 text-sm text-hmc-textprimary">
-              <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500" />
-              <span>Warning unsaved changes</span>
-            </div>
-          )}
-
-          <Controller
-            name="live"
-            control={control}
-            render={({ field }) => (
-              <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-hmc-textprimary">
-                <input
-                  type="checkbox"
-                  checked={Boolean(field.value)}
-                  onChange={(e) => field.onChange(e.target.checked)}
-                  className="h-4 w-4 cursor-pointer rounded border-hmc-b text-hmc-c focus:ring-hmc-c"
-                />
-                Live
-              </label>
+      <AdminPageHeader
+        title="Product Edit"
+        action={
+          <div className="flex items-center gap-4">
+            {fieldsUpdated && (
+              <div className="flex flex-none items-center gap-2 text-sm text-hmc-textprimary">
+                <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500" />
+                <span>Warning unsaved changes</span>
+              </div>
             )}
-          />
-
-          <Button_A
-            button_name="Update Product"
-            button_type="form"
-            link_val="/admin/add_product"
-          />
-        </div>
-      </div>
+            <Controller
+              name="live"
+              control={control}
+              render={({ field }) => (
+                <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-hmc-textprimary">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(field.value)}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                    className="h-4 w-4 cursor-pointer rounded border-hmc-b text-hmc-c focus:ring-hmc-c"
+                  />
+                  Live
+                </label>
+              )}
+            />
+            <Button_A
+              button_name="Update Product"
+              button_type="form"
+              link_val="/admin/add_product"
+            />
+          </div>
+        }
+      />
 
       <div className="space-y-2 overflow-y-auto flex-1 min-h-0">
         <CollapsibleSection title="Product Details" defaultOpen>

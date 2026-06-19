@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getCustomerOrders } from "../../api/adminAPI";
 import OrdersTable from "../../components/adminPageComponents/orders/OrdersTable";
+import { PageContainer, AdminPageHeader } from "../../components/Resuables";
 
 export default function OrdersOverviewPage() {
   const [orders, setOrders] = useState([]);
@@ -23,13 +24,13 @@ export default function OrdersOverviewPage() {
   }, []);
 
   if (isLoading) {
-    return <div className="p-4 text-hmc-textprimary">Loading orders...</div>;
+    return <PageContainer><div className="text-hmc-textprimary">Loading orders...</div></PageContainer>;
   }
 
   return (
-    <div className="p-4 h-full">
-      <h1 className="mb-4 text-xl font-bold text-hmc-textprimary">Orders</h1>
+    <PageContainer>
+      <AdminPageHeader title="Orders Overview" />
       <OrdersTable orders={orders} />
-    </div>
+    </PageContainer>
   );
 }

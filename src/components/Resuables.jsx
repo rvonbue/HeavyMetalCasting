@@ -276,6 +276,18 @@ export function ImgPlaceholder({}) {
   )
 }
 
+export function AdminPageHeader({ title, subtitle, action }) {
+  return (
+    <div className="flex items-center justify-between mb-6 border-b border-hmc-border-b pb-4">
+      <div>
+        <h1 className="text-2xl font-bold text-hmc-textprimary">{title}</h1>
+        {subtitle && <p className="text-xs text-hmc-textprimary opacity-60 mt-1">{subtitle}</p>}
+      </div>
+      {action && <div>{action}</div>}
+    </div>
+  )
+}
+
 export function PriceComponent({price}) {
   if(price === 0 ) return <span>Price Unavailable</span>
   else return <span>${Number(price).toFixed(2)}</span>

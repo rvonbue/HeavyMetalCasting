@@ -87,6 +87,16 @@ export default function HeaderDesktop({
           </NavLink>
 
           <NavLink
+            to="/events"
+            className={({ isActive }) =>
+              isActive ? activeBorder : inactiveBorder
+            }
+            style={{ color: 'inherit' }}
+          >
+            EVENTS
+          </NavLink>
+
+          <NavLink
             to="/about_us"
             className={({ isActive }) =>
               isActive ? activeBorder : inactiveBorder
