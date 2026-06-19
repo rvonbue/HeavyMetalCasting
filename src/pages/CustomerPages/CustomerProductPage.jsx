@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { Button_A, getProductById, PageContainer, ImgPlaceholder, PriceComponent, OptionButton } from '../../components/Resuables'
+import { Button_A, getProductById, PageContainer, ImgPlaceholder, ProductImage, PriceComponent, OptionButton } from '../../components/Resuables'
 import { getProductImageLinks, getUpdateCartProduct, getCartItemId } from '../../helpers/dataHelper.js';
 import { updateCart, selectProductQuantity } from '../../store/shoppingCartSlice.js';
 import ThumbnailCarousel from "../../components/CustomerPageComponents/ThumbnailCarousel.jsx"
@@ -44,14 +44,12 @@ function LeftColumn({ product }) {
   return (
   <div className="lg:col-span-9 flex h-[calc(100vh-90px)] min-h-0 flex-col">
     <div className="relative min-h-0 flex-1 overflow-hidden border border-hmc-c shadow">
-      {images[selectedImageIndex] ?
-        <img
-          src={images[selectedImageIndex].image_url}
-          alt={product.name || product.title || "Product Image"}
-          className="h-full w-full object-contain"
-        /> :
-        <ImgPlaceholder/>
-      }
+        <ProductImage
+        src={images[selectedImageIndex]?.image_url}
+        alt={product.name || product.title || "Product Image"}
+        bgVar="hero"
+        className="h-full w-full object-contain"
+      />
 
       {hasPrev && (
         <button
@@ -116,9 +114,14 @@ function RightColumn({ product }) {
         {product.name || "Product Page"}
       </h1>
 
-      <p className="mb-4 text-md font-bold text-hmc-c">
-        <PriceComponent price={displayPrice}/>
-      </p>
+      <div className="flex items-baseline gap-3 mb-4">
+        <p className="text-md font-bold text-hmc-c">
+          <PriceComponent price={displayPrice}/>
+        </p>
+        <span className="text-xs text-hmc-c opacity-60">
+          {stockAvailable === 0 ? <span className="text-hmc-error font-semibold opacity-100">Out of stock</span> : `${stockAvailable} in stock`}
+        </span>
+      </div>
      <MetalTypeSelectorWidget
         metal_types={product.metal_types}
         metalTypeSelected={metalTypeSelected}
@@ -200,15 +203,21 @@ function SizeChartSelectorWidget({
   const sizeOptions = size_charts.find((s) => s.id === productSizeChartId)?.options || [];
 
   useEffect(() => {
-    if (sizeOptions?.length > 0) {
-      setSizeSelected(sizeOptions[0].value);
-      setSizeChartId(productSizeChartId);
+    if (!sizeOptions?.length) return;
+    const current = sizeOptions.find(size => size.value === sizeSelected);
+    const currentInStock = current && (getProductVariant({ productVariants, sizeChartId: productSizeChartId, sizeSelected: current.value, metalTypeSelected })?.stock ?? 0) > 0;
+    if (!current || !currentInStock) {
+      const first = sizeOptions.find(size =>
+        (getProductVariant({ productVariants, sizeChartId: productSizeChartId, sizeSelected: size.value, metalTypeSelected })?.stock ?? 0) > 0
+      );
+      if (first) {
+        setSizeSelected(first.value);
+        setSizeChartId(productSizeChartId);
+      }
     }
-  }, [sizeOptions]);
+  }, [sizeOptions, metalTypeSelected]);
   
   if (!sizeOptions?.length)  return null;
-
-  console.log("sizeOptions", sizeOptions);
 
   return (
     <div>
@@ -261,14 +270,6 @@ function AddToCartWidget({ product, shoppingCartItemQuantity, shoppingCartProps,
 
   return (
     <div className="mt-8">
-      <p className="mb-2 text-xs text-hmc-c">
-        {outOfStock ? (
-          <span className="font-semibold text-hmc-error">Out of stock</span>
-        ) : (
-          <span>{stockAvailable} in stock</span>
-        )}
-      </p>
-
       {!outOfStock && (
         <div className="flex flex-row items-end gap-3">
           <div className="flex items-center border rounded overflow-hidden">

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ProductImage } from "../Resuables";
 
 export default function ThumbnailCarousel({
   imgs,
@@ -75,9 +76,10 @@ export default function ThumbnailCarousel({
                 : "border-gray-300"
             }`}
           >
-            <img
+            <ProductImage
               src={img.thumbnail_url || img.image_url}
               alt={`${productName || "Product"} thumbnail ${index + 1}`}
+              bgVar="thumb"
               className="h-full w-full object-contain"
             />
           </button>

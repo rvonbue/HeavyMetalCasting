@@ -24,6 +24,9 @@
   --color-hmc-inputbox-a: oklch(86.9% 0.022 252.894);
   --color-hmc-bodybackground: oklch(0.94 0.005 178);
   --color-hmc-panelbackground: oklch(0.96 0.0 1);
+  --color-hmc-img-bg-hero: oklch(0.91 0.005 178);
+  --color-hmc-img-bg-thumb: oklch(0.93 0.005 178);
+  --color-hmc-img-bg-card: oklch(0.92 0.005 178);
   --color-hmc-button-a: oklch(86.9% 0.022 252.894);
   --color-hmc-button-b: oklch(55.4% 0.046 257.417);
   --color-hmc-button-text-a: oklch(0.1 0.11 178);  
@@ -62,6 +65,9 @@
   --color-hmc-inputbox-a: oklch(0.1 0.11 178);
   --color-hmc-bodybackground: oklch(0.99 0 0);
   --color-hmc-panelbackground: oklch(0.96 0 1);
+  --color-hmc-img-bg-hero: oklch(0.93 0.005 178);
+  --color-hmc-img-bg-thumb: oklch(0.93 0.005 178);
+  --color-hmc-img-bg-card: oklch(0.92 0.005 178);
   --color-hmc-button-a: oklch(55.4% 0.046 257.417);
   --color-hmc-button-b: oklch(86.9% 0.022 252.894);
   --color-hmc-button-text-a: oklch(0.96 0 1);

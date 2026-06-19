@@ -265,15 +265,25 @@ export function HmcSelect({
 }
 
 export function ImgPlaceholder({}) {
-
   return (
-
     <div className="flex h-full w-full items-center justify-center border border-hmc-border-a bg-hmc-panelbackground">
-  <span className="text-sm text-hmc-textprimary">
-    No Image Available
-  </span>
-</div>
+      <span className="text-sm text-hmc-textprimary">No Image Available</span>
+    </div>
   )
+}
+
+export function ProductImage({ src, alt = '', className = '', bgVar = 'hero' }) {
+  const bgClass = bgVar === 'thumb' ? 'bg-hmc-img-bg-thumb' : bgVar === 'card' ? 'bg-hmc-img-bg-card' : 'bg-hmc-img-bg-hero';
+  if (!src) {
+    return (
+      <div className={`${bgClass} ${className} flex items-center justify-center`}>
+        <span className="text-xs tracking-widest uppercase opacity-50 text-hmc-textprimary text-center px-2">
+          Image Coming Soon
+        </span>
+      </div>
+    );
+  }
+  return <img src={src} alt={alt} className={`${bgClass} ${className}`} />;
 }
 
 export function AdminPageHeader({ title, subtitle, action }) {
