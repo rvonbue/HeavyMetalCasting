@@ -21,6 +21,7 @@ import ProductEditPage from "./pages/AdminPages/ProductEditPage.jsx";
 import ProductAddPage from "./pages/AdminPages/ProductAddPage.jsx";
 import StoreSettingsPage from "./pages/AdminPages/StoreSettingsPage.jsx";
 import EventOverviewPage from "./pages/AdminPages/EventOverviewPage.jsx";
+import EditEventPage from "./pages/AdminPages/EditEventPage.jsx";
 import EventsPage from "./pages/CustomerPages/EventsPage.jsx";
 
 import './styles/App.css';
@@ -53,6 +54,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="add_product" element={<ProductAddPage />} />
               <Route path="store_settings" element={<StoreSettingsPage />} />
               <Route path="event_overview" element={<EventOverviewPage />} />
+              <Route path="edit_event/:id" element={<EditEventPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Route>

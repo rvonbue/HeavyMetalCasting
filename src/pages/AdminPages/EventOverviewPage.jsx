@@ -1,5 +1,6 @@
 import { useState, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   flexRender,
@@ -10,11 +11,10 @@ import {
 import { PageContainer, AdminPageHeader } from '../../components/Resuables';
 import { TrashIcon, PencilIcon } from '../../styles/Icons';
 import Modal from '../../components/modal/Modal';
-import { addEvent, updateEvent, removeEvent } from '../../store/eventsSlice';
+import { addEvent, removeEvent } from '../../store/eventsSlice';
 import RichTextEditor from '../../components/RichTextEditor';
 import {
   createEventAPI,
-  updateEventAPI,
   deleteEventAPI,
   uploadEventImageAPI,
   deleteSiteImageAPI,
@@ -23,17 +23,17 @@ import {
 const inputClass = "w-full bg-hmc-panelbackground text-hmc-textprimary text-sm px-3 py-2 border border-hmc-border-b focus:outline-none focus:border-hmc-border-a";
 const labelClass = "text-xs font-bold text-hmc-textprimary uppercase mb-1 block";
 
-function EventForm({ initial = {}, onSave, onCancel, saving }) {
-  const [title, setTitle] = useState(initial.title ?? '');
-  const [description, setDescription] = useState(initial.description ?? '');
-  const [url, setUrl] = useState(initial.url ?? '');
-  const [startDate, setStartDate] = useState(initial.start_date ?? '');
-  const [endDate, setEndDate] = useState(initial.end_date ?? '');
-  const [startTime, setStartTime] = useState(initial.start_time ?? '');
-  const [endTime, setEndTime] = useState(initial.end_time ?? '');
-  const [active, setActive] = useState(initial.active ?? true);
+function EventForm({ onSave, onCancel, saving }) {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [url, setUrl] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [active, setActive] = useState(true);
   const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview] = useState(initial.image?.image_url ?? null);
+  const [preview, setPreview] = useState(null);
   const fileRef = useRef();
 
   function onFileChange(e) {
@@ -52,8 +52,6 @@ function EventForm({ initial = {}, onSave, onCancel, saving }) {
       start_time: startTime || null,
       end_time: endTime || null,
       imageFile,
-      existingImageId: initial.image?.id,
-      existingImagePath: initial.image?.image_path,
     });
   }
 
@@ -128,42 +126,29 @@ function formatTime(val) {
 
 export default function EventOverviewPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const events = useSelector(state => state.events.events);
 
   const [showForm, setShowForm] = useState(false);
-  const [editTarget, setEditTarget] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [saving, setSaving] = useState(false);
   const [sorting, setSorting] = useState([]);
 
-  async function handleSave({ title, description, url, active, start_date, end_date, start_time, end_time, imageFile, existingImageId, existingImagePath }) {
+  async function handleSave({ title, description, url, active, start_date, end_date, start_time, end_time, imageFile }) {
     setSaving(true);
     try {
-      let image_id = editTarget?.image_id ?? null;
-
+      let image_id = null;
       if (imageFile) {
-        if (existingImageId) await deleteSiteImageAPI(existingImageId, existingImagePath);
         const img = await uploadEventImageAPI(imageFile);
         image_id = img.id;
       }
-
-      const fields = { title, description, url, active, start_date, end_date, start_time, end_time, image_id };
-
-      if (editTarget) {
-        const updated = await updateEventAPI(editTarget.id, fields);
-        dispatch(updateEvent(updated));
-        toast.success('Event updated');
-      } else {
-        const created = await createEventAPI({ ...fields, sort_order: events.length });
-        dispatch(addEvent(created));
-        toast.success('Event created');
-      }
-
+      const created = await createEventAPI({ title, description, url, active, start_date, end_date, start_time, end_time, image_id, sort_order: events.length });
+      dispatch(addEvent(created));
+      toast.success('Event created');
       setShowForm(false);
-      setEditTarget(null);
     } catch (err) {
       console.error(err);
-      toast.error('Failed to save event');
+      toast.error('Failed to create event');
     } finally {
       setSaving(false);
     }
@@ -181,8 +166,8 @@ export default function EventOverviewPage() {
     }
   }
 
-  function openEdit(event) { setEditTarget(event); setShowForm(true); }
-  function openAdd() { setEditTarget(null); setShowForm(true); }
+  function openAdd() { setShowForm(true); }
+
 
   const columns = useMemo(() => [
     {
@@ -244,7 +229,7 @@ export default function EventOverviewPage() {
       meta: { align: 'right' },
       cell: ({ row }) => (
         <div className="flex gap-3 justify-end">
-          <button onClick={() => openEdit(row.original)} className="text-hmc-textprimary hover:text-hmc-b transition"><PencilIcon /></button>
+          <button onClick={() => navigate(`/admin/edit_event/${row.original.id}`)} className="text-hmc-textprimary hover:text-hmc-b transition"><PencilIcon /></button>
           <button onClick={() => setDeleteTarget(row.original)} className="text-hmc-textprimary hover:text-hmc-error transition"><TrashIcon /></button>
         </div>
       ),
@@ -262,11 +247,10 @@ export default function EventOverviewPage() {
 
   return (
     <PageContainer bg="admin">
-      <Modal isOpen={showForm} onClose={() => { setShowForm(false); setEditTarget(null); }} title={editTarget ? 'Edit Event' : 'Add Event'} maxWidth="max-w-lg">
+      <Modal isOpen={showForm} onClose={() => setShowForm(false)} title="Add Event" maxWidth="max-w-lg">
         <EventForm
-          initial={editTarget ?? {}}
           onSave={handleSave}
-          onCancel={() => { setShowForm(false); setEditTarget(null); }}
+          onCancel={() => setShowForm(false)}
           saving={saving}
         />
       </Modal>
