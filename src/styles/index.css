@@ -40,7 +40,8 @@
   --color-hmc-textsecondary: oklch(0.96 0 1);
   --color-hmc-headercolor: oklch(0.1 0.11 178);
   --color-hmc-header-opaque: oklch(0.96 0.0 1);
-   
+  --color-hmc-overlay: oklch(0.08 0.03 178 / 0.35);
+
   --color-hmc-error: red;
   --font-family: "Cinzel"; 
   --breakpoint-3xl: 120rem; 
@@ -66,8 +67,8 @@
   --color-hmc-inputbox-a: oklch(0.1 0.11 178);
   --color-hmc-bodybackground: oklch(0.99 0 0);
   --color-hmc-panelbackground: oklch(0.96 0 1);
-  --color-hmc-img-bg-hero: oklch(0.93 0.005 178);
-  --color-hmc-img-bg-thumb: oklch(0.93 0.005 178);
+  --color-hmc-img-bg-hero: oklch(93.069% 0.00449 181.078 / 0);
+  --color-hmc-img-bg-thumb: oklch(100% 0.00011 271.152 / 0);
   --color-hmc-img-bg-card: oklch(0.92 0.005 178);
   --color-hmc-button-a: oklch(55.4% 0.046 257.417);
   --color-hmc-button-b: oklch(86.9% 0.022 252.894);
@@ -83,6 +84,7 @@
   --color-hmc-textsecondary: oklch(0.96 0 1);
   --color-hmc-headercolor: oklch(86.9% 0.022 252.894);
   --color-hmc-header-opaque: oklch(0.96 0 1);
+  --color-hmc-overlay: oklch(0.15 0.03 178 / 0.25);
 }
 
 

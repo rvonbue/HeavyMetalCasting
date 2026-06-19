@@ -6,7 +6,6 @@ import { Button_A, getProductById, PageContainer, ImgPlaceholder, ProductImage, 
 import { getProductImageLinks, getUpdateCartProduct, getCartItemId } from '../../helpers/dataHelper.js';
 import { updateCart, selectProductQuantity } from '../../store/shoppingCartSlice.js';
 import ThumbnailCarousel from "../../components/CustomerPageComponents/ThumbnailCarousel.jsx"
-import { size } from 'lodash-es';
 
 function CustomerProductPage() {
   const { product_id } = useParams()
@@ -54,21 +53,25 @@ function LeftColumn({ product }) {
       {hasPrev && (
         <button
           onClick={() => setSelectedImageIndex(i => i - 1)}
-          className="absolute left-[1%] top-1/2 -translate-y-1/2 text-hmc-c/75 hover:text-hmc-c transition-colors leading-none select-none"
-          style={{ fontSize: 'clamp(6rem, 15vw, 14rem)' }}
+          className="absolute left-0 top-0 h-full text-hmc-a/60 hover:text-hmc-a leading-none select-none flex items-center justify-center group transition-colors duration-500"
+          style={{ fontSize: 'clamp(6rem, 15vw, 14rem)', width: '20%' }}
           aria-label="Previous image"
         >
-          ‹
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+            style={{ background: 'linear-gradient(to left, transparent, var(--color-hmc-overlay))' }} />
+          <span className="relative">‹</span>
         </button>
       )}
       {hasNext && (
         <button
           onClick={() => setSelectedImageIndex(i => i + 1)}
-          className="absolute right-[1%] top-1/2 -translate-y-1/2 text-hmc-c/75 hover:text-hmc-c transition-colors leading-none select-none"
-          style={{ fontSize: 'clamp(6rem, 15vw, 14rem)' }}
+          className="absolute right-0 top-0 h-full text-hmc-a/60 hover:text-hmc-a leading-none select-none flex items-center justify-center group transition-colors duration-500"
+          style={{ fontSize: 'clamp(6rem, 15vw, 14rem)', width: '20%' }}
           aria-label="Next image"
         >
-          ›
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+            style={{ background: 'linear-gradient(to right, transparent, var(--color-hmc-overlay))' }} />
+          <span className="relative">›</span>
         </button>
       )}
     </div>
