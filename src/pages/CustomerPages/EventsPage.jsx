@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux';
 import { PageContainer } from '../../components/Resuables';
-import BreadCrumb from '../../components/BreadCrumb';
 
 function EventCard({ event }) {
   return (
@@ -39,7 +38,6 @@ export default function EventsPage() {
 
   return (
     <PageContainer>
-      <BreadCrumb />
       <h1 className="text-3xl font-bold text-hmc-c text-left mt-6 mb-8">Events</h1>
 
       {events.length === 0 ? (

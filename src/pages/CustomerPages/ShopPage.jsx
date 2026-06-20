@@ -3,7 +3,6 @@ import { NavLink, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { Button_A, PageContainer, OptionButton } from '../../components/Resuables'
-import BreadCrumb from '../../components/BreadCrumb'
 import ProductCard from '../../components/CustomerPageComponents/ProductCard.jsx'
 import { ShopPathName } from '../../staticData/PathData.js'
 
@@ -41,18 +40,10 @@ function ShopPage() {
 
   return (
     <PageContainer>
-      <BreadCrumb />
 
-      <div
-        className={
-          'text-left text-3xl text-hmc-text-a font-bold mt-6 select-none' +
-          (selectedCategoriesByRoute.length ? '' : ' invisible')
-        }
-      >
-        {selectedCategoriesByRoute.join(" ") || 'invisible'}
-      </div>
 
-      <div className="flex mt-8 gap-8">
+      <div className="flex
+       gap-8">
         <div className="hidden sm:block w-40 shrink-0">
           <SidePanel
             selectedCategoriesByRoute={selectedCategoriesByRoute}

@@ -31,7 +31,7 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
 
       {/* Sliding panel */}
       <div
-        className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-50 transform transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-full w-full sm:w-80 bg-white shadow-lg z-50 transform transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
