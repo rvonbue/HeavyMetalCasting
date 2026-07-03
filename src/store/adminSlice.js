@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   productEditFields: [],
-  productColumns: [],
   shopBlocks: [],
   adminDataLoaded: false,
 }
@@ -14,22 +13,6 @@ const adminSlice = createSlice({
     setAdminInitialData(state, action) {
       Object.assign(state, action.payload);
       state.adminDataLoaded = true;
-    },
-    setAdminProductFields(state, action) {
-      state.productEditFields = action.payload;
-    },
-    addAdminProductField(state, action) {
-      state.productEditFields.push(action.payload);
-    },
-    updateAdminProductField(state, action) {
-      const updated = action.payload;
-      const idx = state.productEditFields.findIndex((f) => f.id === updated.id);
-      if (idx !== -1) {
-        state.productEditFields[idx] = {
-          ...state.productEditFields[idx],
-          ...updated,
-        };
-      }
     },
     setShopBlocks(state, action) {
       state.shopBlocks = action.payload;
@@ -52,9 +35,6 @@ const adminSlice = createSlice({
 
 export const {
   setAdminInitialData,
-  setAdminProductFields,
-  updateAdminProductField,
-  addAdminProductField,
   setShopBlocks,
   addShopBlock,
   updateShopBlock,
