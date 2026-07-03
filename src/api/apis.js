@@ -28,6 +28,7 @@ export async function loadAppData(dispatch) {
         product_categories: data.product_categories,
         size_charts: data.size_charts,
         metal_types: data.metal_types,
+        shop_page_blocks: data.shop_page_blocks,
       })
     );
     dispatch(setEvents(data.events ?? []));

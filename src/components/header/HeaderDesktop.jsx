@@ -125,7 +125,7 @@ export default function HeaderDesktop({
           >
             ABOUT US
           </NavLink>
-          {/* {hasAdminAccess === true &&<AdminDropDownMenu/> } */}
+          {hasAdminAccess === true &&<AdminDropDownMenu/> }
         </div>
 
         {/* Right */}

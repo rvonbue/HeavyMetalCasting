@@ -10,6 +10,7 @@ const initialState = {
     size_charts: [],
     metal_types: []
   },
+  shopBlocks: [],
 }
 
 const productsSlice = createSlice({
@@ -22,14 +23,15 @@ const productsSlice = createSlice({
         product_categories,
         size_charts,
         metal_types,
+        shop_page_blocks,
       } = action.payload;
-      
-      console.log("setAppData:action", action);
+
       state.products = products ?? [];
       state.shopProducts = state.products.filter(prd => prd.live);
       state.productAttributes.product_categories = product_categories ?? [];
       state.productAttributes.size_charts = size_charts ?? [];
       state.productAttributes.metal_types = metal_types ?? [];
+      state.shopBlocks = shop_page_blocks ?? [];
       state.productsLoading = false;
     },
     setProductsLoading(state, action) {

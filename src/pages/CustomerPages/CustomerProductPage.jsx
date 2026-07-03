@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, Fragment } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -99,10 +99,30 @@ function getProductVariant({productVariants, sizeChartId, sizeSelected, metalTyp
   ));
 }
 
+// Groups shop-page blocks into a 2D layout: rows sorted by grid_row, and within
+// each row blocks sorted by grid_col.
+function buildBlockRows(blocks) {
+  const visible = (blocks ?? []).filter(b => b.visible !== false);
+  const byRow = new Map();
+  for (const b of visible) {
+    const r = b.grid_row ?? 999;
+    if (!byRow.has(r)) byRow.set(r, []);
+    byRow.get(r).push(b);
+  }
+  return [...byRow.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([row, items]) => [
+      row,
+      items.sort((x, y) => (x.grid_col ?? 0) - (y.grid_col ?? 0)),
+    ]);
+}
+
 function RightColumn({ product }) {
   const [metalTypeSelected, setMetalTypeSelected] = useState(0);
   const [sizeSelected, setSizeSelected] = useState(null);
   const [sizeChartId, setSizeChartId] = useState(null);
+
+  const shopBlocks = useSelector(state => state.products.shopBlocks);
 
   const shoppingCartProps = { product, metalTypeSelected, sizeSelected };
   const shoppingCartItems = useSelector(state => state.cart.shoppingCartItems);
@@ -111,44 +131,97 @@ function RightColumn({ product }) {
   const stockAvailable = selectedVariant?.stock ?? 0;
   const displayPrice = selectedVariant?.price ?? product.price;
 
-  return (
-    <div className="text-left lg:col-span-3">
-      <h1 className="text-2xl font-bold text-hmc-c">
-        {product.name || "Product Page"}
-      </h1>
+  const rows = useMemo(() => buildBlockRows(shopBlocks), [shopBlocks]);
 
-      <div className="flex items-baseline gap-3 mb-4">
-        <p className="text-md font-bold text-hmc-c">
-          <PriceComponent price={displayPrice}/>
-        </p>
-        <span className="text-xs text-hmc-c opacity-60">
-          {stockAvailable === 0 ? <span className="text-hmc-error font-semibold opacity-100">Out of stock</span> : `${stockAvailable} in stock`}
-        </span>
+  // widget blocks -> interactive components
+  function renderWidget(component) {
+    switch (component) {
+      case 'metal_selector':
+        return (
+          <MetalTypeSelectorWidget
+            metal_types={product.metal_types}
+            metalTypeSelected={metalTypeSelected}
+            setMetalTypeSelected={setMetalTypeSelected}
+          />
+        );
+      case 'size_selector':
+        return (
+          <SizeChartSelectorWidget
+            productSizeChart={product.size_chart}
+            sizeSelected={sizeSelected}
+            setSizeSelected={setSizeSelected}
+            sizeChartId={sizeChartId}
+            setSizeChartId={setSizeChartId}
+            metalTypeSelected={metalTypeSelected}
+            productVariants={product.product_variants}
+          />
+        );
+      case 'buy_controls':
+        return (
+          <AddToCartWidget
+            product={product}
+            shoppingCartItemQuantity={shoppingCartItemQuantity}
+            shoppingCartProps={shoppingCartProps}
+            stockAvailable={stockAvailable}
+          />
+        );
+      case 'stock_status':
+        return (
+          <span className="text-xs text-hmc-c opacity-60">
+            {stockAvailable === 0
+              ? <span className="text-hmc-error font-semibold opacity-100">Out of stock</span>
+              : `${stockAvailable} in stock`}
+          </span>
+        );
+      default:
+        return null;
+    }
+  }
+
+  // product blocks -> a value from the product record
+  function renderProduct(block) {
+    const { column_name, input_type, field_label } = block;
+    if (column_name === 'name') {
+      return <h1 className="text-2xl font-bold text-hmc-c">{product.name || 'Product'}</h1>;
+    }
+    if (column_name === 'price') {
+      return <p className="text-md font-bold text-hmc-c"><PriceComponent price={displayPrice} /></p>;
+    }
+    if (input_type === 'textarea') {
+      return <p className="text-sm text-hmc-c">{product[column_name] || 'No description available.'}</p>;
+    }
+    const value = product[column_name];
+    if (value == null || value === '') return null;
+    return (
+      <div className="text-sm text-hmc-c">
+        {field_label && <span className="mr-2 text-xs uppercase tracking-wide text-hmc-c/70">{field_label}</span>}
+        <span>{value}</span>
       </div>
-     <MetalTypeSelectorWidget
-        metal_types={product.metal_types}
-        metalTypeSelected={metalTypeSelected}
-        setMetalTypeSelected={setMetalTypeSelected}
-      />
-     <SizeChartSelectorWidget
-        productSizeChart={product.size_chart}
-        sizeSelected={sizeSelected}
-        setSizeSelected={setSizeSelected}
-        sizeChartId={sizeChartId}
-        setSizeChartId={setSizeChartId}
-         metalTypeSelected={metalTypeSelected}
-        productVariants={product.product_variants}
-      />
-     <AddToCartWidget
-        product={product}
-        shoppingCartItemQuantity={shoppingCartItemQuantity}
-        shoppingCartProps={shoppingCartProps}
-        stockAvailable={stockAvailable}
-      />
-      <p className="mt-4 text-sm text-hmc-c">
-        {product.description || product.desc || "No description available."}
-      </p>
-  </div>
+    );
+  }
+
+  function renderBlock(block) {
+    switch (block.block_type) {
+      case 'widget':
+        return renderWidget(block.component);
+      case 'user':
+        return <p className="text-sm text-hmc-c">{block.content}</p>;
+      case 'product':
+      default:
+        return renderProduct(block);
+    }
+  }
+
+  return (
+    <div className="text-left lg:col-span-3 flex flex-col gap-4">
+      {rows.map(([row, items]) => (
+        <div key={row} className="flex flex-wrap items-baseline gap-x-3 gap-y-2">
+          {items.map(block => (
+            <Fragment key={block.id}>{renderBlock(block)}</Fragment>
+          ))}
+        </div>
+      ))}
+    </div>
   )
 }
 
