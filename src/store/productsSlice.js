@@ -37,6 +37,9 @@ const productsSlice = createSlice({
     setProductsLoading(state, action) {
       state.productsLoading = action.payload
     },
+    setShopBlocks(state, action) {
+      state.shopBlocks = action.payload ?? [];
+    },
     setProducts(state, action) {
       state.products = action.payload;
       state.shopProducts= action.payload.filter(prd => prd.live === true);
@@ -147,6 +150,7 @@ const productsSlice = createSlice({
 export const {
   setAppData,
   setProductsLoading,
+  setShopBlocks,
   setProducts,
   setProductEditFields,
   updateProduct,

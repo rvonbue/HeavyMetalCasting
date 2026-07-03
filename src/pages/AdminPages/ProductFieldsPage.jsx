@@ -27,6 +27,7 @@ import {
   deleteShopBlockAPI,
 } from "../../api/adminAPI";
 import { setShopBlocks } from "../../store/adminSlice";
+import { setShopBlocks as setProductsShopBlocks } from "../../store/productsSlice";
 
 const SIMPLE_TYPES = ["text", "textarea", "checkbox", "float", "number", "string"];
 
@@ -60,6 +61,9 @@ function serializeBlocks(blocks) {
         field_id: b.field_id ?? null,
         component: b.component ?? null,
         content: b.content ?? null,
+        label: b.label ?? null,
+        font_size: b.font_size ?? null,
+        show_label: b.show_label ?? true,
       }))
       .sort((a, b) => String(a.id).localeCompare(String(b.id)))
   );
@@ -74,10 +78,26 @@ const BLOCK_TYPE_OPTIONS = [
 const WIDGET_OPTIONS = [
   { value: "metal_selector", label: "Metal Selector" },
   { value: "size_selector", label: "Size Selector" },
-  { value: "buy_controls", label: "Quantity + Add to Cart" },
+  { value: "quantity", label: "Quantity" },
+  { value: "add_to_cart", label: "Add to Cart" },
   { value: "stock_status", label: "Stock Status (live)" },
 ];
-const WIDGET_LABELS = Object.fromEntries(WIDGET_OPTIONS.map((o) => [o.value, o.label]));
+// Includes legacy buy_controls so any pre-split blocks still label correctly.
+const WIDGET_LABELS = {
+  ...Object.fromEntries(WIDGET_OPTIONS.map((o) => [o.value, o.label])),
+  buy_controls: "Quantity + Add to Cart",
+};
+
+const FONT_SIZE_OPTIONS = [
+  { value: "", label: "Size: default" },
+  { value: "xs", label: "XS" },
+  { value: "sm", label: "S" },
+  { value: "base", label: "M" },
+  { value: "lg", label: "L" },
+  { value: "xl", label: "XL" },
+  { value: "2xl", label: "2XL" },
+  { value: "3xl", label: "3XL" },
+];
 
 // Groups blocks into a 2D array of rows (each a list of blocks ordered by col).
 function buildLayout(blocks) {
@@ -102,7 +122,7 @@ function blockSummary(block) {
   );
 }
 
-function SortableBlockCard({ block, onDelete, onEditContent }) {
+function SortableBlockCard({ block, onDelete, onEditContent, onEditLabel, onSetFontSize, onToggleLabel }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: block.id });
 
@@ -152,6 +172,43 @@ function SortableBlockCard({ block, onDelete, onEditContent }) {
       ) : (
         <span className="text-sm text-hmc-textprimary">{blockSummary(block)}</span>
       )}
+
+      {block.block_type === "widget" && (
+        <input
+          type="text"
+          defaultValue={block.label ?? ""}
+          onBlur={(e) => onEditLabel(block, e.target.value)}
+          placeholder="Label…"
+          className="w-full rounded border border-hmc-b/30 bg-white px-2 py-1 text-xs text-hmc-textprimary focus:border-hmc-c focus:outline-none focus:ring-1 focus:ring-hmc-c/30"
+        />
+      )}
+
+      {/* Styling controls */}
+      <div className="mt-1 flex items-center gap-2 border-t border-hmc-border-a pt-2">
+        <select
+          value={block.font_size ?? ""}
+          onChange={(e) => onSetFontSize(block, e.target.value || null)}
+          className="rounded border border-hmc-b/30 bg-white px-1 py-0.5 text-[11px] text-hmc-textprimary"
+        >
+          {FONT_SIZE_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+
+        {block.block_type === "widget" && (
+          <label className="flex items-center gap-1 text-[11px] text-hmc-textprimary">
+            <input
+              type="checkbox"
+              checked={block.show_label !== false}
+              onChange={(e) => onToggleLabel(block, e.target.checked)}
+              className="h-3 w-3"
+            />
+            Label
+          </label>
+        )}
+      </div>
     </div>
   );
 }
@@ -455,6 +512,8 @@ export default function ProductFieldsPage() {
       grid_row: maxRow + 1,
       grid_col: 0,
       visible: true,
+      font_size: null,
+      show_label: true,
     };
     if (values.block_type === "product") {
       block.field_id = values.field_id;
@@ -485,6 +544,25 @@ export default function ProductFieldsPage() {
     );
   }
 
+  function handleEditLabel(block, value) {
+    if (value === (block.label ?? "")) return;
+    setDraftBlocks((prev) =>
+      (prev ?? []).map((b) => (b.id === block.id ? { ...b, label: value } : b))
+    );
+  }
+
+  function handleSetFontSize(block, value) {
+    setDraftBlocks((prev) =>
+      (prev ?? []).map((b) => (b.id === block.id ? { ...b, font_size: value } : b))
+    );
+  }
+
+  function handleToggleLabel(block, checked) {
+    setDraftBlocks((prev) =>
+      (prev ?? []).map((b) => (b.id === block.id ? { ...b, show_label: checked } : b))
+    );
+  }
+
   // Persist the whole draft: delete removed blocks, create new ones, update the
   // fields that changed on existing ones, then sync the saved state from results.
   async function handleConfirm() {
@@ -503,9 +581,14 @@ export default function ProductFieldsPage() {
               block_type: b.block_type,
               grid_row: b.grid_row,
               grid_col: b.grid_col,
+              font_size: b.font_size ?? null,
+              show_label: b.show_label ?? true,
             };
             if (b.block_type === "product") payload.field_id = b.field_id;
-            if (b.block_type === "widget") payload.component = b.component;
+            if (b.block_type === "widget") {
+              payload.component = b.component;
+              payload.label = b.label ?? null;
+            }
             if (b.block_type === "user") payload.content = b.content ?? "";
             return createShopBlockAPI(payload);
           }
@@ -515,12 +598,16 @@ export default function ProductFieldsPage() {
           if (saved.grid_row !== b.grid_row) updates.grid_row = b.grid_row;
           if (saved.grid_col !== b.grid_col) updates.grid_col = b.grid_col;
           if ((saved.content ?? "") !== (b.content ?? "")) updates.content = b.content ?? "";
+          if ((saved.label ?? "") !== (b.label ?? "")) updates.label = b.label ?? null;
+          if ((saved.font_size ?? null) !== (b.font_size ?? null)) updates.font_size = b.font_size ?? null;
+          if ((saved.show_label ?? true) !== (b.show_label ?? true)) updates.show_label = b.show_label ?? true;
           if (Object.keys(updates).length === 0) return saved;
           return updateShopBlockAPI({ id: b.id, updates });
         })
       );
 
       dispatch(setShopBlocks(persisted));
+      dispatch(setProductsShopBlocks(persisted));
       toast.success("Changes saved");
     } catch (err) {
       console.error(err);
@@ -588,6 +675,9 @@ export default function ProductFieldsPage() {
                           block={block}
                           onDelete={handleDeleteBlock}
                           onEditContent={handleEditContent}
+                          onEditLabel={handleEditLabel}
+                          onSetFontSize={handleSetFontSize}
+                          onToggleLabel={handleToggleLabel}
                         />
                       ))}
                       <AppendGhost rowIndex={rIdx} />

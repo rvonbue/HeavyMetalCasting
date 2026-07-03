@@ -166,6 +166,17 @@ function blockFieldMeta(block) {
   };
 }
 
+// Maps a block's font_size token to a Tailwind text-size class.
+export const FONT_SIZE_CLASSES = {
+  xs: "text-xs",
+  sm: "text-sm",
+  base: "text-base",
+  lg: "text-lg",
+  xl: "text-xl",
+  "2xl": "text-2xl",
+  "3xl": "text-3xl",
+};
+
 // Renders the shop-page blocks for a product as a CSS grid. Reused by the
 // customer product page and by the admin layout preview.
 export function ProductBlocks({ product, blocks }) {
@@ -183,14 +194,19 @@ export function ProductBlocks({ product, blocks }) {
   const { colCount, cells } = useMemo(() => buildBlockGrid(blocks), [blocks]);
 
   // widget blocks -> interactive components
-  function renderWidget(component) {
-    switch (component) {
+  function renderWidget(block) {
+    const sizeClass = FONT_SIZE_CLASSES[block.font_size];
+    const showLabel = block.show_label !== false;
+    switch (block.component) {
       case 'metal_selector':
         return (
           <MetalTypeSelectorWidget
             metal_types={product.metal_types}
             metalTypeSelected={metalTypeSelected}
             setMetalTypeSelected={setMetalTypeSelected}
+            showLabel={showLabel}
+            label={block.label}
+            sizeClass={sizeClass}
           />
         );
       case 'size_selector':
@@ -203,6 +219,28 @@ export function ProductBlocks({ product, blocks }) {
             setSizeChartId={setSizeChartId}
             metalTypeSelected={metalTypeSelected}
             productVariants={product.product_variants}
+            showLabel={showLabel}
+            label={block.label}
+            sizeClass={sizeClass}
+          />
+        );
+      case 'quantity':
+        return (
+          <QuantityWidget
+            shoppingCartItemQuantity={shoppingCartItemQuantity}
+            shoppingCartProps={shoppingCartProps}
+            stockAvailable={stockAvailable}
+            showLabel={showLabel}
+            label={block.label}
+            sizeClass={sizeClass}
+          />
+        );
+      case 'add_to_cart':
+        return (
+          <AddToCartButtonWidget
+            shoppingCartItemQuantity={shoppingCartItemQuantity}
+            shoppingCartProps={shoppingCartProps}
+            stockAvailable={stockAvailable}
           />
         );
       case 'buy_controls':
@@ -216,7 +254,7 @@ export function ProductBlocks({ product, blocks }) {
         );
       case 'stock_status':
         return (
-          <span className="text-xs text-hmc-c opacity-60">
+          <span className={`${sizeClass || 'text-xs'} text-hmc-c opacity-60`}>
             {stockAvailable === 0
               ? <span className="text-hmc-error font-semibold opacity-100">Out of stock</span>
               : `${stockAvailable} in stock`}
@@ -229,20 +267,21 @@ export function ProductBlocks({ product, blocks }) {
 
   // product blocks -> a value from the product record
   function renderProduct(block) {
+    const sizeClass = FONT_SIZE_CLASSES[block.font_size];
     const { column_name, input_type, field_label } = blockFieldMeta(block);
     if (column_name === 'name') {
-      return <h1 className="text-2xl font-bold text-hmc-c">{product.name || 'Product'}</h1>;
+      return <h1 className={`${sizeClass || 'text-2xl'} font-bold text-hmc-c`}>{product.name || 'Product'}</h1>;
     }
     if (column_name === 'price') {
-      return <p className="text-md font-bold text-hmc-c"><PriceComponent price={displayPrice} /></p>;
+      return <p className={`${sizeClass || 'text-md'} font-bold text-hmc-c`}><PriceComponent price={displayPrice} /></p>;
     }
     if (input_type === 'textarea') {
-      return <p className="text-sm text-hmc-c">{product[column_name] || 'No description available.'}</p>;
+      return <p className={`${sizeClass || 'text-sm'} text-hmc-c`}>{product[column_name] || 'No description available.'}</p>;
     }
     const value = product[column_name];
     if (value == null || value === '') return null;
     return (
-      <div className="text-sm text-hmc-c">
+      <div className={`${sizeClass || 'text-sm'} text-hmc-c`}>
         {field_label && <span className="mr-2 text-xs uppercase tracking-wide text-hmc-c/70">{field_label}</span>}
         <span>{value}</span>
       </div>
@@ -252,9 +291,11 @@ export function ProductBlocks({ product, blocks }) {
   function renderBlock(block) {
     switch (block.block_type) {
       case 'widget':
-        return renderWidget(block.component);
-      case 'user':
-        return <p className="text-sm text-hmc-c">{block.content}</p>;
+        return renderWidget(block);
+      case 'user': {
+        const sizeClass = FONT_SIZE_CLASSES[block.font_size];
+        return <p className={`${sizeClass || 'text-sm'} text-hmc-c`}>{block.content}</p>;
+      }
       case 'product':
       default:
         return renderProduct(block);
@@ -269,7 +310,7 @@ export function ProductBlocks({ product, blocks }) {
       {cells.map(({ block, rowLine, colStart, colSpan }) => (
         <div
           key={block.id}
-          className="min-w-0"
+          className={`min-w-0 ${FONT_SIZE_CLASSES[block.font_size] ?? ""}`}
           style={{ gridColumn: `${colStart} / span ${colSpan}`, gridRow: rowLine }}
         >
           {renderBlock(block)}
@@ -282,7 +323,10 @@ export function ProductBlocks({ product, blocks }) {
 function MetalTypeSelectorWidget({
   metal_types = [],
   metalTypeSelected,
-  setMetalTypeSelected
+  setMetalTypeSelected,
+  showLabel = true,
+  label,
+  sizeClass,
 }) {
   const metal_types_detals = useSelector(state => state.products.productAttributes).metal_types;
 
@@ -293,12 +337,14 @@ function MetalTypeSelectorWidget({
   }, [metal_types]);
 
   if (!metal_types?.length)  return null;
-  
+
   return (
     <div>
-      <p className="mb-2 text-xs text-hmc-c">
-        Metal Type
-      </p>
+      {showLabel && (
+        <p className={`mb-2 ${sizeClass || 'text-xs'} text-hmc-c`}>
+          {label || 'Metal Type'}
+        </p>
+      )}
 
       <div className="flex flex-wrap gap-2">
         {metal_types.map((metal) => {
@@ -307,9 +353,9 @@ function MetalTypeSelectorWidget({
           if(metalDetails === undefined) return null;
           return (
             <div key={metal} onClick={() => setMetalTypeSelected(metal)}>
-            <OptionButton  
-              button_name={metalDetails.label} 
-              extraClassNames={` text-xs`}
+            <OptionButton
+              button_name={metalDetails.label}
+              extraClassNames={` ${sizeClass || 'text-xs'}`}
               isActive={isSelected}
             />
             </div>
@@ -326,7 +372,10 @@ function SizeChartSelectorWidget({
   setSizeSelected,
   sizeChartId,
   setSizeChartId,
-  metalTypeSelected
+  metalTypeSelected,
+  showLabel = true,
+  label,
+  sizeClass,
 }) {
   const productSizeChartId = productSizeChart[0];
   const size_charts = useSelector(state => state.products.productAttributes).size_charts;
@@ -351,9 +400,11 @@ function SizeChartSelectorWidget({
 
   return (
     <div>
-      <p className="mt-4 mb-1 text-xs text-hmc-c">
-        Size Chart
-      </p>
+      {showLabel && (
+        <p className={`mt-4 mb-1 ${sizeClass || 'text-xs'} text-hmc-c`}>
+          {label || 'Size Chart'}
+        </p>
+      )}
 
       <div className="flex flex-wrap gap-2">
         {sizeOptions.map((size) => {
@@ -370,7 +421,7 @@ function SizeChartSelectorWidget({
             >
               <OptionButton
                 button_name={size.label}
-                extraClassNames={`text-xs`}
+                extraClassNames={`${sizeClass || 'text-xs'}`}
                 isActive={isSelected}
                 isDisabled={isDisabled}
               />
@@ -381,6 +432,51 @@ function SizeChartSelectorWidget({
     </div>
   );
 }
+// Standalone quantity input. type="text" + inputMode numeric so no spinner
+// arrows ever render. Sets the cart quantity directly.
+function QuantityWidget({ shoppingCartItemQuantity, shoppingCartProps, stockAvailable, showLabel = true, label, sizeClass }) {
+  const dispatch = useDispatch();
+  if (stockAvailable === 0) return null;
+
+  const onQuantityChange = (e) => {
+    const v = parseInt(e.target.value.replace(/\D/g, ""), 10);
+    const newQuantity = Number.isNaN(v) ? 1 : Math.min(Math.max(1, v), stockAvailable);
+    dispatch(updateCart(getUpdateCartProduct({ ...shoppingCartProps, newQuantity })));
+  };
+
+  return (
+    <div>
+      {showLabel && <p className={`mb-1 ${sizeClass || 'text-xs'} text-hmc-c`}>{label || 'Quantity'}</p>}
+      <input
+        type="text"
+        inputMode="numeric"
+        value={shoppingCartItemQuantity || 1}
+        onChange={onQuantityChange}
+        className={`w-20 rounded border px-2 py-1 text-center outline-none bg-hmc-c ${sizeClass || 'text-sm'}`}
+      />
+    </div>
+  );
+}
+
+// Standalone Add to Cart button.
+function AddToCartButtonWidget({ shoppingCartItemQuantity, shoppingCartProps, stockAvailable }) {
+  const dispatch = useDispatch();
+  if (stockAvailable === 0) {
+    return <p className="text-sm font-semibold text-hmc-error">Out of stock</p>;
+  }
+
+  const addToCart = () => {
+    const newQuantity = Math.min(Math.max(1, shoppingCartItemQuantity), stockAvailable);
+    dispatch(updateCart(getUpdateCartProduct({ ...shoppingCartProps, newQuantity })));
+  };
+
+  return (
+    <div onClick={addToCart}>
+      <Button_A button_name="Add to Cart" />
+    </div>
+  );
+}
+
 function AddToCartWidget({ product, shoppingCartItemQuantity, shoppingCartProps, stockAvailable }) {
   const dispatch = useDispatch();
   const outOfStock = stockAvailable === 0;

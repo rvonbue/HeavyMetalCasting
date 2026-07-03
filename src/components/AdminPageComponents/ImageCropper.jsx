@@ -201,15 +201,6 @@ const ImageCropper = forwardRef(function ImageCropper({ src }, ref) {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <canvas
-        ref={canvasRef}
-        width={dims.w}
-        height={dims.h}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        className="max-w-full touch-none cursor-crosshair select-none"
-      />
       <div className="flex gap-2">
         <button
           type="button"
@@ -228,6 +219,15 @@ const ImageCropper = forwardRef(function ImageCropper({ src }, ref) {
           Expand to edges
         </button>
       </div>
+      <canvas
+        ref={canvasRef}
+        width={dims.w}
+        height={dims.h}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        className="max-w-full touch-none cursor-crosshair select-none"
+      />
     </div>
   );
 });

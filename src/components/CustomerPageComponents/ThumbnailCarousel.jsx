@@ -50,7 +50,7 @@ export default function ThumbnailCarousel({
   }, [imgs]);
 
   return (
-    <div className="relative mt-4 w-full px-10">
+    <div className={`relative mt-4 w-full ${canScroll ? "px-10" : "px-0"}`}>
       {canScroll && showLeftArrow && (
         <button
           type="button"

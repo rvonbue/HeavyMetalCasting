@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
@@ -24,7 +24,6 @@ export default function ProductImageEditorModal({ isOpen, onClose, image }) {
   const metalTypes = useSelector(
     (state) => state.products.productAttributes.metal_types
   );
-  const [fieldsOpen, setFieldsOpen] = useState(true);
   const cropperRef = useRef(null);
 
   const metalOptions = (metalTypes ?? []).map((m) => ({
@@ -78,8 +77,8 @@ export default function ProductImageEditorModal({ isOpen, onClose, image }) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Edit Image"
-      maxWidth="max-w-3xl"
+      title="Product Image Edit Modal"
+      maxWidth="max-w-4xl"
       footer={
         <>
           <button
@@ -101,86 +100,75 @@ export default function ProductImageEditorModal({ isOpen, onClose, image }) {
       }
     >
       <form id="image-editor-form" onSubmit={handleSubmit(onSubmit)}>
-        {/* Collapsible fields section */}
-        <div className="rounded border border-hmc-border-a">
-          <button
-            type="button"
-            onClick={() => setFieldsOpen((o) => !o)}
-            className="flex w-full items-center justify-between px-3 py-2 text-left text-sm font-semibold uppercase tracking-wide text-hmc-textprimary hover:bg-hmc-button-a/10"
-          >
-            Image Details
-            <span className="text-xs opacity-50">{fieldsOpen ? "▲" : "▼"}</span>
-          </button>
+        <div className="grid grid-cols-2 gap-6">
+          {/* Left: image + cropper */}
+          <div className="rounded border border-hmc-border-a bg-hmc-bg-a p-4">
+            <ImageCropper ref={cropperRef} src={image.image_url || image.thumbnail_url} />
+          </div>
 
-          {fieldsOpen && (
-            <div className="grid grid-cols-2 gap-4 px-3 pb-3 pt-1">
-              <div>
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-hmc-textprimary">
-                  Metal Types
-                </label>
-                <Controller
-                  name="metal_types"
-                  control={control}
-                  render={({ field }) => (
-                    <HmcSelect
-                      isMulti
-                      options={metalOptions}
-                      value={metalOptions.filter((o) => (field.value ?? []).includes(o.value))}
-                      onChange={(selected) =>
-                        field.onChange((selected ?? []).map((o) => o.value))
-                      }
-                    />
-                  )}
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-hmc-textprimary">
-                  View
-                </label>
-                <Controller
-                  name="view_type"
-                  control={control}
-                  render={({ field }) => (
-                    <HmcSelect
-                      options={VIEW_OPTIONS}
-                      value={VIEW_OPTIONS.find((o) => o.value === field.value) ?? null}
-                      onChange={(option) => field.onChange(option?.value ?? null)}
-                      isClearable
-                      isSearchable={false}
-                    />
-                  )}
-                />
-              </div>
-
-              <div className="col-span-2">
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-hmc-textprimary">
-                  Search Text
-                </label>
-                <input
-                  type="text"
-                  {...register("search_text")}
-                  className="w-full rounded border border-hmc-b/30 bg-white px-3 py-2 text-sm text-hmc-textprimary focus:border-hmc-c focus:outline-none focus:ring-1 focus:ring-hmc-c/30"
-                />
-              </div>
-
-              <div className="col-span-2">
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-hmc-textprimary">
-                  Description / Notes
-                </label>
-                <textarea
-                  rows={3}
-                  {...register("product_description")}
-                  className="w-full rounded border border-hmc-b/30 bg-white px-3 py-2 text-sm text-hmc-textprimary focus:border-hmc-c focus:outline-none focus:ring-1 focus:ring-hmc-c/30"
-                />
-              </div>
+          {/* Right: edit fields */}
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-hmc-textprimary">
+                Metal Types
+              </label>
+              <Controller
+                name="metal_types"
+                control={control}
+                render={({ field }) => (
+                  <HmcSelect
+                    isMulti
+                    options={metalOptions}
+                    value={metalOptions.filter((o) => (field.value ?? []).includes(o.value))}
+                    onChange={(selected) =>
+                      field.onChange((selected ?? []).map((o) => o.value))
+                    }
+                  />
+                )}
+              />
             </div>
-          )}
-        </div>
 
-        {/* Canvas cropper */}
-        <div className="mt-4 rounded border border-hmc-border-a bg-hmc-bg-a p-4">
-          <ImageCropper ref={cropperRef} src={image.image_url || image.thumbnail_url} />
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-hmc-textprimary">
+                View
+              </label>
+              <Controller
+                name="view_type"
+                control={control}
+                render={({ field }) => (
+                  <HmcSelect
+                    options={VIEW_OPTIONS}
+                    value={VIEW_OPTIONS.find((o) => o.value === field.value) ?? null}
+                    onChange={(option) => field.onChange(option?.value ?? null)}
+                    isClearable
+                    isSearchable={false}
+                  />
+                )}
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-hmc-textprimary">
+                Search Text
+              </label>
+              <input
+                type="text"
+                {...register("search_text")}
+                className="w-full rounded border border-hmc-b/30 bg-white px-3 py-2 text-sm text-hmc-textprimary focus:border-hmc-c focus:outline-none focus:ring-1 focus:ring-hmc-c/30"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-hmc-textprimary">
+                Description / Notes
+              </label>
+              <textarea
+                rows={4}
+                {...register("product_description")}
+                className="w-full rounded border border-hmc-b/30 bg-white px-3 py-2 text-sm text-hmc-textprimary focus:border-hmc-c focus:outline-none focus:ring-1 focus:ring-hmc-c/30"
+              />
+            </div>
+          </div>
         </div>
       </form>
     </Modal>
