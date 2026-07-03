@@ -31,7 +31,7 @@ export default function AdminMenu() {
   const selectedOption = ADMIN_ROUTES.find(r => pathname.startsWith(r.value)) ?? null;
 
   return (
-    <div className="w-[350px]">
+    <div className="w-56">
       <HmcSelect
         options={ADMIN_ROUTES}
         value={selectedOption}

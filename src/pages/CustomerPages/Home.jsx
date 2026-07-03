@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setHeaderTransparent } from '../../store/appSlice';
-import heroSrc from '../../assets/images/hmc_hero.png';
-import heroPortraitSrc from '../../assets/images/hmc_hero_portrait.png';
 import illustrationSrc from '../../assets/images/hmc_illustration.jpg';
 
 const SECTION_ONE = {
@@ -34,8 +32,8 @@ export default function Home() {
 
   // Uploaded homepage images (from store settings), falling back to the bundled
   // assets when not set.
-  const heroDesktop = settings.homepage_image_desktop_url || heroSrc;
-  const heroMobile = settings.homepage_image_mobile_url || heroPortraitSrc;
+  const heroDesktop = settings.homepage_image_desktop_url;
+  const heroMobile = settings.homepage_image_mobile_url;
 
   useEffect(() => {
     dispatch(setHeaderTransparent(true));
