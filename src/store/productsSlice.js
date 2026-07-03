@@ -102,6 +102,22 @@ const productsSlice = createSlice({
 
       product.product_images = images;
     },
+    updateProductImage: (state, action) => {
+      const { productId, image } = action.payload;
+
+      const product = state.products.find((p) => p.id === productId);
+      if (!product) return;
+
+      const idx = (product.product_images ?? []).findIndex(
+        (img) => img.id === image.id
+      );
+      if (idx !== -1) {
+        product.product_images[idx] = {
+          ...product.product_images[idx],
+          ...image,
+        };
+      }
+    },
     upsertProductVariants: (state, action) => {
       const { productId, variants } = action.payload;
 
@@ -139,6 +155,7 @@ export const {
   addProductImages,
   removeProductImage,
   reorderProductImages,
+  updateProductImage,
   upsertProductVariants,
 } = productsSlice.actions
 

@@ -1,4 +1,6 @@
+import { useState } from "react";
 import SortableImage from "./DragDropSortableImage";
+import ProductImageEditorModal from "./ProductImageEditorModal";
 import { useDispatch } from 'react-redux';
 import { toast } from "sonner";
 
@@ -19,6 +21,7 @@ import { removeProductImage, reorderProductImages  } from "../../store/productsS
 export default function ProductImageGrid({ product }) {
   const { product_images } = product;
   const dispatch = useDispatch();
+  const [editingImage, setEditingImage] = useState(null);
 
   async function handleReorderImages(reorderedImages) {
     try {
@@ -95,11 +98,21 @@ export default function ProductImageGrid({ product }) {
               image={image}
               index={index}
               onDelete={handleDeleteImage}
+              onEdit={setEditingImage}
             />
           ))}
         </div>
       </SortableContext>
     </DndContext>
+
+    {editingImage && (
+      <ProductImageEditorModal
+        key={editingImage.id}
+        isOpen
+        image={editingImage}
+        onClose={() => setEditingImage(null)}
+      />
+    )}
   </div>
   );
 };

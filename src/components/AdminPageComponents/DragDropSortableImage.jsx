@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -12,7 +12,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 
-export default function SortableImage({ image, index, onDelete }) {
+export default function SortableImage({ image, index, onDelete, onEdit }) {
   const {
     attributes,
     listeners,
@@ -48,6 +48,18 @@ export default function SortableImage({ image, index, onDelete }) {
     >
       {image.label}
     </div>
+
+      <button
+        type="button"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit(image);
+        }}
+        className="absolute left-2 top-2 hidden rounded bg-hmc-button-a p-2 text-hmc-button-text-a shadow group-hover:block"
+      >
+        <Pencil size={16} style={{ cursor: "pointer" }} />
+      </button>
 
       <button
         type="button"
