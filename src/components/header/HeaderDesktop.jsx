@@ -20,6 +20,9 @@ export default function HeaderDesktop({
 
   const toolbarHeight = useSelector(state => state.app.toolbarHeight);
   const headerTransparent = useSelector(state => state.app.headerTransparent);
+  const settings = useSelector(state => state.settings.settings);
+  const siteInitials = settings.site_initials || 'HMC';
+  const showLogo = settings.logo_show_in_navbar === 'true' && settings.logo_url;
   const isHome = window.location.pathname === '/';
   const [scrolled, setScrolled] = useState(false);
 
@@ -88,7 +91,12 @@ export default function HeaderDesktop({
         {/* Left: brand */}
         <div className="flex items-center">
           <NavLink to="/" end className={({ isActive }) => isActive ? activeBorder : inactiveBorder} style={{ color: 'inherit' }}>
-            HMC
+            <span className="inline-flex items-center">
+              {siteInitials}
+              {showLogo && (
+                <img src={settings.logo_url} alt="" className="ml-2 h-6 w-auto object-contain" />
+              )}
+            </span>
           </NavLink>
         </div>
 

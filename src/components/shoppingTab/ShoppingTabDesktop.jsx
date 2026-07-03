@@ -14,6 +14,7 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
   const shoppingCartItems = useSelector(
     state => state.cart.shoppingCartItems
   )
+  const logoUrl = useSelector(state => state.settings.settings.logo_url)
 
   const { totalCost, totalQuantities } = shoppingCartItemDetails
   const shoppingCartEmpty = shoppingCartItems.length === 0
@@ -31,10 +32,17 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
 
       {/* Sliding panel */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-80 bg-white shadow-lg z-50 transform transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-full w-full sm:w-80 bg-white shadow-lg z-50 transform transition-transform duration-300 overflow-hidden ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
+        {/* Logo watermark background */}
+        {logoUrl && (
+          <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center opacity-25">
+            <img src={logoUrl} alt="" className="max-h-[55%] max-w-[70%] object-contain" />
+          </div>
+        )}
+
         {isOpen && (
           <>
             {/* Header */}

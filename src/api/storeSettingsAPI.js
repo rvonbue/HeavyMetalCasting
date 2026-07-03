@@ -7,9 +7,43 @@ export async function getStoreSettingsAPI() {
 }
 
 export async function updateStoreSettingAPI(key, value) {
+  // Upsert so keys that were never seeded still persist (an UPDATE by key
+  // silently affects 0 rows when the row doesn't exist yet).
   const { error } = await supabase
     .from('store_settings')
-    .update({ value, updated_at: new Date().toISOString() })
-    .eq('key', key);
+    .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' });
   if (error) throw error;
+}
+
+// Uploads an image to the site-images bucket + site_images table, tagged with a
+// context (e.g. 'logo', 'homepage_desktop', 'about'). Returns the row.
+export async function uploadSiteImageAPI(file, context) {
+  const uid = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const ext = file.name.split('.').pop().toLowerCase();
+  const path = `${context}/${uid}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('site-images')
+    .upload(path, file, { contentType: file.type });
+  if (uploadError) throw uploadError;
+
+  const { data: urlData } = supabase.storage.from('site-images').getPublicUrl(path);
+
+  const bitmap = await createImageBitmap(file);
+
+  const { data, error } = await supabase
+    .from('site_images')
+    .insert({
+      image_url: urlData.publicUrl,
+      image_path: path,
+      context,
+      file_size: file.size,
+      file_extension: ext,
+      width: bitmap.width,
+      height: bitmap.height,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
 }

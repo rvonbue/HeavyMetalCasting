@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Toaster } from "sonner";
 import HeaderNavbar from './components/header/Header'
 import ShoppingTab from './components/shoppingTab/ShoppingTab'
+import SaleBanner from './components/SaleBanner'
 
 import { toggleShoppingCart } from './store/shoppingCartSlice'
 import './styles/App.css'
@@ -32,6 +33,7 @@ function Root() {
     <div id="hmc-theme-root" className={theme}>
       <Toaster position="bottom-right" richColors closeButton />
       <HeaderNavbar />
+      <SaleBanner />
       <div style={outletStyle} className="bg-hmc-bodybackground">
         <Outlet />
         <ShoppingTab

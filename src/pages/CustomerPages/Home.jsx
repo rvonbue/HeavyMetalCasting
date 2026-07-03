@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setHeaderTransparent } from '../../store/appSlice';
 import heroSrc from '../../assets/images/hmc_hero.png';
 import heroPortraitSrc from '../../assets/images/hmc_hero_portrait.png';
@@ -25,11 +25,17 @@ const SECTION_TWO = {
 
 export default function Home() {
   const dispatch = useDispatch();
+  const settings = useSelector((state) => state.settings.settings);
   const heroRef = useRef(null);
   const rafRef = useRef(null);
   const [isLandscape, setIsLandscape] = useState(
     () => window.matchMedia('(orientation: landscape)').matches
   );
+
+  // Uploaded homepage images (from store settings), falling back to the bundled
+  // assets when not set.
+  const heroDesktop = settings.homepage_image_desktop_url || heroSrc;
+  const heroMobile = settings.homepage_image_mobile_url || heroPortraitSrc;
 
   useEffect(() => {
     dispatch(setHeaderTransparent(true));
@@ -70,7 +76,7 @@ export default function Home() {
           ref={heroRef}
           className="absolute inset-x-0 will-change-transform"
           style={{
-            backgroundImage: `url(${isLandscape ? heroSrc : heroPortraitSrc})`,
+            backgroundImage: `url(${isLandscape ? heroDesktop : heroMobile})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center top',
             top: 0,
