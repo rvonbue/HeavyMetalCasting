@@ -118,16 +118,17 @@ export function FolderTab({ label, labelStatus, selected, onClick }) {
     </div>
   );
 }
-export const PageContainer = ({ children, bg }) => {
+export const PageContainer = ({ children, bg, fullScreen, widthClass }) => {
+  const width = widthClass ?? (fullScreen ? "max-w-none w-full" : "max-w-[1280px]");
   return (
     <div
       className={`
-        max-w-[1280px]
+        ${width}
         mx-auto
         ${bg === "alt1" ? "bg-white" : bg === "admin" ? "bg-hmc-bodybackground" : "bg-hmc-bg-a"}
-        
+
         shadow
-        py-[12px] 
+        py-[12px]
         px-[24px]
         h-full
         flex

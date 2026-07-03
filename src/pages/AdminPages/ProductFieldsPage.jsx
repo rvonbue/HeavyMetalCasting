@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import {
   DndContext,
+  DragOverlay,
   closestCenter,
   PointerSensor,
   useSensor,
@@ -19,20 +20,50 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { PageContainer, AdminPageHeader, HmcSelect } from "../../components/Resuables";
 import Modal from "../../components/modal/Modal";
+import { ShopProductLayout } from "../CustomerPages/CustomerProductPage";
 import {
   createShopBlockAPI,
   updateShopBlockAPI,
   deleteShopBlockAPI,
-  updateShopBlocksLayoutAPI,
 } from "../../api/adminAPI";
-import {
-  setShopBlocks,
-  addShopBlock,
-  updateShopBlock,
-  removeShopBlock,
-} from "../../store/adminSlice";
+import { setShopBlocks } from "../../store/adminSlice";
 
 const SIMPLE_TYPES = ["text", "textarea", "checkbox", "float", "number", "string"];
+
+// Preview viewport modes. `widthClass` clamps the shop-page container to a
+// Tailwind breakpoint width, and `viewport` forces the shop layout's breakpoint
+// so Mobile actually stacks (Tailwind `lg:` follows the window, not the box).
+const PREVIEW_MODES = [
+  { value: "mobile", label: "Mobile", widthClass: "max-w-sm", viewport: "mobile" },
+  { value: "desktop", label: "Desktop", widthClass: "max-w-[1280px]", viewport: "desktop" },
+];
+
+// Blocks added in the editor get a temporary id until "Confirm Changes" persists
+// them and swaps in the real database row.
+const isTempId = (id) => typeof id === "string" && id.startsWith("temp-");
+
+// Monotonic counter for temp ids — avoids relying on crypto.randomUUID, which
+// isn't available over plain HTTP on non-localhost hosts.
+let tempIdCounter = 0;
+const nextTempId = () => `temp-${Date.now()}-${tempIdCounter++}`;
+
+// Stable string of the persistable fields so we can tell whether the working
+// draft differs from the last-saved blocks (drives the Confirm button state).
+function serializeBlocks(blocks) {
+  return JSON.stringify(
+    (blocks ?? [])
+      .map((b) => ({
+        id: b.id,
+        grid_row: b.grid_row ?? null,
+        grid_col: b.grid_col ?? null,
+        block_type: b.block_type,
+        field_id: b.field_id ?? null,
+        component: b.component ?? null,
+        content: b.content ?? null,
+      }))
+      .sort((a, b) => String(a.id).localeCompare(String(b.id)))
+  );
+}
 
 const BLOCK_TYPE_OPTIONS = [
   { value: "product", label: "Product field" },
@@ -125,15 +156,33 @@ function SortableBlockCard({ block, onDelete, onEditContent }) {
   );
 }
 
+// Static copy of a block card rendered inside the DragOverlay so the dragged
+// block stays visible above the overflow-clipped editor/preview panels.
+function OverlayBlockCard({ block }) {
+  return (
+    <div className="flex w-52 flex-none cursor-grabbing flex-col gap-2 rounded border border-hmc-c bg-hmc-panelbackground p-2 shadow-lg">
+      <div className="flex items-center gap-2">
+        <span className="text-lg leading-none text-hmc-textprimary">⠿</span>
+        <span className="text-[10px] font-bold uppercase tracking-wide text-hmc-textprimary/60">
+          {block.block_type}
+        </span>
+      </div>
+      <span className="text-sm text-hmc-textprimary">
+        {block.block_type === "user" ? block.content || "(empty text)" : blockSummary(block)}
+      </span>
+    </div>
+  );
+}
+
 function AppendGhost({ rowIndex }) {
   const { setNodeRef, isOver } = useDroppable({ id: `append-${rowIndex}` });
   return (
     <div
       ref={setNodeRef}
-      className={`flex h-[70px] w-12 flex-none items-center justify-center rounded border border-dashed text-lg ${
+      className={`flex h-[70px] w-12 flex-none items-center justify-center rounded border border-dashed text-lg transition-colors ${
         isOver
-          ? "border-hmc-c bg-hmc-button-a/20 text-hmc-c"
-          : "border-hmc-border-a text-hmc-textprimary/40"
+          ? "border-sky-400 bg-sky-200 text-sky-600"
+          : "border-hmc-border-a text-hmc-textprimary/40 hover:border-sky-400 hover:bg-sky-100 hover:text-sky-600"
       }`}
     >
       +
@@ -146,13 +195,14 @@ function NewRowGhost() {
   return (
     <div
       ref={setNodeRef}
-      className={`flex h-12 items-center justify-center rounded border border-dashed text-xs uppercase tracking-wide ${
+      className={`flex h-12 items-center justify-center gap-2 rounded border border-dashed text-xs uppercase tracking-wide transition-colors ${
         isOver
-          ? "border-hmc-c bg-hmc-button-a/20 text-hmc-c"
-          : "border-hmc-border-a text-hmc-textprimary/40"
+          ? "border-sky-400 bg-sky-200 text-sky-600"
+          : "border-hmc-border-a text-hmc-textprimary/40 hover:border-sky-400 hover:bg-sky-100 hover:text-sky-600"
       }`}
     >
-      Drop here for a new row
+      <span className="text-lg leading-none">+</span>
+      <span>New row</span>
     </div>
   );
 }
@@ -303,14 +353,32 @@ export default function ProductFieldsPage() {
   const blocks = useSelector((state) => state.admin.shopBlocks);
   const productEditFields = useSelector((state) => state.admin.productEditFields);
   const adminDataLoaded = useSelector((state) => state.admin.adminDataLoaded);
+  const sampleProduct = useSelector((state) => state.products.products?.[0]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [previewMode, setPreviewMode] = useState("desktop");
+  const [activeId, setActiveId] = useState(null);
+  const [draftBlocks, setDraftBlocks] = useState(blocks ?? []);
+  const [saving, setSaving] = useState(false);
+
+  // Reset the working draft whenever the saved blocks change (initial load and
+  // after a successful confirm). Edits below only touch the local draft, so this
+  // won't clobber unsaved work — the saved blocks only change when we persist.
+  useEffect(() => {
+    setDraftBlocks(blocks ?? []);
+  }, [blocks]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   );
 
-  const layout = useMemo(() => buildLayout(blocks ?? []), [blocks]);
-  const blockIds = useMemo(() => (blocks ?? []).map((b) => b.id), [blocks]);
+  const layout = useMemo(() => buildLayout(draftBlocks ?? []), [draftBlocks]);
+  const blockIds = useMemo(() => (draftBlocks ?? []).map((b) => b.id), [draftBlocks]);
+  const activePreviewMode =
+    PREVIEW_MODES.find((m) => m.value === previewMode) ?? PREVIEW_MODES[1];
+  const hasChanges = useMemo(
+    () => serializeBlocks(draftBlocks) !== serializeBlocks(blocks),
+    [draftBlocks, blocks]
+  );
 
   const productFieldOptions = useMemo(
     () =>
@@ -320,11 +388,14 @@ export default function ProductFieldsPage() {
     [productEditFields]
   );
 
+  // All editor mutations below only touch the local draft; nothing is persisted
+  // until handleConfirm runs.
   function handleDragEnd(event) {
+    setActiveId(null);
     const { active, over } = event;
     if (!over || over.id === active.id) return;
 
-    const newLayout = buildLayout(blocks ?? []).map((row) => [...row]);
+    const newLayout = buildLayout(draftBlocks ?? []).map((row) => [...row]);
 
     // Remove the dragged block from its current position.
     let activeBlock = null;
@@ -367,64 +438,89 @@ export default function ProductFieldsPage() {
       )
     );
 
-    const prev = blocks;
-    dispatch(setShopBlocks(updatedBlocks));
-
-    const changed = updatedBlocks
-      .filter((b) => {
-        const old = prev.find((o) => o.id === b.id);
-        return !old || old.grid_row !== b.grid_row || old.grid_col !== b.grid_col;
-      })
-      .map((b) => ({ id: b.id, grid_row: b.grid_row, grid_col: b.grid_col }));
-
-    updateShopBlocksLayoutAPI(changed).catch((err) => {
-      console.error(err);
-      toast.error("Failed to save layout");
-      dispatch(setShopBlocks(prev));
-    });
+    setDraftBlocks(updatedBlocks);
   }
 
   async function handleAddBlock(values) {
-    const maxRow = (blocks ?? []).reduce((m, b) => Math.max(m, b.grid_row ?? 0), 0);
-    const payload = { block_type: values.block_type, grid_row: maxRow + 1, grid_col: 0 };
-    if (values.block_type === "product") payload.field_id = values.field_id;
-    if (values.block_type === "widget") payload.component = values.component;
-    if (values.block_type === "user") payload.content = values.content ?? "";
-
-    try {
-      const created = await createShopBlockAPI(payload);
-      dispatch(addShopBlock(created));
-      toast.success("Block added");
-    } catch (err) {
-      console.error(err);
-      toast.error(err?.message || "Failed to add block");
-      throw err;
+    const maxRow = (draftBlocks ?? []).reduce((m, b) => Math.max(m, b.grid_row ?? 0), 0);
+    const block = {
+      id: nextTempId(),
+      block_type: values.block_type,
+      grid_row: maxRow + 1,
+      grid_col: 0,
+      visible: true,
+    };
+    if (values.block_type === "product") {
+      block.field_id = values.field_id;
+      // Attach the field meta so the card summary and preview render before save.
+      const field = (productEditFields ?? []).find((f) => f.id === values.field_id);
+      if (field) {
+        block.admin_product_fields = {
+          column_name: field.column_name,
+          input_type: field.input_type,
+          label: field.label,
+        };
+      }
     }
+    if (values.block_type === "widget") block.component = values.component;
+    if (values.block_type === "user") block.content = values.content ?? "";
+
+    setDraftBlocks((prev) => [...(prev ?? []), block]);
   }
 
-  async function handleDeleteBlock(block) {
-    const prev = blocks;
-    dispatch(removeShopBlock(block.id));
-    try {
-      await deleteShopBlockAPI(block.id);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to delete block");
-      dispatch(setShopBlocks(prev));
-    }
+  function handleDeleteBlock(block) {
+    setDraftBlocks((prev) => (prev ?? []).filter((b) => b.id !== block.id));
   }
 
-  async function handleEditContent(block, value) {
+  function handleEditContent(block, value) {
     if (value === (block.content ?? "")) return;
-    const prev = blocks;
-    dispatch(updateShopBlock({ id: block.id, content: value }));
+    setDraftBlocks((prev) =>
+      (prev ?? []).map((b) => (b.id === block.id ? { ...b, content: value } : b))
+    );
+  }
+
+  // Persist the whole draft: delete removed blocks, create new ones, update the
+  // fields that changed on existing ones, then sync the saved state from results.
+  async function handleConfirm() {
+    setSaving(true);
     try {
-      const saved = await updateShopBlockAPI({ id: block.id, updates: { content: value } });
-      dispatch(updateShopBlock(saved));
+      const savedById = new Map((blocks ?? []).map((b) => [b.id, b]));
+      const draftIds = new Set(draftBlocks.map((b) => b.id));
+
+      const toDelete = (blocks ?? []).filter((b) => !draftIds.has(b.id));
+      await Promise.all(toDelete.map((b) => deleteShopBlockAPI(b.id)));
+
+      const persisted = await Promise.all(
+        draftBlocks.map(async (b) => {
+          if (isTempId(b.id)) {
+            const payload = {
+              block_type: b.block_type,
+              grid_row: b.grid_row,
+              grid_col: b.grid_col,
+            };
+            if (b.block_type === "product") payload.field_id = b.field_id;
+            if (b.block_type === "widget") payload.component = b.component;
+            if (b.block_type === "user") payload.content = b.content ?? "";
+            return createShopBlockAPI(payload);
+          }
+
+          const saved = savedById.get(b.id);
+          const updates = {};
+          if (saved.grid_row !== b.grid_row) updates.grid_row = b.grid_row;
+          if (saved.grid_col !== b.grid_col) updates.grid_col = b.grid_col;
+          if ((saved.content ?? "") !== (b.content ?? "")) updates.content = b.content ?? "";
+          if (Object.keys(updates).length === 0) return saved;
+          return updateShopBlockAPI({ id: b.id, updates });
+        })
+      );
+
+      dispatch(setShopBlocks(persisted));
+      toast.success("Changes saved");
     } catch (err) {
       console.error(err);
-      toast.error("Failed to save text");
-      dispatch(setShopBlocks(prev));
+      toast.error(err?.message || "Failed to save changes");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -451,18 +547,28 @@ export default function ProductFieldsPage() {
             >
               + Add Block
             </button>
+            <button
+              onClick={handleConfirm}
+              disabled={!hasChanges || saving}
+              className="flex-none px-4 py-2 text-sm bg-hmc-button-b text-hmc-button-text-b font-bold hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {saving ? "Saving…" : "Confirm Changes"}
+            </button>
           </div>
         }
       />
 
-      <div className="mt-4">
+      {/* Editor */}
+      <div className="mt-4 min-w-0">
         {!adminDataLoaded ? (
           <div className="p-4 text-sm text-hmc-textprimary">Loading…</div>
         ) : (
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
+            onDragStart={(event) => setActiveId(event.active.id)}
             onDragEnd={handleDragEnd}
+            onDragCancel={() => setActiveId(null)}
           >
             <SortableContext items={blockIds} strategy={rectSortingStrategy}>
               <div className="flex flex-col gap-3">
@@ -482,8 +588,60 @@ export default function ProductFieldsPage() {
                 <NewRowGhost />
               </div>
             </SortableContext>
+
+            <DragOverlay>
+              {activeId
+                ? (() => {
+                    const block = (draftBlocks ?? []).find((b) => b.id === activeId);
+                    return block ? <OverlayBlockCard block={block} /> : null;
+                  })()
+                : null}
+            </DragOverlay>
           </DndContext>
         )}
+      </div>
+
+      {/* Live preview — the real shop page, with interactions disabled */}
+      <div className="mt-8">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="text-xs font-semibold uppercase tracking-wide text-hmc-textprimary/60">
+            Preview
+          </div>
+          <div className="flex overflow-hidden rounded border border-hmc-border-a text-xs">
+            {PREVIEW_MODES.map((mode) => (
+              <button
+                key={mode.value}
+                type="button"
+                onClick={() => setPreviewMode(mode.value)}
+                className={`px-3 py-1 font-semibold ${
+                  previewMode === mode.value
+                    ? "bg-hmc-button-a text-hmc-button-text-a"
+                    : "bg-transparent text-hmc-textprimary hover:bg-hmc-button-a/20"
+                }`}
+              >
+                {mode.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="h-[calc(100vh-120px)] overflow-auto rounded border border-hmc-border-a bg-hmc-bg-a">
+          {sampleProduct ? (
+            <PageContainer widthClass={activePreviewMode.widthClass}>
+              <div className="pointer-events-none">
+                <ShopProductLayout
+                  product={sampleProduct}
+                  blocks={draftBlocks}
+                  viewport={activePreviewMode.viewport}
+                />
+              </div>
+            </PageContainer>
+          ) : (
+            <p className="p-4 text-xs text-hmc-textprimary/60">
+              Add a product to see a preview.
+            </p>
+          )}
+        </div>
       </div>
     </PageContainer>
   );

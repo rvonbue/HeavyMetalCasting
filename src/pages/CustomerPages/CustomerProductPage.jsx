@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, Fragment } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -27,21 +27,42 @@ function CustomerProductPage() {
 }
 
 function CustomerProductPageMainContainer({ product }) {
+  const shopBlocks = useSelector(state => state.products.shopBlocks);
+  return <ShopProductLayout product={product} blocks={shopBlocks} />
+}
+
+// Column-layout classes per viewport. The default `responsive` variant keys off
+// the real browser viewport (Tailwind `lg:`); `mobile`/`desktop` hard-force the
+// breakpoint so the admin preview can simulate a size regardless of window width
+// (Tailwind's `lg:` can't respond to a shrunken container, only the viewport).
+const SHOP_VIEWPORT_CLASSES = {
+  responsive: { grid: "grid-cols-1 lg:grid-cols-12", left: "lg:col-span-9", right: "lg:col-span-3" },
+  desktop: { grid: "grid-cols-12", left: "col-span-9", right: "col-span-3" },
+  mobile: { grid: "grid-cols-1", left: "", right: "" },
+};
+
+// The full shop product page layout (image gallery + product blocks). Reused by
+// the customer product page and by the admin shop-layout preview, which passes
+// in the blocks it is currently editing plus a forced `viewport`.
+export function ShopProductLayout({ product, blocks, viewport = "responsive" }) {
+  const cols = SHOP_VIEWPORT_CLASSES[viewport] ?? SHOP_VIEWPORT_CLASSES.responsive;
   return (
-    <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-12">
-      <LeftColumn {...{product}}/>
-      <RightColumn {...{ product }}/>
+    <div className={`grid w-full gap-8 ${cols.grid}`}>
+      <LeftColumn product={product} colSpanClass={cols.left} />
+      <div className={cols.right}>
+        <ProductBlocks product={product} blocks={blocks} />
+      </div>
     </div>
   )
 }
-function LeftColumn({ product }) {
+function LeftColumn({ product, colSpanClass = "lg:col-span-9" }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const images = product.product_images;
+  const images = product.product_images ?? [];
   const hasPrev = selectedImageIndex > 0;
   const hasNext = selectedImageIndex < images.length - 1;
 
   return (
-  <div className="lg:col-span-9 flex h-[calc(100vh-90px)] min-h-0 flex-col">
+  <div className={`${colSpanClass} flex h-[calc(100vh-90px)] min-h-0 flex-col`}>
     <div className="relative min-h-0 flex-1 overflow-hidden border border-hmc-c shadow">
         <ProductImage
         src={images[selectedImageIndex]?.image_url}
@@ -99,30 +120,58 @@ function getProductVariant({productVariants, sizeChartId, sizeSelected, metalTyp
   ));
 }
 
-// Groups shop-page blocks into a 2D layout: rows sorted by grid_row, and within
-// each row blocks sorted by grid_col.
-function buildBlockRows(blocks) {
+// Maps shop-page blocks onto CSS-grid cells from their grid_row / grid_col.
+// Rows collapse to sequential grid lines; within a row each block starts at its
+// column and spans to the next block (or the row end), so a lone block fills the
+// full width and side-by-side blocks tile across the columns.
+function buildBlockGrid(blocks) {
   const visible = (blocks ?? []).filter(b => b.visible !== false);
+  if (visible.length === 0) return { colCount: 1, cells: [] };
+
+  const colCount = Math.max(1, ...visible.map(b => (b.grid_col ?? 0) + 1));
+
   const byRow = new Map();
   for (const b of visible) {
     const r = b.grid_row ?? 999;
     if (!byRow.has(r)) byRow.set(r, []);
     byRow.get(r).push(b);
   }
-  return [...byRow.entries()]
-    .sort((a, b) => a[0] - b[0])
-    .map(([row, items]) => [
-      row,
-      items.sort((x, y) => (x.grid_col ?? 0) - (y.grid_col ?? 0)),
-    ]);
+
+  const sortedRowKeys = [...byRow.keys()].sort((a, b) => a - b);
+  const cells = [];
+  sortedRowKeys.forEach((rowKey, rowIndex) => {
+    const rowBlocks = byRow.get(rowKey).sort((x, y) => (x.grid_col ?? 0) - (y.grid_col ?? 0));
+    rowBlocks.forEach((block, j) => {
+      const col = block.grid_col ?? 0;
+      const nextCol = j < rowBlocks.length - 1 ? (rowBlocks[j + 1].grid_col ?? 0) : colCount;
+      cells.push({
+        block,
+        rowLine: rowIndex + 1,
+        colStart: col + 1,
+        colSpan: Math.max(1, nextCol - col),
+      });
+    });
+  });
+
+  return { colCount, cells };
 }
 
-function RightColumn({ product }) {
+// Reads the product-field meta off a block, supporting both the flattened
+// shape from get_app_data and the nested admin_product_fields join shape.
+function blockFieldMeta(block) {
+  return {
+    column_name: block.column_name ?? block.admin_product_fields?.column_name,
+    input_type: block.input_type ?? block.admin_product_fields?.input_type,
+    field_label: block.field_label ?? block.admin_product_fields?.label,
+  };
+}
+
+// Renders the shop-page blocks for a product as a CSS grid. Reused by the
+// customer product page and by the admin layout preview.
+export function ProductBlocks({ product, blocks }) {
   const [metalTypeSelected, setMetalTypeSelected] = useState(0);
   const [sizeSelected, setSizeSelected] = useState(null);
   const [sizeChartId, setSizeChartId] = useState(null);
-
-  const shopBlocks = useSelector(state => state.products.shopBlocks);
 
   const shoppingCartProps = { product, metalTypeSelected, sizeSelected };
   const shoppingCartItems = useSelector(state => state.cart.shoppingCartItems);
@@ -131,7 +180,7 @@ function RightColumn({ product }) {
   const stockAvailable = selectedVariant?.stock ?? 0;
   const displayPrice = selectedVariant?.price ?? product.price;
 
-  const rows = useMemo(() => buildBlockRows(shopBlocks), [shopBlocks]);
+  const { colCount, cells } = useMemo(() => buildBlockGrid(blocks), [blocks]);
 
   // widget blocks -> interactive components
   function renderWidget(component) {
@@ -180,7 +229,7 @@ function RightColumn({ product }) {
 
   // product blocks -> a value from the product record
   function renderProduct(block) {
-    const { column_name, input_type, field_label } = block;
+    const { column_name, input_type, field_label } = blockFieldMeta(block);
     if (column_name === 'name') {
       return <h1 className="text-2xl font-bold text-hmc-c">{product.name || 'Product'}</h1>;
     }
@@ -213,12 +262,17 @@ function RightColumn({ product }) {
   }
 
   return (
-    <div className="text-left lg:col-span-3 flex flex-col gap-4">
-      {rows.map(([row, items]) => (
-        <div key={row} className="flex flex-wrap items-baseline gap-x-3 gap-y-2">
-          {items.map(block => (
-            <Fragment key={block.id}>{renderBlock(block)}</Fragment>
-          ))}
+    <div
+      className="text-left grid items-baseline gap-x-3 gap-y-4"
+      style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}
+    >
+      {cells.map(({ block, rowLine, colStart, colSpan }) => (
+        <div
+          key={block.id}
+          className="min-w-0"
+          style={{ gridColumn: `${colStart} / span ${colSpan}`, gridRow: rowLine }}
+        >
+          {renderBlock(block)}
         </div>
       ))}
     </div>
