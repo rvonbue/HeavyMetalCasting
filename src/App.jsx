@@ -7,7 +7,7 @@ import SaleBanner from './components/SaleBanner'
 
 import { toggleShoppingCart } from './store/shoppingCartSlice'
 import './styles/App.css'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { loadAppData } from "./api/apis";
 
 function Root() {
@@ -18,22 +18,29 @@ function Root() {
   const theme = themeName === "dark" ? "" : "theme-hmc-inverted"
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const [bannerHeight, setBannerHeight] = useState(0);
 
   useEffect(() => {
     loadAppData(dispatch);
   }, []);
 
-  // On home, header is position:fixed (out of flow) so outlet fills full 100vh.
-  // overflow:hidden forces scrolling to happen inside #home-scroll-container.
+  // Off home, the banner sits in flow and pushes content down, so the outlet
+  // shrinks by its measured height (header is sticky, taking toolbarHeight).
+  // On home the header is fixed and the hero fills the viewport; the banner is
+  // fixed just under the header, so the outlet stays a full 100vh.
   const outletStyle = isHome
     ? { height: '100vh', overflow: 'hidden' }
-    : { height: `calc(100vh - ${toolbarHeight}px)` };
+    : { height: `calc(100vh - ${toolbarHeight}px - ${bannerHeight}px)` };
 
   return (
     <div id="hmc-theme-root" className={theme}>
       <Toaster position="bottom-right" richColors closeButton />
       <HeaderNavbar />
-      <SaleBanner />
+      <SaleBanner
+        onHeightChange={setBannerHeight}
+        fixed={isHome}
+        topOffset={toolbarHeight}
+      />
       <div style={outletStyle} className="bg-hmc-bodybackground">
         <Outlet />
         <ShoppingTab
