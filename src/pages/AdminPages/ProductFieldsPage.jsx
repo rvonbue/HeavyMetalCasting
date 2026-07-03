@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import {
   DndContext,
   DragOverlay,
-  closestCenter,
+  pointerWithin,
   PointerSensor,
   useSensor,
   useSensors,
@@ -179,30 +179,33 @@ function AppendGhost({ rowIndex }) {
   return (
     <div
       ref={setNodeRef}
-      className={`flex h-[70px] w-12 flex-none items-center justify-center rounded border border-dashed text-lg transition-colors ${
+      className={`flex min-h-[70px] w-20 flex-none flex-col items-center justify-center gap-1 rounded border border-dashed text-xs font-semibold uppercase tracking-wide transition-colors ${
         isOver
-          ? "border-sky-400 bg-sky-200 text-sky-600"
-          : "border-hmc-border-a text-hmc-textprimary/40 hover:border-sky-400 hover:bg-sky-100 hover:text-sky-600"
+          ? "border-sky-400 bg-sky-200 text-sky-700"
+          : "border-hmc-border-a text-hmc-textprimary hover:border-sky-400 hover:bg-sky-100 hover:text-sky-700"
       }`}
     >
-      +
+      <span className="text-xl leading-none">+</span>
+      <span>Column</span>
     </div>
   );
 }
 
-function NewRowGhost() {
-  const { setNodeRef, isOver } = useDroppable({ id: "newrow" });
+// A full-width drop zone that inserts a new row at `index`, pushing later rows
+// down. Rendered above every row and below the last one.
+function RowInsertGhost({ index }) {
+  const { setNodeRef, isOver } = useDroppable({ id: `insertrow-${index}` });
   return (
     <div
       ref={setNodeRef}
-      className={`flex h-12 items-center justify-center gap-2 rounded border border-dashed text-xs uppercase tracking-wide transition-colors ${
+      className={`my-1 flex h-9 items-center justify-center gap-2 rounded border border-dashed text-xs font-semibold uppercase tracking-wide transition-colors ${
         isOver
-          ? "border-sky-400 bg-sky-200 text-sky-600"
-          : "border-hmc-border-a text-hmc-textprimary/40 hover:border-sky-400 hover:bg-sky-100 hover:text-sky-600"
+          ? "border-sky-400 bg-sky-200 text-sky-700"
+          : "border-hmc-border-a text-hmc-textprimary hover:border-sky-400 hover:bg-sky-100 hover:text-sky-700"
       }`}
     >
-      <span className="text-lg leading-none">+</span>
-      <span>New row</span>
+      <span className="text-base leading-none">+</span>
+      <span>Insert row</span>
     </div>
   );
 }
@@ -410,8 +413,11 @@ export default function ProductFieldsPage() {
     if (!activeBlock) return;
 
     const overId = over.id;
-    if (overId === "newrow") {
-      newLayout.push([activeBlock]);
+    if (typeof overId === "string" && overId.startsWith("insertrow-")) {
+      // Insert a brand-new row at this index; the block lands at column 0 and
+      // all later rows shift down. Active's old row (now empty) is filtered below.
+      const i = parseInt(overId.slice("insertrow-".length), 10);
+      newLayout.splice(i, 0, [activeBlock]);
     } else if (typeof overId === "string" && overId.startsWith("append-")) {
       const i = parseInt(overId.slice("append-".length), 10);
       if (newLayout[i]) newLayout[i].push(activeBlock);
@@ -565,27 +571,30 @@ export default function ProductFieldsPage() {
         ) : (
           <DndContext
             sensors={sensors}
-            collisionDetection={closestCenter}
+            collisionDetection={pointerWithin}
             onDragStart={(event) => setActiveId(event.active.id)}
             onDragEnd={handleDragEnd}
             onDragCancel={() => setActiveId(null)}
           >
             <SortableContext items={blockIds} strategy={rectSortingStrategy}>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col">
+                <RowInsertGhost index={0} />
                 {layout.map((row, rIdx) => (
-                  <div key={rIdx} className="flex items-stretch gap-3">
-                    {row.map((block) => (
-                      <SortableBlockCard
-                        key={block.id}
-                        block={block}
-                        onDelete={handleDeleteBlock}
-                        onEditContent={handleEditContent}
-                      />
-                    ))}
-                    <AppendGhost rowIndex={rIdx} />
-                  </div>
+                  <Fragment key={rIdx}>
+                    <div className="flex items-stretch gap-3">
+                      {row.map((block) => (
+                        <SortableBlockCard
+                          key={block.id}
+                          block={block}
+                          onDelete={handleDeleteBlock}
+                          onEditContent={handleEditContent}
+                        />
+                      ))}
+                      <AppendGhost rowIndex={rIdx} />
+                    </div>
+                    <RowInsertGhost index={rIdx + 1} />
+                  </Fragment>
                 ))}
-                <NewRowGhost />
               </div>
             </SortableContext>
 
