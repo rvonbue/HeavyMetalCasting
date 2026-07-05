@@ -28,18 +28,17 @@ export default function HeaderDesktop({
 
   useEffect(() => {
     if (!headerTransparent && !isHome) { setScrolled(false); return; }
-    // Defer one tick so Home's scroll container is in the DOM
+    let cleanup;
     const t = setTimeout(() => {
       const el = document.getElementById('home-scroll-container');
       if (!el) return;
       const onScroll = () => setScrolled(el.scrollTop > 20);
       el.addEventListener('scroll', onScroll, { passive: true });
-      // store cleanup on the timeout ref so we can call it on unmount
-      t._cleanup = () => el.removeEventListener('scroll', onScroll);
+      cleanup = () => el.removeEventListener('scroll', onScroll);
     }, 0);
     return () => {
       clearTimeout(t);
-      t._cleanup?.();
+      cleanup?.();
     };
   }, [headerTransparent, isHome]);
 
