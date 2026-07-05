@@ -884,8 +884,10 @@ export default function ProductFieldsPage() {
         )}
       </div>
 
+      <hr className="my-8 border-hmc-border-a" />
+
       {/* Live preview — the real shop page, with interactions disabled */}
-      <div className="mt-8">
+      <div className="mt-0">
         <div className="mb-2 flex items-center justify-between">
           <div className="text-xs font-semibold uppercase tracking-wide text-hmc-textprimary/60">
             Preview
