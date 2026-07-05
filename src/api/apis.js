@@ -4,6 +4,7 @@ import {
   setProductsLoading,
 } from '../store/productsSlice';
 import { setSettings } from '../store/settingsSlice';
+import { setTheme } from '../store/appSlice';
 import { setEvents } from '../store/eventsSlice';
 import { getStoreSettingsAPI } from './storeSettingsAPI';
 
@@ -24,6 +25,7 @@ export async function loadAppData(dispatch) {
           product_categories: product.product_categories ?? [],
           size_chart: product.size_chart ?? [],
           product_images: product.product_images ?? [],
+          product_variants: product.product_variants ?? [],
         })),
         product_categories: data.product_categories,
         size_charts: data.size_charts,
@@ -33,6 +35,11 @@ export async function loadAppData(dispatch) {
     );
     dispatch(setEvents(data.events ?? []));
     dispatch(setSettings(settingsRows));
+
+    const themeValue = (settingsRows ?? []).find((r) => r.key === 'theme')?.value;
+    if (themeValue === 'dark' || themeValue === 'light') {
+      dispatch(setTheme(themeValue));
+    }
   } catch (error) {
     console.error('Failed loading app data', error);
   } finally {
