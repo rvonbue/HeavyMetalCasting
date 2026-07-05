@@ -43,7 +43,8 @@
   --color-hmc-overlay: oklch(0.08 0.03 178 / 0.35);
 
   --color-hmc-error: red;
-  --font-family: "Cinzel"; 
+  --color-hmc-pricing-label: oklch(0.2 0.05 178);
+  --font-family: "Cinzel";
   --breakpoint-3xl: 120rem; 
  
 
@@ -57,12 +58,13 @@
   --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
   --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
 } 
-.theme-hmc-inverted {
+/* Light theme (formerly .theme-hmc-inverted) */
+.theme-hmc-light {
   --color-hmc-a: oklch(0.96 0 1);
   --color-hmc-b: oklch(0.87 0.22 105.85);
   --color-hmc-c: oklch(0.1 0.11 178);
- 
-  
+
+
   --color-hmc-bg-a: oklch(0.96 0 1);
   --color-hmc-inputbox-a: oklch(0.1 0.11 178);
   --color-hmc-bodybackground: oklch(0.99 0 0);
@@ -80,11 +82,47 @@
   --color-hmc-link: oklch(0.1 0.11 178);
   --color-hmc-link-active: oklch(0.87 0.22 105.85);
   --color-hmc-text-a: oklch(0.1 0.11 178);
-  --color-hmc-textprimary: oklch(0.1 0.11 178);   
+  --color-hmc-textprimary: oklch(0.1 0.11 178);
   --color-hmc-textsecondary: oklch(0.96 0 1);
   --color-hmc-headercolor: oklch(86.9% 0.022 252.894);
   --color-hmc-header-opaque: oklch(84.832% 0.0001 271.152);
   --color-hmc-overlay: oklch(0.15 0.03 178 / 0.25);
+  --color-hmc-pricing-label: oklch(0.2 0.05 178);
+}
+
+/* Dark theme — a thoughtful inverse of the light theme: dark teal-tinted
+   backgrounds, light text (hmc-c), gold accent preserved. hmc-a/hmc-c are
+   swapped vs light so text-hmc-c reads light on the dark surfaces. */
+.theme-hmc-dark {
+  --color-hmc-a: oklch(0.18 0.02 178);
+  --color-hmc-b: oklch(0.87 0.22 105.85);
+  --color-hmc-c: oklch(0.95 0 1);
+
+  --color-hmc-bg-a: oklch(0.18 0.02 178);
+  --color-hmc-bg-admin: oklch(0.20 0.02 178);
+  --color-hmc-inputbox-a: oklch(0.26 0.02 178);
+  --color-hmc-bodybackground: oklch(0.16 0.015 178);
+  --color-hmc-panelbackground: oklch(0.21 0.02 178);
+  --color-hmc-img-bg-hero: oklch(0.22 0.02 178);
+  --color-hmc-img-bg-thumb: oklch(0.24 0.02 178);
+  --color-hmc-img-bg-card: oklch(0.22 0.02 178);
+  --color-hmc-button-a: oklch(0.45 0.05 257.417);
+  --color-hmc-button-b: oklch(0.30 0.03 257.417);
+  --color-hmc-button-text-a: oklch(0.95 0 1);
+  --color-hmc-button-text-b: oklch(0.95 0 1);
+  --color-hmc-button-border-a: oklch(0.95 0 1);
+  --color-hmc-border-a: oklch(0.40 0.02 257.417);
+  --color-hmc-border-b: oklch(0.50 0.03 257.417);
+  --color-hmc-link: oklch(0.95 0 1);
+  --color-hmc-link-active: oklch(0.87 0.22 105.85);
+  --color-hmc-text-a: oklch(0.95 0 1);
+  --color-hmc-textprimary: oklch(0.87 0.22 105.85);
+  --color-hmc-textsecondary: oklch(0.95 0 1);
+  --color-hmc-headercolor: oklch(0.14 0.02 178);
+  --color-hmc-header-opaque: oklch(0.16 0.02 178);
+  --color-hmc-overlay: oklch(0.02 0.01 178 / 0.5);
+  --color-hmc-error: oklch(0.68 0.20 25);
+  --color-hmc-pricing-label: oklch(0.87 0.22 105.85);
 }
 
 
@@ -102,6 +140,43 @@ input[type=number]::-webkit-outer-spin-button {
 
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+/* Dual-thumb range slider: two overlapping inputs sharing one visible track.
+   The inputs themselves are transparent/click-through; only the thumbs are
+   interactive. */
+.dual-range {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+  height: 20px;
+  margin: 0;
+}
+.dual-range::-webkit-slider-runnable-track {
+  background: transparent;
+}
+.dual-range::-moz-range-track {
+  background: transparent;
+}
+.dual-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: auto;
+  height: 16px;
+  width: 16px;
+  border-radius: 9999px;
+  background: var(--color-hmc-b);
+  border: 2px solid var(--color-hmc-c);
+  cursor: pointer;
+}
+.dual-range::-moz-range-thumb {
+  pointer-events: auto;
+  height: 16px;
+  width: 16px;
+  border-radius: 9999px;
+  background: var(--color-hmc-b);
+  border: 2px solid var(--color-hmc-c);
+  cursor: pointer;
 }
  
 
