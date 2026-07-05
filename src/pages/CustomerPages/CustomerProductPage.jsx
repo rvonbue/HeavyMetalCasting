@@ -401,7 +401,7 @@ function SizeChartSelectorWidget({
   return (
     <div>
       {showLabel && (
-        <p className={`mt-4 mb-1 ${sizeClass || 'text-xs'} text-hmc-c`}>
+        <p className={`mb-1 ${sizeClass || 'text-xs'} text-hmc-c`}>
           {label || 'Size Chart'}
         </p>
       )}
