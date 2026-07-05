@@ -64,6 +64,10 @@ function serializeBlocks(blocks) {
         label: b.label ?? null,
         font_size: b.font_size ?? null,
         show_label: b.show_label ?? true,
+        margin_top: b.margin_top ?? 'mb-0',
+        margin_bottom: b.margin_bottom ?? 'mb-0',
+        vertical_align: b.vertical_align ?? 'items-start',
+        justify_content: b.justify_content ?? 'flex-start',
       }))
       .sort((a, b) => String(a.id).localeCompare(String(b.id)))
   );
@@ -97,6 +101,29 @@ const FONT_SIZE_OPTIONS = [
   { value: "xl", label: "XL" },
   { value: "2xl", label: "2XL" },
   { value: "3xl", label: "3XL" },
+];
+
+const MARGIN_OPTIONS = [
+  { value: "mb-0", label: "None" },
+  { value: "mb-1", label: "Small" },
+  { value: "mb-2", label: "Medium" },
+  { value: "mb-3", label: "Large" },
+  { value: "mb-4", label: "Extra Large" },
+];
+
+const VERTICAL_ALIGN_OPTIONS = [
+  { value: "items-start", label: "Top" },
+  { value: "items-center", label: "Center" },
+  { value: "items-end", label: "Bottom" },
+];
+
+const JUSTIFY_CONTENT_OPTIONS = [
+  { value: "flex-start", label: "Start" },
+  { value: "flex-center", label: "Center" },
+  { value: "flex-end", label: "End" },
+  { value: "flex-between", label: "Space Between" },
+  { value: "flex-around", label: "Space Around" },
+  { value: "flex-evenly", label: "Space Evenly" },
 ];
 
 // Groups blocks into a 2D array of rows (each a list of blocks ordered by col).
@@ -583,6 +610,10 @@ export default function ProductFieldsPage() {
               grid_col: b.grid_col,
               font_size: b.font_size ?? null,
               show_label: b.show_label ?? true,
+              margin_top: b.margin_top ?? 'mb-0',
+              margin_bottom: b.margin_bottom ?? 'mb-0',
+              vertical_align: b.vertical_align ?? 'items-start',
+              justify_content: b.justify_content ?? 'flex-start',
             };
             if (b.block_type === "product") payload.field_id = b.field_id;
             if (b.block_type === "widget") {
@@ -601,6 +632,10 @@ export default function ProductFieldsPage() {
           if ((saved.label ?? "") !== (b.label ?? "")) updates.label = b.label ?? null;
           if ((saved.font_size ?? null) !== (b.font_size ?? null)) updates.font_size = b.font_size ?? null;
           if ((saved.show_label ?? true) !== (b.show_label ?? true)) updates.show_label = b.show_label ?? true;
+          if ((saved.margin_top ?? 'mb-0') !== (b.margin_top ?? 'mb-0')) updates.margin_top = b.margin_top ?? 'mb-0';
+          if ((saved.margin_bottom ?? 'mb-0') !== (b.margin_bottom ?? 'mb-0')) updates.margin_bottom = b.margin_bottom ?? 'mb-0';
+          if ((saved.vertical_align ?? 'items-start') !== (b.vertical_align ?? 'items-start')) updates.vertical_align = b.vertical_align ?? 'items-start';
+          if ((saved.justify_content ?? 'flex-start') !== (b.justify_content ?? 'flex-start')) updates.justify_content = b.justify_content ?? 'flex-start';
           if (Object.keys(updates).length === 0) return saved;
           return updateShopBlockAPI({ id: b.id, updates });
         })
