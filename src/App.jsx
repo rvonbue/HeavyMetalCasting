@@ -6,12 +6,13 @@ import ShoppingTab from './components/shoppingTab/ShoppingTab'
 import SaleBanner from './components/SaleBanner'
 
 import { toggleShoppingCart } from './store/shoppingCartSlice'
-import { setUser } from './store/authSlice'
+import { setUser, logout } from './store/authSlice'
 import './styles/App.css'
 import { useEffect, useState } from 'react'
 import { loadAppData } from "./api/apis";
 import { buildThemeOverrideStyle } from "./staticData/themeColors";
-import { getCurrentUser } from './api/authAPI';
+import { supabase } from './lib/supabase';
+import { getUserById } from './api/authAPI';
 
 function Root() {
   const dispatch = useDispatch()
@@ -27,16 +28,33 @@ function Root() {
   const [bannerHeight, setBannerHeight] = useState(0);
 
   useEffect(() => {
-    // Check for existing session on app load
-    const checkSession = async () => {
-      const user = await getCurrentUser();
-      if (user) {
-        dispatch(setUser(user));
-      }
-    };
+    // Set up Supabase auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth event:', event, 'Session:', session?.user?.id);
 
-    checkSession();
+        if (session?.user) {
+          // User is logged in
+          try {
+            const userProfile = await getUserById(session.user.id);
+            dispatch(setUser({ ...session.user, role: userProfile?.role }));
+          } catch (error) {
+            console.error('Failed to load user profile:', error);
+            dispatch(setUser(session.user));
+          }
+        } else {
+          // User is logged out
+          dispatch(logout());
+        }
+      }
+    );
+
     loadAppData(dispatch);
+
+    // Cleanup subscription on unmount
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, [dispatch]);
 
   // Off home, the banner sits in flow and pushes content down, so the outlet
