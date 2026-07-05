@@ -201,6 +201,7 @@ export async function upsertProductVariantsAPI({ productId, variants }) {
     size_value: v.size_value,
     metal_type_id: v.metal_type_id,
     stock: v.stock,
+    price: v.price,
   }));
 
   const { data, error } = await supabase
