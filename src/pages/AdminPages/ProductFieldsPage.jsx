@@ -884,7 +884,7 @@ export default function ProductFieldsPage() {
         )}
       </div>
 
-      <hr className="my-8 border-hmc-border-a" />
+      <div className="my-8 border-t-4 border-hmc-border-a"></div>
 
       {/* Live preview — the real shop page, with interactions disabled */}
       <div className="mt-0">
