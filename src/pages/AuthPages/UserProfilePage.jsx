@@ -71,7 +71,7 @@ export default function UserProfilePage() {
         action={
           <button
             onClick={handleSignOut}
-            className="px-4 py-2 bg-hmc-error text-white font-bold rounded hover:opacity-90"
+            className="px-4 py-2 bg-hmc-button-a text-hmc-button-text-a font-bold border border-hmc-border-b hover:bg-hmc-button-b hover:text-hmc-button-text-b transition"
           >
             Sign Out
           </button>
