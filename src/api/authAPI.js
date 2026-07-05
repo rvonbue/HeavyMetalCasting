@@ -166,21 +166,28 @@ export async function resetPassword(newPassword) {
 // Get current user
 export async function getCurrentUser() {
   try {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) throw error;
+    // First, get the session from storage
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) throw sessionError;
 
-    if (!data.user) return null;
+    if (!session) return null;
 
-    // Get user record with role
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', data.user.id)
-      .single();
-
+    // Get the user from the session
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError) throw userError;
 
-    return { ...data.user, role: userData?.role };
+    if (!user) return null;
+
+    // Get user record with role
+    const { data: userData, error: dataError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    if (dataError) throw dataError;
+
+    return { ...user, role: userData?.role };
   } catch (error) {
     console.error('Failed to get current user:', error);
     return null;
