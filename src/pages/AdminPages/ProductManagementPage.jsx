@@ -63,7 +63,7 @@ export default function ProductOverviewPage() {
           return (
             <NavLink
               to={`/product/${row.original.id}`}
-              className="text-hmc-link hover:text-hmc-link-active transition"
+              className="cursor-pointer text-hmc-link hover:text-hmc-link-active transition"
             >
               {value}
             </NavLink>
