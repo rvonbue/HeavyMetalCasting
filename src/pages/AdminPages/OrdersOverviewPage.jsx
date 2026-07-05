@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getCustomerOrders } from "../../api/adminAPI";
-import OrdersTable from "../../components/adminPageComponents/orders/OrdersTable";
+import OrdersTable from "../../components/AdminPageComponents/orders/OrdersTable";
 import { PageContainer, AdminPageHeader } from "../../components/Resuables";
 
 export default function OrdersOverviewPage() {
