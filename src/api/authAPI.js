@@ -1,6 +1,5 @@
 import { supabase } from '../lib/supabase';
 import { sendVerificationEmail, sendPasswordResetEmail } from './brevoAPI';
-import { v4 as uuidv4 } from 'crypto-js'; // Using a simple token generator
 
 // Sign up with email and password
 export async function signUpWithEmail(email, password, fullName = '') {
