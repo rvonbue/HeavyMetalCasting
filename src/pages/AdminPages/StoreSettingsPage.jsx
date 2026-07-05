@@ -21,6 +21,8 @@ const SETTINGS_CONFIG = [
   { key: 'homepage_image_mobile_url', label: 'Homepage Image (Mobile)', type: 'image', context: 'homepage_mobile', group: 'Branding' },
   { key: 'logo_url', label: 'Site Logo', type: 'image', context: 'logo', group: 'Branding' },
   { key: 'logo_show_in_navbar', label: 'Show Logo in Navbar', type: 'checkbox', group: 'Branding' },
+  { key: 'user_icon_url', label: 'User Icon (logged in)', type: 'image', context: 'user_icon', group: 'Branding' },
+  { key: 'shopping_cart_icon_url', label: 'Shopping Cart Icon', type: 'image', context: 'shopping_cart_icon', group: 'Branding' },
 
   { key: 'about_us_text', label: 'About Us Text', type: 'textarea', group: 'About Us' },
   { key: 'about_image_url', label: 'About Us Image', type: 'image', context: 'about', group: 'About Us' },

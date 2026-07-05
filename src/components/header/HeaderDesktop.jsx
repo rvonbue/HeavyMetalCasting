@@ -25,6 +25,8 @@ export default function HeaderDesktop({
   const authUser = useSelector(state => state.auth.user);
   const siteInitials = settings.site_initials || 'HMC';
   const showLogo = settings.logo_show_in_navbar === 'true' && settings.logo_url;
+  const userIconUrl = settings.user_icon_url;
+  const shoppingCartIconUrl = settings.shopping_cart_icon_url;
   const isHome = window.location.pathname === '/';
   const [scrolled, setScrolled] = useState(false);
 
@@ -149,7 +151,11 @@ export default function HeaderDesktop({
               className="flex items-center justify-center cursor-pointer hover:opacity-70 transition"
               title="View profile"
             >
-              <UserCircle size={24} strokeWidth={0.75} />
+              {userIconUrl ? (
+                <img src={userIconUrl} alt="User" className="h-6 w-6 object-contain" />
+              ) : (
+                <UserCircle size={24} strokeWidth={0.75} />
+              )}
             </button>
           ) : (
             <Link to="/create_account" className={inactiveBorder} style={{ color: 'inherit', display: 'inline-flex', alignItems: 'center' }}>
@@ -164,8 +170,10 @@ export default function HeaderDesktop({
             onClick={() => dispatch(toggleShoppingCart())}
             style={{ cursor: 'pointer' }}
           >
-            <div className="flex items-center justify-center text-xs font-bold">
-              {/* <CartIcon stroke='#FFFF'/> */}
+            <div className="flex items-center justify-center text-xs font-bold gap-2">
+              {shoppingCartIconUrl && (
+                <img src={shoppingCartIconUrl} alt="Cart" className="h-6 w-6 object-contain" />
+              )}
               <div
                 key={totalItemsInCart}
                 className="w-6 h-6 rounded-full border border-color-text-hmc-c flex items-center justify-center hmc-bounce"
