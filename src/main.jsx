@@ -24,6 +24,7 @@ import EventOverviewPage from "./pages/AdminPages/EventOverviewPage.jsx";
 import ProductFieldsPage from "./pages/AdminPages/ProductFieldsPage.jsx";
 import EditEventPage from "./pages/AdminPages/EditEventPage.jsx";
 import EventsPage from "./pages/CustomerPages/EventsPage.jsx";
+import CreateAccountPage from "./pages/AuthPages/CreateAccountPage.jsx";
 
 import './styles/App.css';
 import './styles/index.css';
@@ -40,6 +41,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />}>
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
+            <Route path="create_account" element={<CreateAccountPage />} />
             <Route path={`${ShopPathName}/:category?`} element={<ShopPage />} />
             <Route path=":product/:product_id" element={<CustomerProductPage />} />
             <Route path="about_us" element={<AboutUsPage />} />

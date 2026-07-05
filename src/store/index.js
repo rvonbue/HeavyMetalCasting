@@ -6,6 +6,7 @@ import adminReducer from "./adminSlice"
 import userReducer from "./userSlice"
 import settingsReducer from "./settingsSlice"
 import eventsReducer from "./eventsSlice"
+import authReducer from "./authSlice"
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     user: userReducer,
     settings: settingsReducer,
     events: eventsReducer,
+    auth: authReducer,
   },
 })
 export default store;
