@@ -304,7 +304,7 @@ export function ProductBlocks({ product, blocks }) {
 
   return (
     <div
-      className="text-left grid items-baseline gap-x-3 gap-y-4"
+      className="text-left grid items-start gap-x-3 gap-y-4"
       style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}
     >
       {cells.map(({ block, rowLine, colStart, colSpan }) => (
