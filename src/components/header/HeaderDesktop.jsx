@@ -152,9 +152,9 @@ export default function HeaderDesktop({
               title="View profile"
             >
               {userIconUrl ? (
-                <img src={userIconUrl} alt="User" className="h-6 w-6 object-contain" />
+                <img src={userIconUrl} alt="User" className="h-9 w-9 object-contain" />
               ) : (
-                <UserCircle size={24} strokeWidth={0.75} />
+                <UserCircle size={36} strokeWidth={0.75} />
               )}
             </button>
           ) : (
