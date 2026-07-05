@@ -318,7 +318,7 @@ export function ProductBlocks({ product, blocks }) {
     const gridRow = block.grid_row ?? 1;
     if (!rowStylingByGridRow.has(gridRow)) {
       rowStylingByGridRow.set(gridRow, {
-        margin_top: block.margin_top ?? 'mb-0',
+        margin_top: block.margin_top ?? 'mt-0',
         margin_bottom: block.margin_bottom ?? 'mb-0',
         vertical_align: block.vertical_align ?? 'items-start',
         justify_content: block.justify_content ?? 'flex-start',
@@ -335,7 +335,7 @@ export function ProductBlocks({ product, blocks }) {
         const styling = rowStylingByGridRow.get(gridRow) ?? {};
 
         // Map margin class names to Tailwind classes
-        const marginTopClass = styling.margin_top === 'mb-0' ? '' : styling.margin_top;
+        const marginTopClass = styling.margin_top === 'mt-0' ? '' : styling.margin_top;
         const marginBottomClass = styling.margin_bottom === 'mb-0' ? '' : styling.margin_bottom;
 
         // Map vertical alignment class names

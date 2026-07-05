@@ -64,7 +64,7 @@ function serializeBlocks(blocks) {
         label: b.label ?? null,
         font_size: b.font_size ?? null,
         show_label: b.show_label ?? true,
-        margin_top: b.margin_top ?? 'mb-0',
+        margin_top: b.margin_top ?? 'mt-0',
         margin_bottom: b.margin_bottom ?? 'mb-0',
         vertical_align: b.vertical_align ?? 'items-start',
         justify_content: b.justify_content ?? 'flex-start',
@@ -103,7 +103,15 @@ const FONT_SIZE_OPTIONS = [
   { value: "3xl", label: "3XL" },
 ];
 
-const MARGIN_OPTIONS = [
+const MARGIN_TOP_OPTIONS = [
+  { value: "mt-0", label: "None" },
+  { value: "mt-1", label: "Small" },
+  { value: "mt-2", label: "Medium" },
+  { value: "mt-3", label: "Large" },
+  { value: "mt-4", label: "Extra Large" },
+];
+
+const MARGIN_BOTTOM_OPTIONS = [
   { value: "mb-0", label: "None" },
   { value: "mb-1", label: "Small" },
   { value: "mb-2", label: "Medium" },
@@ -307,7 +315,7 @@ function RowStylingPanel({ rowIndex, row, onSetRowStyling }) {
 
   const verticalAlign = firstBlock.vertical_align ?? 'items-start';
   const justifyContent = firstBlock.justify_content ?? 'flex-start';
-  const marginTop = firstBlock.margin_top ?? 'mb-0';
+  const marginTop = firstBlock.margin_top ?? 'mt-0';
   const marginBottom = firstBlock.margin_bottom ?? 'mb-0';
 
   return (
@@ -381,9 +389,9 @@ function RowStylingPanel({ rowIndex, row, onSetRowStyling }) {
 
           {/* Margin Top */}
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Margin T</span>
+            <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Margin Top</span>
             <div className="flex gap-1">
-              {MARGIN_OPTIONS.map((o) => (
+              {MARGIN_TOP_OPTIONS.map((o) => (
                 <button
                   key={o.value}
                   type="button"
@@ -403,9 +411,9 @@ function RowStylingPanel({ rowIndex, row, onSetRowStyling }) {
 
           {/* Margin Bottom */}
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Margin B</span>
+            <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Margin Bottom</span>
             <div className="flex gap-1">
-              {MARGIN_OPTIONS.map((o) => (
+              {MARGIN_BOTTOM_OPTIONS.map((o) => (
                 <button
                   key={o.value}
                   type="button"
@@ -750,7 +758,7 @@ export default function ProductFieldsPage() {
               grid_col: b.grid_col,
               font_size: b.font_size ?? null,
               show_label: b.show_label ?? true,
-              margin_top: b.margin_top ?? 'mb-0',
+              margin_top: b.margin_top ?? 'mt-0',
               margin_bottom: b.margin_bottom ?? 'mb-0',
               vertical_align: b.vertical_align ?? 'items-start',
               justify_content: b.justify_content ?? 'flex-start',
@@ -772,7 +780,7 @@ export default function ProductFieldsPage() {
           if ((saved.label ?? "") !== (b.label ?? "")) updates.label = b.label ?? null;
           if ((saved.font_size ?? null) !== (b.font_size ?? null)) updates.font_size = b.font_size ?? null;
           if ((saved.show_label ?? true) !== (b.show_label ?? true)) updates.show_label = b.show_label ?? true;
-          if ((saved.margin_top ?? 'mb-0') !== (b.margin_top ?? 'mb-0')) updates.margin_top = b.margin_top ?? 'mb-0';
+          if ((saved.margin_top ?? 'mt-0') !== (b.margin_top ?? 'mt-0')) updates.margin_top = b.margin_top ?? 'mt-0';
           if ((saved.margin_bottom ?? 'mb-0') !== (b.margin_bottom ?? 'mb-0')) updates.margin_bottom = b.margin_bottom ?? 'mb-0';
           if ((saved.vertical_align ?? 'items-start') !== (b.vertical_align ?? 'items-start')) updates.vertical_align = b.vertical_align ?? 'items-start';
           if ((saved.justify_content ?? 'flex-start') !== (b.justify_content ?? 'flex-start')) updates.justify_content = b.justify_content ?? 'flex-start';
