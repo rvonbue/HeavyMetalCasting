@@ -327,7 +327,7 @@ export function ProductBlocks({ product, blocks }) {
   });
 
   return (
-    <div className="text-left flex flex-col gap-y-4">
+    <div className="text-left flex flex-col">
       {rowLines.map((rowLine) => {
         const rowCells = cellsByRow.get(rowLine) ?? [];
         const firstBlock = blocks?.find((b) => rowCells.some((c) => c.block.id === b.id));
