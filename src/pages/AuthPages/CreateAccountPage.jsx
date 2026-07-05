@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'sonner';
 import { PageContainer } from '../../components/Resuables';
-import { signUpWithEmail, signInWithOAuth } from '../../api/authAPI';
+import { signUpWithEmail, signInWithOAuth, signInWithEmail } from '../../api/authAPI';
+import { setUser } from '../../store/authSlice';
 
 export default function CreateAccountPage() {
   const navigate = useNavigate();
@@ -271,6 +273,7 @@ export default function CreateAccountPage() {
 
 function SignInForm({ isLoading, setIsLoading }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: { email: '', password: '' },
   });
@@ -278,8 +281,8 @@ function SignInForm({ isLoading, setIsLoading }) {
   async function onSubmitSignIn(data) {
     setIsLoading(true);
     try {
-      const { signInWithEmail } = await import('../../api/authAPI');
       const result = await signInWithEmail(data.email, data.password);
+      dispatch(setUser(result.user));
       toast.success('Signed in successfully');
       navigate('/shop');
     } catch (error) {

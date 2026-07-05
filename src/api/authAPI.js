@@ -55,19 +55,26 @@ export async function signInWithEmail(email, password) {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
+      options: {
+        // Keep session for 30 days
+        expiresIn: 30 * 24 * 60 * 60, // 30 days in seconds
+      },
     });
 
     if (error) throw error;
 
     // Update last login
-    await supabase
+    const userProfile = await supabase
       .from('users')
       .update({ last_login_at: new Date().toISOString() })
-      .eq('id', data.user.id);
+      .eq('id', data.user.id)
+      .select()
+      .single();
 
+    // Return complete user object with profile data
     return {
       success: true,
-      user: data.user,
+      user: { ...data.user, role: userProfile.data?.role },
       session: data.session,
     };
   } catch (error) {

@@ -6,10 +6,12 @@ import ShoppingTab from './components/shoppingTab/ShoppingTab'
 import SaleBanner from './components/SaleBanner'
 
 import { toggleShoppingCart } from './store/shoppingCartSlice'
+import { setUser } from './store/authSlice'
 import './styles/App.css'
 import { useEffect, useState } from 'react'
 import { loadAppData } from "./api/apis";
 import { buildThemeOverrideStyle } from "./staticData/themeColors";
+import { getCurrentUser } from './api/authAPI';
 
 function Root() {
   const dispatch = useDispatch()
@@ -25,8 +27,17 @@ function Root() {
   const [bannerHeight, setBannerHeight] = useState(0);
 
   useEffect(() => {
+    // Check for existing session on app load
+    const checkSession = async () => {
+      const user = await getCurrentUser();
+      if (user) {
+        dispatch(setUser(user));
+      }
+    };
+
+    checkSession();
     loadAppData(dispatch);
-  }, []);
+  }, [dispatch]);
 
   // Off home, the banner sits in flow and pushes content down, so the outlet
   // shrinks by its measured height (header is sticky, taking toolbarHeight).
