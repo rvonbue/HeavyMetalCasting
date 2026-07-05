@@ -49,7 +49,7 @@ export function ShopProductLayout({ product, blocks, viewport = "responsive" }) 
   return (
     <div className={`grid w-full gap-8 ${cols.grid}`}>
       <LeftColumn product={product} colSpanClass={cols.left} />
-      <div className={cols.right}>
+      <div className={`${cols.right} flex flex-col justify-between`}>
         <ProductBlocks product={product} blocks={blocks} />
       </div>
     </div>
