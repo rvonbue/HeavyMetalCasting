@@ -452,7 +452,7 @@ function QuantityWidget({ shoppingCartItemQuantity, shoppingCartProps, stockAvai
         inputMode="numeric"
         value={shoppingCartItemQuantity}
         onChange={onQuantityChange}
-        className={`w-20 rounded border px-2 py-1 text-center outline-none bg-hmc-button-a text-hmc-button-text-a font-bold ${sizeClass || 'text-sm'}`}
+        className={`w-20 rounded border px-2 py-1 text-center outline-none bg-hmc-button-a text-hmc-a font-bold ${sizeClass || 'text-sm'}`}
       />
     </div>
   );
