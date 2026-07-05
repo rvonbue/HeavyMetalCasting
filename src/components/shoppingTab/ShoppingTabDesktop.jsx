@@ -47,10 +47,10 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
           <>
             {/* Header */}
             <div
-              className="flex justify-between items-center border-b border-hmc-border-b select-none cursor-pointer pl-4 text-hmc-textsecondary"
+              className="flex justify-between items-center border-b border-hmc-border-b select-none cursor-pointer pl-4"
               onClick={onClose}
             >
-              <div className="text-lg">SHOPPING CART</div>
+              <div className="text-lg font-bold text-hmc-textprimary">SHOPPING CART</div>
 
               <button
                 className="text-hmc-textsecondary hover:opacity-70"
