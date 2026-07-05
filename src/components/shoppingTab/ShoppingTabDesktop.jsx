@@ -53,7 +53,7 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
               <div className="text-lg font-bold text-hmc-textprimary">SHOPPING CART</div>
 
               <button
-                className="text-hmc-textsecondary hover:opacity-70"
+                className="text-hmc-textprimary hover:opacity-70"
                 style={{ fontSize: '32px', marginRight: '12px' }}
               >
                 ✕
