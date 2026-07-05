@@ -126,6 +126,13 @@ const JUSTIFY_CONTENT_OPTIONS = [
   { value: "flex-evenly", label: "Space Evenly" },
 ];
 
+// Block type icons
+const BLOCK_TYPE_ICONS = {
+  product: "▦",
+  widget: "⚙",
+  user: "📝",
+};
+
 // Groups blocks into a 2D array of rows (each a list of blocks ordered by col).
 function buildLayout(blocks) {
   const byRow = new Map();
@@ -175,8 +182,8 @@ function SortableBlockCard({ block, onDelete, onEditContent, onEditLabel, onSetF
         >
           ⠿
         </button>
-        <span className="text-[10px] font-bold uppercase tracking-wide text-hmc-textprimary/60">
-          {block.block_type}
+        <span className="text-lg text-hmc-textprimary" title={block.block_type}>
+          {BLOCK_TYPE_ICONS[block.block_type] || "•"}
         </span>
         <button
           type="button"
@@ -247,8 +254,8 @@ function OverlayBlockCard({ block }) {
     <div className="flex w-52 flex-none cursor-grabbing flex-col gap-2 rounded border border-hmc-c bg-hmc-panelbackground p-2 shadow-lg">
       <div className="flex items-center gap-2">
         <span className="text-lg leading-none text-hmc-textprimary">⠿</span>
-        <span className="text-[10px] font-bold uppercase tracking-wide text-hmc-textprimary/60">
-          {block.block_type}
+        <span className="text-lg text-hmc-textprimary">
+          {BLOCK_TYPE_ICONS[block.block_type] || "•"}
         </span>
       </div>
       <span className="text-sm text-hmc-textprimary">
@@ -298,78 +305,110 @@ function RowStylingPanel({ rowIndex, row, onSetRowStyling }) {
   const firstBlock = row?.[0];
   if (!firstBlock) return null;
 
+  const verticalAlign = firstBlock.vertical_align ?? 'items-start';
+  const justifyContent = firstBlock.justify_content ?? 'flex-start';
+  const marginTop = firstBlock.margin_top ?? 'mb-0';
+  const marginBottom = firstBlock.margin_bottom ?? 'mb-0';
+
   return (
     <div className="mb-3 rounded bg-hmc-panelbackground p-3 border border-hmc-border-a">
-      <div className="text-[11px] font-bold uppercase tracking-wide text-hmc-textprimary/70 mb-2">
-        Row {rowIndex + 1} Styling
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        <div>
-          <label className="block text-[10px] font-semibold text-hmc-textprimary/60 mb-1">
-            Vertical Align
-          </label>
-          <select
-            value={firstBlock.vertical_align ?? 'items-start'}
-            onChange={(e) => onSetRowStyling(rowIndex, 'vertical_align', e.target.value)}
-            className="w-full rounded border border-hmc-b/30 bg-white px-2 py-1 text-[11px] text-hmc-textprimary"
-          >
+      <div className="space-y-2">
+        {/* Vertical Align */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Vertical Align</span>
+          <div className="flex gap-1">
             {VERTICAL_ALIGN_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
+              <button
+                key={o.value}
+                type="button"
+                onClick={() => onSetRowStyling(rowIndex, 'vertical_align', o.value)}
+                className={`px-2 py-1 text-[10px] font-bold rounded transition ${
+                  verticalAlign === o.value
+                    ? 'bg-hmc-button-a text-hmc-button-text-a'
+                    : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-a/20'
+                }`}
+                title={o.label}
+              >
+                {o.label === 'Top' ? '↑' : o.label === 'Center' ? '↕' : '↓'}
+              </button>
             ))}
-          </select>
+          </div>
         </div>
 
-        <div>
-          <label className="block text-[10px] font-semibold text-hmc-textprimary/60 mb-1">
-            Justify Content
-          </label>
-          <select
-            value={firstBlock.justify_content ?? 'flex-start'}
-            onChange={(e) => onSetRowStyling(rowIndex, 'justify_content', e.target.value)}
-            className="w-full rounded border border-hmc-b/30 bg-white px-2 py-1 text-[11px] text-hmc-textprimary"
-          >
-            {JUSTIFY_CONTENT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+        {/* Justify Content */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Justify</span>
+          <div className="flex gap-1">
+            {JUSTIFY_CONTENT_OPTIONS.map((o) => {
+              const icons = {
+                'flex-start': '⊣',
+                'flex-center': '⊥',
+                'flex-end': '⊢',
+                'flex-between': '⊡',
+                'flex-around': '≋',
+                'flex-evenly': '≈',
+              };
+              return (
+                <button
+                  key={o.value}
+                  type="button"
+                  onClick={() => onSetRowStyling(rowIndex, 'justify_content', o.value)}
+                  className={`px-2 py-1 text-xs font-bold rounded transition ${
+                    justifyContent === o.value
+                      ? 'bg-hmc-button-a text-hmc-button-text-a'
+                      : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-a/20'
+                  }`}
+                  title={o.label}
+                >
+                  {icons[o.value] || o.label[0]}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <div>
-          <label className="block text-[10px] font-semibold text-hmc-textprimary/60 mb-1">
-            Margin Top
-          </label>
-          <select
-            value={firstBlock.margin_top ?? 'mb-0'}
-            onChange={(e) => onSetRowStyling(rowIndex, 'margin_top', e.target.value)}
-            className="w-full rounded border border-hmc-b/30 bg-white px-2 py-1 text-[11px] text-hmc-textprimary"
-          >
+        {/* Margin Top */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Margin T</span>
+          <div className="flex gap-1">
             {MARGIN_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
+              <button
+                key={o.value}
+                type="button"
+                onClick={() => onSetRowStyling(rowIndex, 'margin_top', o.value)}
+                className={`px-2 py-1 text-[10px] font-bold rounded transition ${
+                  marginTop === o.value
+                    ? 'bg-hmc-button-a text-hmc-button-text-a'
+                    : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-a/20'
+                }`}
+                title={o.label}
+              >
+                {o.label[0]}
+              </button>
             ))}
-          </select>
+          </div>
         </div>
 
-        <div>
-          <label className="block text-[10px] font-semibold text-hmc-textprimary/60 mb-1">
-            Margin Bottom
-          </label>
-          <select
-            value={firstBlock.margin_bottom ?? 'mb-0'}
-            onChange={(e) => onSetRowStyling(rowIndex, 'margin_bottom', e.target.value)}
-            className="w-full rounded border border-hmc-b/30 bg-white px-2 py-1 text-[11px] text-hmc-textprimary"
-          >
+        {/* Margin Bottom */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Margin B</span>
+          <div className="flex gap-1">
             {MARGIN_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
+              <button
+                key={o.value}
+                type="button"
+                onClick={() => onSetRowStyling(rowIndex, 'margin_bottom', o.value)}
+                className={`px-2 py-1 text-[10px] font-bold rounded transition ${
+                  marginBottom === o.value
+                    ? 'bg-hmc-button-a text-hmc-button-text-a'
+                    : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-a/20'
+                }`}
+                title={o.label}
+              >
+                {o.label[0]}
+              </button>
             ))}
-          </select>
+          </div>
         </div>
       </div>
     </div>
@@ -791,24 +830,28 @@ export default function ProductFieldsPage() {
                 <RowInsertGhost index={0} />
                 {layout.map((row, rIdx) => (
                   <Fragment key={rIdx}>
-                    <RowStylingPanel
-                      rowIndex={rIdx}
-                      row={row}
-                      onSetRowStyling={handleSetRowStyling}
-                    />
-                    <div className="flex items-stretch gap-3">
-                      {row.map((block) => (
-                        <SortableBlockCard
-                          key={block.id}
-                          block={block}
-                          onDelete={handleDeleteBlock}
-                          onEditContent={handleEditContent}
-                          onEditLabel={handleEditLabel}
-                          onSetFontSize={handleSetFontSize}
-                          onToggleLabel={handleToggleLabel}
+                    <div className="flex gap-3 items-start">
+                      <div className="flex items-stretch gap-3 flex-1">
+                        {row.map((block) => (
+                          <SortableBlockCard
+                            key={block.id}
+                            block={block}
+                            onDelete={handleDeleteBlock}
+                            onEditContent={handleEditContent}
+                            onEditLabel={handleEditLabel}
+                            onSetFontSize={handleSetFontSize}
+                            onToggleLabel={handleToggleLabel}
+                          />
+                        ))}
+                        <AppendGhost rowIndex={rIdx} />
+                      </div>
+                      <div className="w-96 flex-none">
+                        <RowStylingPanel
+                          rowIndex={rIdx}
+                          row={row}
+                          onSetRowStyling={handleSetRowStyling}
                         />
-                      ))}
-                      <AppendGhost rowIndex={rIdx} />
+                      </div>
                     </div>
                     <RowInsertGhost index={rIdx + 1} />
                   </Fragment>
