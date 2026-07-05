@@ -172,40 +172,39 @@ function SortableBlockCard({ block, onDelete, onEditContent, onEditLabel, onSetF
       style={style}
       className="flex w-52 flex-none flex-col gap-2 rounded border border-hmc-border-a bg-hmc-panelbackground p-2"
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 min-h-6">
         <button
           type="button"
-          className="cursor-grab text-lg leading-none text-hmc-textprimary hover:text-hmc-c"
+          className="cursor-grab text-lg leading-none text-hmc-textprimary hover:text-hmc-c flex-none"
           aria-label="Drag to reposition"
           {...attributes}
           {...listeners}
         >
           ⠿
         </button>
-        <span className="text-lg text-hmc-textprimary" title={block.block_type}>
+        <span className="text-lg text-hmc-textprimary flex-none" title={block.block_type}>
           {BLOCK_TYPE_ICONS[block.block_type] || "•"}
         </span>
+        {block.block_type === "user" ? (
+          <input
+            type="text"
+            defaultValue={block.content ?? ""}
+            onBlur={(e) => onEditContent(block, e.target.value)}
+            placeholder="Custom text…"
+            className="flex-1 min-w-0 rounded border border-hmc-b/30 bg-white px-1 py-0.5 text-xs text-hmc-textprimary focus:border-hmc-c focus:outline-none focus:ring-1 focus:ring-hmc-c/30"
+          />
+        ) : (
+          <span className="flex-1 min-w-0 text-xs text-hmc-textprimary truncate">{blockSummary(block)}</span>
+        )}
         <button
           type="button"
           onClick={() => onDelete(block)}
-          className="ml-auto text-xs text-hmc-error hover:opacity-70"
+          className="flex-none text-xs text-hmc-error hover:opacity-70"
           aria-label="Remove block"
         >
           ✕
         </button>
       </div>
-
-      {block.block_type === "user" ? (
-        <input
-          type="text"
-          defaultValue={block.content ?? ""}
-          onBlur={(e) => onEditContent(block, e.target.value)}
-          placeholder="Custom text…"
-          className="w-full rounded border border-hmc-b/30 bg-white px-2 py-1 text-xs text-hmc-textprimary focus:border-hmc-c focus:outline-none focus:ring-1 focus:ring-hmc-c/30"
-        />
-      ) : (
-        <span className="text-sm text-hmc-textprimary">{blockSummary(block)}</span>
-      )}
 
       {block.block_type === "widget" && (
         <input
