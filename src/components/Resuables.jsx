@@ -9,7 +9,7 @@ export function Button_A({button_name, link_val, button_type, button_styles_oute
     <>      
       {button_type === "form" ? (
   <div
-    className=" bg-hmc-button-a px-2 py-1 font-bold transition hover:bg-hmc-button-b hover:text-hmc-b"
+    className=" bg-hmc-button-a font-bold transition hover:bg-hmc-button-b hover:text-hmc-b"
     style={button_styles_outer}
   >
     <button
@@ -26,7 +26,6 @@ export function Button_A({button_name, link_val, button_type, button_styles_oute
     onClick={onClick}
     className={`
         ${extraClassNames}
-        px-2 py-2
         text-sm font-bold
         transition
         cursor-pointer
@@ -40,7 +39,6 @@ export function Button_A({button_name, link_val, button_type, button_styles_oute
             : `
               bg-hmc-button-b
               text-hmc-textprimary
-              hover:border-hmc-textsecondary
               hover:bg-hmc-button-b
               hover:text-hmc-textsecondary
             `
@@ -56,7 +54,6 @@ export function Button_A({button_name, link_val, button_type, button_styles_oute
       to={link_val}
       className={`
         ${extraClassNames}
-        px-2 py-2
         text-sm font-bold
         transition
         cursor-pointer
@@ -70,7 +67,6 @@ export function Button_A({button_name, link_val, button_type, button_styles_oute
             : `
               bg-hmc-button-b
               text-hmc-textprimary
-              hover:border-hmc-textsecondary
               hover:bg-hmc-button-b
               hover:text-hmc-textsecondary
             `
@@ -189,31 +185,65 @@ const hmcSelectStyles = {
   control: (base, state) => ({
     ...base,
     minHeight: "38px",
+    backgroundColor: "var(--color-hmc-panelbackground)",
     borderColor: state.isFocused
       ? "var(--color-hmc-c)"
-      : "rgba(107, 91, 75, 0.35)",
-    boxShadow: state.isFocused
-      ? "0 0 0 1px rgba(176, 141, 87, 0.35)"
-      : "none",
+      : "var(--color-hmc-border-b)",
+    boxShadow: "none",
     "&:hover": {
       borderColor: "var(--color-hmc-c)",
     },
   }),
 
+  menu: (base) => ({
+    ...base,
+    backgroundColor: "var(--color-hmc-panelbackground)",
+    border: "1px solid var(--color-hmc-border-b)",
+    zIndex: 9999,
+  }),
+
   option: (base, state) => ({
     ...base,
     fontSize: "13px",
-    backgroundColor: state.isSelected
-      ? "var(--color-hmc-panelbackground)"
-      : state.isFocused
-        ? "var(--color-hmc-panelbackground)"
-        : "white",
-    color: state.isSelected ? "var(--color-hmc-textprimary)" : "var(--color-hmc-textprimary)",
+    cursor: "pointer",
+    backgroundColor: state.isSelected || state.isFocused
+      ? "var(--color-hmc-button-b)"
+      : "var(--color-hmc-panelbackground)",
+    color: "var(--color-hmc-textprimary)",
+    ":active": {
+      backgroundColor: "var(--color-hmc-button-b)",
+    },
+  }),
+
+  singleValue: (base) => ({
+    ...base,
+    color: "var(--color-hmc-textprimary)",
+  }),
+
+  placeholder: (base) => ({
+    ...base,
+    color: "var(--color-hmc-textprimary)",
+    opacity: 0.7,
+  }),
+
+  input: (base) => ({
+    ...base,
+    color: "var(--color-hmc-textprimary)",
+  }),
+
+  dropdownIndicator: (base) => ({
+    ...base,
+    color: "var(--color-hmc-textprimary)",
+  }),
+
+  indicatorSeparator: (base) => ({
+    ...base,
+    backgroundColor: "var(--color-hmc-border-b)",
   }),
 
   multiValue: (base) => ({
     ...base,
-    backgroundColor: "rgba(176, 141, 87, 0.15)",
+    backgroundColor: "var(--color-hmc-button-b)",
   }),
 
   multiValueLabel: (base) => ({
@@ -224,10 +254,10 @@ const hmcSelectStyles = {
 
   multiValueRemove: (base) => ({
     ...base,
-    color: "var(--color-hmc-c)",
+    color: "var(--color-hmc-textprimary)",
     ":hover": {
       backgroundColor: "var(--color-hmc-c)",
-      color: "white",
+      color: "var(--color-hmc-panelbackground)",
     },
   }),
 };
@@ -239,6 +269,8 @@ export function HmcSelect({
   isMulti = false,
   placeholder = "Select...",
   className = "",
+  controlBg,
+  ...rest
 }) {
   return (
     <Select
@@ -250,17 +282,18 @@ export function HmcSelect({
       menuPortalTarget={document.getElementById("hmc-theme-root")}
       styles={{
         ...hmcSelectStyles,
-        menuPortal: (base) => ({
-          ...base,
-          zIndex: 9999,
+        control: (base, state) => ({
+          ...hmcSelectStyles.control(base, state),
+          ...(controlBg ? { backgroundColor: controlBg } : {}),
         }),
-        menu: (base) => ({
+        menuPortal: (base) => ({
           ...base,
           zIndex: 9999,
         }),
       }}
       className={`text-sm ${className}`}
       classNamePrefix="hmc-select"
+      {...rest}
     />
   );
 }
@@ -321,14 +354,13 @@ export function OptionButton({button_name, button_styles_outer, isActive, isDisa
       disabled={isDisabled}
       className={`
         ${extraClassNames}
-        px-2 py-2
         text-sm font-bold
         transition
         ${isDisabled ? 'opacity-40 pointer-events-none' : 'cursor-pointer'}
         ${
           isActive
             ? 'bg-hmc-button-a text-hmc-textsecondary'
-            : 'bg-hmc-button-b text-hmc-textprimary hover:border-hmc-textsecondary hover:bg-hmc-button-b hover:text-hmc-textsecondary'
+            : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-b hover:text-hmc-textsecondary'
         }
       `}
       style={button_styles_outer}
