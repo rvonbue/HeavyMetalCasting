@@ -56,7 +56,21 @@ export default function ProductOverviewPage() {
           productAttributes,
         }),
       header: field.label,
-      cell: ({ getValue }) => getValue(),
+      cell: ({ getValue, row }) => {
+        const value = getValue();
+        // Make the name column clickable
+        if (field.column_name === 'name') {
+          return (
+            <NavLink
+              to={`/product/${row.original.id}`}
+              className="text-hmc-link hover:text-hmc-link-active transition"
+            >
+              {value}
+            </NavLink>
+          );
+        }
+        return value;
+      },
       sortingFn: "alphanumeric",
     }));
 
