@@ -302,6 +302,7 @@ function RowInsertGhost({ index }) {
 }
 
 function RowStylingPanel({ rowIndex, row, onSetRowStyling }) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const firstBlock = row?.[0];
   if (!firstBlock) return null;
 
@@ -311,106 +312,119 @@ function RowStylingPanel({ rowIndex, row, onSetRowStyling }) {
   const marginBottom = firstBlock.margin_bottom ?? 'mb-0';
 
   return (
-    <div className="mb-3 rounded bg-hmc-panelbackground p-3 border border-hmc-border-a">
-      <div className="space-y-2">
-        {/* Vertical Align */}
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Vertical Align</span>
-          <div className="flex gap-1">
-            {VERTICAL_ALIGN_OPTIONS.map((o) => (
-              <button
-                key={o.value}
-                type="button"
-                onClick={() => onSetRowStyling(rowIndex, 'vertical_align', o.value)}
-                className={`px-2 py-1 text-[10px] font-bold rounded transition ${
-                  verticalAlign === o.value
-                    ? 'bg-hmc-button-a text-hmc-button-text-a'
-                    : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-a/20'
-                }`}
-                title={o.label}
-              >
-                {o.label === 'Top' ? '↑' : o.label === 'Center' ? '↕' : '↓'}
-              </button>
-            ))}
-          </div>
-        </div>
+    <div className="rounded bg-hmc-panelbackground border border-hmc-border-a">
+      <button
+        type="button"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center gap-2 px-3 py-2 text-sm font-semibold text-hmc-textprimary hover:bg-hmc-button-a/10 transition"
+      >
+        <span className={`text-[10px] transition-transform ${isExpanded ? 'rotate-90' : ''}`}>
+          ▶
+        </span>
+        <span>Row stylings</span>
+      </button>
 
-        {/* Justify Content */}
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Justify</span>
-          <div className="flex gap-1">
-            {JUSTIFY_CONTENT_OPTIONS.map((o) => {
-              const icons = {
-                'flex-start': '⊣',
-                'flex-center': '⊥',
-                'flex-end': '⊢',
-                'flex-between': '⊡',
-                'flex-around': '≋',
-                'flex-evenly': '≈',
-              };
-              return (
+      {isExpanded && (
+        <div className="border-t border-hmc-border-a p-3 space-y-2">
+          {/* Vertical Align */}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Vertical Align</span>
+            <div className="flex gap-1">
+              {VERTICAL_ALIGN_OPTIONS.map((o) => (
                 <button
                   key={o.value}
                   type="button"
-                  onClick={() => onSetRowStyling(rowIndex, 'justify_content', o.value)}
-                  className={`px-2 py-1 text-xs font-bold rounded transition ${
-                    justifyContent === o.value
+                  onClick={() => onSetRowStyling(rowIndex, 'vertical_align', o.value)}
+                  className={`px-2 py-1 text-[10px] font-bold rounded transition ${
+                    verticalAlign === o.value
                       ? 'bg-hmc-button-a text-hmc-button-text-a'
                       : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-a/20'
                   }`}
                   title={o.label}
                 >
-                  {icons[o.value] || o.label[0]}
+                  {o.label === 'Top' ? '↑' : o.label === 'Center' ? '↕' : '↓'}
                 </button>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Margin Top */}
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Margin T</span>
-          <div className="flex gap-1">
-            {MARGIN_OPTIONS.map((o) => (
-              <button
-                key={o.value}
-                type="button"
-                onClick={() => onSetRowStyling(rowIndex, 'margin_top', o.value)}
-                className={`px-2 py-1 text-[10px] font-bold rounded transition ${
-                  marginTop === o.value
-                    ? 'bg-hmc-button-a text-hmc-button-text-a'
-                    : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-a/20'
-                }`}
-                title={o.label}
-              >
-                {o.label[0]}
-              </button>
-            ))}
+          {/* Justify Content */}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Justify</span>
+            <div className="flex gap-1">
+              {JUSTIFY_CONTENT_OPTIONS.map((o) => {
+                const icons = {
+                  'flex-start': '⊣',
+                  'flex-center': '⊥',
+                  'flex-end': '⊢',
+                  'flex-between': '⊡',
+                  'flex-around': '≋',
+                  'flex-evenly': '≈',
+                };
+                return (
+                  <button
+                    key={o.value}
+                    type="button"
+                    onClick={() => onSetRowStyling(rowIndex, 'justify_content', o.value)}
+                    className={`px-2 py-1 text-xs font-bold rounded transition ${
+                      justifyContent === o.value
+                        ? 'bg-hmc-button-a text-hmc-button-text-a'
+                        : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-a/20'
+                    }`}
+                    title={o.label}
+                  >
+                    {icons[o.value] || o.label[0]}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* Margin Bottom */}
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Margin B</span>
-          <div className="flex gap-1">
-            {MARGIN_OPTIONS.map((o) => (
-              <button
-                key={o.value}
-                type="button"
-                onClick={() => onSetRowStyling(rowIndex, 'margin_bottom', o.value)}
-                className={`px-2 py-1 text-[10px] font-bold rounded transition ${
-                  marginBottom === o.value
-                    ? 'bg-hmc-button-a text-hmc-button-text-a'
-                    : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-a/20'
-                }`}
-                title={o.label}
-              >
-                {o.label[0]}
-              </button>
-            ))}
+          {/* Margin Top */}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Margin T</span>
+            <div className="flex gap-1">
+              {MARGIN_OPTIONS.map((o) => (
+                <button
+                  key={o.value}
+                  type="button"
+                  onClick={() => onSetRowStyling(rowIndex, 'margin_top', o.value)}
+                  className={`px-2 py-1 text-[10px] font-bold rounded transition ${
+                    marginTop === o.value
+                      ? 'bg-hmc-button-a text-hmc-button-text-a'
+                      : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-a/20'
+                  }`}
+                  title={o.label}
+                >
+                  {o.label[0]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Margin Bottom */}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold text-hmc-textprimary/60 w-20">Margin B</span>
+            <div className="flex gap-1">
+              {MARGIN_OPTIONS.map((o) => (
+                <button
+                  key={o.value}
+                  type="button"
+                  onClick={() => onSetRowStyling(rowIndex, 'margin_bottom', o.value)}
+                  className={`px-2 py-1 text-[10px] font-bold rounded transition ${
+                    marginBottom === o.value
+                      ? 'bg-hmc-button-a text-hmc-button-text-a'
+                      : 'bg-hmc-button-b text-hmc-textprimary hover:bg-hmc-button-a/20'
+                  }`}
+                  title={o.label}
+                >
+                  {o.label[0]}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -845,7 +859,7 @@ export default function ProductFieldsPage() {
                         ))}
                         <AppendGhost rowIndex={rIdx} />
                       </div>
-                      <div className="w-96 flex-none">
+                      <div className="flex-none min-w-fit">
                         <RowStylingPanel
                           rowIndex={rIdx}
                           row={row}
