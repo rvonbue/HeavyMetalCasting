@@ -25,6 +25,9 @@ import ProductFieldsPage from "./pages/AdminPages/ProductFieldsPage.jsx";
 import EditEventPage from "./pages/AdminPages/EditEventPage.jsx";
 import EventsPage from "./pages/CustomerPages/EventsPage.jsx";
 import CreateAccountPage from "./pages/AuthPages/CreateAccountPage.jsx";
+import VerifyEmailPage from "./pages/AuthPages/VerifyEmailPage.jsx";
+import ForgotPasswordPage from "./pages/AuthPages/ForgotPasswordPage.jsx";
+import ResetPasswordPage from "./pages/AuthPages/ResetPasswordPage.jsx";
 
 import './styles/App.css';
 import './styles/index.css';
@@ -42,6 +45,9 @@ createRoot(document.getElementById('root')).render(
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="create_account" element={<CreateAccountPage />} />
+            <Route path="verify-email" element={<VerifyEmailPage />} />
+            <Route path="forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="reset-password" element={<ResetPasswordPage />} />
             <Route path={`${ShopPathName}/:category?`} element={<ShopPage />} />
             <Route path=":product/:product_id" element={<CustomerProductPage />} />
             <Route path="about_us" element={<AboutUsPage />} />
