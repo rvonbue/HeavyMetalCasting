@@ -1,4 +1,4 @@
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useState, useEffect } from 'react'
 
@@ -17,10 +17,12 @@ export default function HeaderDesktop({
   hasAdminAccess
 }) {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const toolbarHeight = useSelector(state => state.app.toolbarHeight);
   const headerTransparent = useSelector(state => state.app.headerTransparent);
   const settings = useSelector(state => state.settings.settings);
+  const authUser = useSelector(state => state.auth.user);
   const siteInitials = settings.site_initials || 'HMC';
   const showLogo = settings.logo_show_in_navbar === 'true' && settings.logo_url;
   const isHome = window.location.pathname === '/';
@@ -139,12 +141,18 @@ export default function HeaderDesktop({
         {/* Right */}
         <div
           className="flex items-center"
-          style={{ marginLeft: 'auto', gap: '0.25rem' }}
+          style={{ marginLeft: 'auto', gap: '1rem' }}
         >
-          {loggedIn ? (
-            <SkullIcon />
+          {authUser ? (
+            <button
+              onClick={() => navigate('/user/profile')}
+              className="flex items-center justify-center cursor-pointer hover:opacity-70 transition"
+              title="View profile"
+            >
+              <UserCircle size={24} strokeWidth={0.75} />
+            </button>
           ) : (
-            <Link to="/login" className={inactiveBorder} style={{ color: 'inherit', display: 'inline-flex', alignItems: 'center' }}>
+            <Link to="/create_account" className={inactiveBorder} style={{ color: 'inherit', display: 'inline-flex', alignItems: 'center' }}>
               <span className="hidden sm:inline">SIGN IN</span>
               <UserCircle className="sm:hidden" size={24} strokeWidth={0.75} />
             </Link>

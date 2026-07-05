@@ -1,16 +1,26 @@
-import React, { useState } from 'react';
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { NavLink, useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
 import './Login.css';
 import { Button_A } from "../components/Resuables";
 
 function LoginPage() {
+  const navigate = useNavigate();
+  const authUser = useSelector(state => state.auth.user);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  useEffect(() => {
+    // Redirect to shop if already logged in
+    if (authUser) {
+      navigate('/shop');
+    }
+  }, [authUser, navigate]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Logging in with:', { email, password });
-    // Replace with real login logic
+    // Redirect to create_account which handles both signup and signin
+    navigate('/create_account');
   };
 
   return (
