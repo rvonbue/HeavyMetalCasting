@@ -63,7 +63,7 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
             {/* Content */}
             <div className="p-4 h-[calc(100%-156px)] overflow-y-auto">
               {shoppingCartEmpty ? (
-                <div className="text-lg select-none">
+                <div className="text-lg select-none text-hmc-textprimary">
                   Your shopping cart is empty.
                 </div>
               ) : (
