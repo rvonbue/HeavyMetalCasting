@@ -9,15 +9,19 @@ import { toggleShoppingCart } from './store/shoppingCartSlice'
 import './styles/App.css'
 import { useEffect, useState } from 'react'
 import { loadAppData } from "./api/apis";
+import { buildThemeOverrideStyle } from "./staticData/themeColors";
 
 function Root() {
   const dispatch = useDispatch()
 
   const showShoppingCart = useSelector(state => state.cart.showShoppingCart);
   const { toolbarHeight, themeName } = useSelector(state => state.app);
-  const theme = themeName === "dark" ? "" : "theme-hmc-inverted"
+  const settings = useSelector(state => state.settings.settings);
+  const theme = themeName === "dark" ? "theme-hmc-dark" : "theme-hmc-light"
+  const themeOverrideStyle = buildThemeOverrideStyle(settings);
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const isAdmin = location.pathname.startsWith('/admin');
   const [bannerHeight, setBannerHeight] = useState(0);
 
   useEffect(() => {
@@ -33,14 +37,16 @@ function Root() {
     : { height: `calc(100vh - ${toolbarHeight}px - ${bannerHeight}px)` };
 
   return (
-    <div id="hmc-theme-root" className={theme}>
+    <div id="hmc-theme-root" className={theme} style={themeOverrideStyle}>
       <Toaster position="bottom-right" richColors closeButton />
       <HeaderNavbar />
-      <SaleBanner
-        onHeightChange={setBannerHeight}
-        fixed={isHome}
-        topOffset={toolbarHeight}
-      />
+      {!isAdmin && (
+        <SaleBanner
+          onHeightChange={setBannerHeight}
+          fixed={isHome}
+          topOffset={toolbarHeight}
+        />
+      )}
       <div style={outletStyle} className="bg-hmc-bodybackground">
         <Outlet />
         <ShoppingTab

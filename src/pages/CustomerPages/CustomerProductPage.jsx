@@ -302,20 +302,66 @@ export function ProductBlocks({ product, blocks }) {
     }
   }
 
+  // Group cells by row for applying row-level styling
+  const cellsByRow = new Map();
+  cells.forEach((cell) => {
+    const row = cell.rowLine;
+    if (!cellsByRow.has(row)) cellsByRow.set(row, []);
+    cellsByRow.get(row).push(cell);
+  });
+
+  const rowLines = Array.from(cellsByRow.keys()).sort((a, b) => a - b);
+
+  // Map grid_row (1-based) to row styling. Blocks in the same grid_row share styling.
+  const rowStylingByGridRow = new Map();
+  blocks?.forEach((block) => {
+    const gridRow = block.grid_row ?? 1;
+    if (!rowStylingByGridRow.has(gridRow)) {
+      rowStylingByGridRow.set(gridRow, {
+        margin_top: block.margin_top ?? 'mb-0',
+        margin_bottom: block.margin_bottom ?? 'mb-0',
+        vertical_align: block.vertical_align ?? 'items-start',
+        justify_content: block.justify_content ?? 'flex-start',
+      });
+    }
+  });
+
   return (
-    <div
-      className="text-left grid items-start gap-x-3 gap-y-4"
-      style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}
-    >
-      {cells.map(({ block, rowLine, colStart, colSpan }) => (
-        <div
-          key={block.id}
-          className={`min-w-0 ${FONT_SIZE_CLASSES[block.font_size] ?? ""}`}
-          style={{ gridColumn: `${colStart} / span ${colSpan}`, gridRow: rowLine }}
-        >
-          {renderBlock(block)}
-        </div>
-      ))}
+    <div className="text-left flex flex-col gap-y-4">
+      {rowLines.map((rowLine) => {
+        const rowCells = cellsByRow.get(rowLine) ?? [];
+        const firstBlock = blocks?.find((b) => rowCells.some((c) => c.block.id === b.id));
+        const gridRow = firstBlock?.grid_row ?? 1;
+        const styling = rowStylingByGridRow.get(gridRow) ?? {};
+
+        // Map margin class names to Tailwind classes
+        const marginTopClass = styling.margin_top === 'mb-0' ? '' : styling.margin_top;
+        const marginBottomClass = styling.margin_bottom === 'mb-0' ? '' : styling.margin_bottom;
+
+        // Map vertical alignment class names
+        const alignClass = styling.vertical_align === 'items-start' ? '' : styling.vertical_align;
+
+        // Map justify content class names
+        const justifyClass = styling.justify_content === 'flex-start' ? '' : styling.justify_content;
+
+        return (
+          <div
+            key={rowLine}
+            className={`grid gap-x-3 text-left ${alignClass} ${justifyClass} ${marginTopClass} ${marginBottomClass}`}
+            style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`, gridRow: rowLine }}
+          >
+            {rowCells.map(({ block, colStart, colSpan }) => (
+              <div
+                key={block.id}
+                className={`min-w-0 ${FONT_SIZE_CLASSES[block.font_size] ?? ""}`}
+                style={{ gridColumn: `${colStart} / span ${colSpan}` }}
+              >
+                {renderBlock(block)}
+              </div>
+            ))}
+          </div>
+        );
+      })}
     </div>
   )
 }

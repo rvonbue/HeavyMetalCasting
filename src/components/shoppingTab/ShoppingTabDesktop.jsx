@@ -32,7 +32,7 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
 
       {/* Sliding panel */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-80 bg-white shadow-lg z-50 transform transition-transform duration-300 overflow-hidden ${
+        className={`fixed top-0 right-0 h-full w-full sm:w-80 bg-hmc-panelbackground text-hmc-c shadow-lg z-50 transform transition-transform duration-300 overflow-hidden ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -47,13 +47,13 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
           <>
             {/* Header */}
             <div
-              className="flex justify-between items-center border-b select-none cursor-pointer pl-4 text-hmc-textprimary"
+              className="flex justify-between items-center border-b border-hmc-border-b select-none cursor-pointer pl-4 text-hmc-textsecondary"
               onClick={onClose}
             >
               <div className="text-lg">SHOPPING CART</div>
-              
+
               <button
-                className="text-gray-600 hover:text-black"
+                className="text-hmc-textsecondary hover:opacity-70"
                 style={{ fontSize: '32px', marginRight: '12px' }}
               >
                 ✕
@@ -77,7 +77,7 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
             </div>
 
             {/* Footer */}
-            <div className="border-t flex flex-col align-center ">
+            <div className="border-t border-hmc-border-b flex flex-col align-center ">
               <div className="p-3 flex flex-row gap-4 justify-between ">  
                 <div className="font-semibold select-none text-sm">   
                   {totalQuantities} {totalQuantities === 1 ? "item" : "items"} in cart
@@ -86,11 +86,19 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
                   Total Cost: {totalCost}
                 </div>
               </div>
-                <Button_A
-                  button_name="CHECK OUT"
-                  link_val="/checkout"
-                  extraClassNames={" w-full"}
-                />
+                {shoppingCartEmpty ? (
+                  <div className="w-full bg-hmc-button-a px-2 py-2 text-center text-sm font-bold text-hmc-textprimary opacity-40 cursor-not-allowed select-none">
+                    CHECK OUT
+                  </div>
+                ) : (
+                  <div onClick={onClose}>
+                    <Button_A
+                      button_name="CHECK OUT"
+                      link_val="/checkout"
+                      extraClassNames={" w-full"}
+                    />
+                  </div>
+                )}
             </div>
           </>
         )}

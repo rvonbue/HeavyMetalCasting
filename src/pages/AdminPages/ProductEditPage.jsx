@@ -264,7 +264,7 @@ const EditProductForm = ({
         </CollapsibleSection>
 
         <CollapsibleSection title="Image Gallery" defaultOpen>
-          <div className="grid grid-cols-[80%_20%] gap-4">
+          <div className="grid h-72 grid-cols-[80%_20%] items-stretch gap-4">
             <div className="overflow-hidden border">
               <div className="h-full overflow-y-auto px-2">
                 {selectedProduct.product_images.length > 0 && (
@@ -272,11 +272,13 @@ const EditProductForm = ({
                 )}
               </div>
             </div>
-            <div className="h-[90px] w-full pr-2">
+            <div className="h-full w-full pr-2">
               <ProductImageUploaderDropzone product={selectedProduct} />
             </div>
           </div>
         </CollapsibleSection>
+
+        <div className="pb-8" />
       </div>
     </form>
   );
@@ -488,9 +490,6 @@ function VariantStockGrid({ product, productAttributes }) {
 
   return (
     <div>
-      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-hmc-textprimary">
-        Stock &amp; Pricing
-      </h2>
       <div className="overflow-x-auto rounded border border-hmc-border-a">
         <table className="text-sm">
           <thead className="bg-hmc-button-a text-hmc-button-text-a">

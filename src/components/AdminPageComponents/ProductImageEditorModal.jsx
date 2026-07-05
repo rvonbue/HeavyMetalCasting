@@ -89,8 +89,8 @@ export default function ProductImageEditorModal({ isOpen, onClose, image }) {
             Cancel
           </button>
           <button
-            type="submit"
-            form="image-editor-form"
+            type="button"
+            onClick={handleSubmit(onSubmit)}
             disabled={isSubmitting}
             className="px-4 py-2 text-sm bg-hmc-button-a text-hmc-button-text-a font-bold hover:opacity-90 disabled:opacity-60"
           >
@@ -99,7 +99,7 @@ export default function ProductImageEditorModal({ isOpen, onClose, image }) {
         </>
       }
     >
-      <form id="image-editor-form" onSubmit={handleSubmit(onSubmit)}>
+      <div>
         <div className="grid grid-cols-2 gap-6">
           {/* Left: image + cropper */}
           <div className="rounded border border-hmc-border-a bg-hmc-bg-a p-4">
@@ -170,7 +170,7 @@ export default function ProductImageEditorModal({ isOpen, onClose, image }) {
             </div>
           </div>
         </div>
-      </form>
+      </div>
     </Modal>
   );
 }

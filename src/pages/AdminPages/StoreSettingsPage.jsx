@@ -4,13 +4,18 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { PageContainer, AdminPageHeader, FolderTab } from '../../components/Resuables';
 import { updateSetting } from '../../store/settingsSlice';
+import { setTheme } from '../../store/appSlice';
 import { updateStoreSettingAPI, uploadSiteImageAPI } from '../../api/storeSettingsAPI';
+import { THEME_COLORS, themeColorKey, resolveVarToHex } from '../../staticData/themeColors';
 
 const SETTINGS_CONFIG = [
   { key: 'store_name', label: 'Store Name', type: 'text', group: 'General' },
   { key: 'site_initials', label: 'Site Initials (toolbar)', type: 'text', group: 'General' },
   { key: 'tagline', label: 'Tagline', type: 'text', group: 'General' },
   { key: 'contact_email', label: 'Contact Email', type: 'text', group: 'General' },
+
+  { key: 'theme', label: 'Theme', type: 'select', group: 'Theme',
+    options: [{ value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }] },
 
   { key: 'homepage_image_desktop_url', label: 'Homepage Image (Desktop)', type: 'image', context: 'homepage_desktop', group: 'Branding' },
   { key: 'homepage_image_mobile_url', label: 'Homepage Image (Mobile)', type: 'image', context: 'homepage_mobile', group: 'Branding' },
@@ -102,12 +107,45 @@ function SettingField({ config, register, watch, onImageUpload }) {
     );
   }
 
+  if (config.type === 'select') {
+    return (
+      <select {...register(config.key)} className={inputClass}>
+        {config.options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    );
+  }
+
   return (
     <input
       type={config.type}
       {...register(config.key)}
       className={inputClass}
     />
+  );
+}
+
+function ColorSwatch({ varName, value, onChange }) {
+  const [resolved, setResolved] = useState(null);
+
+  useEffect(() => {
+    if (!value) setResolved(resolveVarToHex(varName));
+  }, [varName, value]);
+
+  const hex = value || resolved || '#000000';
+
+  return (
+    <div className="flex items-center gap-3">
+      <input
+        type="color"
+        value={hex}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-8 w-8 cursor-pointer rounded border border-hmc-border-b bg-transparent p-0"
+        aria-label={`Edit ${varName}`}
+      />
+      <span className="text-xs text-hmc-textprimary/70">{hex}</span>
+    </div>
   );
 }
 
@@ -129,6 +167,12 @@ export default function StoreSettingsPage() {
     }
   }, [storedSettings, reset]);
 
+  function handleResetThemeColors() {
+    THEME_COLORS.forEach((c) =>
+      setValue(themeColorKey(c.var), '', { shouldDirty: true })
+    );
+  }
+
   async function handleImageUpload(config, file) {
     try {
       const row = await uploadSiteImageAPI(file, config.context);
@@ -148,6 +192,9 @@ export default function StoreSettingsPage() {
       ]);
       await Promise.all(entries.map(([key, value]) => updateStoreSettingAPI(key, value)));
       entries.forEach(([key, value]) => dispatch(updateSetting({ key, value })));
+      if (values.theme === 'light' || values.theme === 'dark') {
+        dispatch(setTheme(values.theme));
+      }
       reset(values);
       toast.success('Settings saved');
     } catch {
@@ -203,6 +250,39 @@ export default function StoreSettingsPage() {
                 </div>
               </div>
             ))}
+
+            {activeGroup === 'Theme' && (
+              <div className="flex flex-col gap-4 border-t border-hmc-border-b pt-5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-hmc-textprimary/60">
+                    Theme Colors
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={handleResetThemeColors}
+                    className="px-3 py-1 text-xs font-bold border border-hmc-border-b text-hmc-textprimary hover:bg-hmc-button-a/20"
+                  >
+                    Reset to theme defaults
+                  </button>
+                </div>
+                {THEME_COLORS.map((c) => (
+                  <div key={c.var} className="grid grid-cols-3 gap-4 items-center">
+                    <label className="text-sm font-semibold text-hmc-textprimary col-span-1">
+                      {c.label}
+                    </label>
+                    <div className="col-span-2">
+                      <ColorSwatch
+                        varName={c.var}
+                        value={watch(themeColorKey(c.var))}
+                        onChange={(hex) =>
+                          setValue(themeColorKey(c.var), hex, { shouldDirty: true })
+                        }
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </form>

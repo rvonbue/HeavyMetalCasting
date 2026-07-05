@@ -67,7 +67,7 @@ async function handleUpload() {
         onClick={() => inputRef.current.click()}
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
-        className="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-8 text-sm text-gray-500 hover:bg-gray-50"
+        className="flex h-full w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 text-center text-sm text-gray-500 hover:bg-gray-50"
       >
         Drop product images here or click to upload
       </div>

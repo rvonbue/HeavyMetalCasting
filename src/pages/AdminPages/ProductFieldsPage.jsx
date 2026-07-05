@@ -294,6 +294,88 @@ function RowInsertGhost({ index }) {
   );
 }
 
+function RowStylingPanel({ rowIndex, row, onSetRowStyling }) {
+  const firstBlock = row?.[0];
+  if (!firstBlock) return null;
+
+  return (
+    <div className="mb-3 rounded bg-hmc-panelbackground p-3 border border-hmc-border-a">
+      <div className="text-[11px] font-bold uppercase tracking-wide text-hmc-textprimary/70 mb-2">
+        Row {rowIndex + 1} Styling
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="block text-[10px] font-semibold text-hmc-textprimary/60 mb-1">
+            Vertical Align
+          </label>
+          <select
+            value={firstBlock.vertical_align ?? 'items-start'}
+            onChange={(e) => onSetRowStyling(rowIndex, 'vertical_align', e.target.value)}
+            className="w-full rounded border border-hmc-b/30 bg-white px-2 py-1 text-[11px] text-hmc-textprimary"
+          >
+            {VERTICAL_ALIGN_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-semibold text-hmc-textprimary/60 mb-1">
+            Justify Content
+          </label>
+          <select
+            value={firstBlock.justify_content ?? 'flex-start'}
+            onChange={(e) => onSetRowStyling(rowIndex, 'justify_content', e.target.value)}
+            className="w-full rounded border border-hmc-b/30 bg-white px-2 py-1 text-[11px] text-hmc-textprimary"
+          >
+            {JUSTIFY_CONTENT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-semibold text-hmc-textprimary/60 mb-1">
+            Margin Top
+          </label>
+          <select
+            value={firstBlock.margin_top ?? 'mb-0'}
+            onChange={(e) => onSetRowStyling(rowIndex, 'margin_top', e.target.value)}
+            className="w-full rounded border border-hmc-b/30 bg-white px-2 py-1 text-[11px] text-hmc-textprimary"
+          >
+            {MARGIN_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-semibold text-hmc-textprimary/60 mb-1">
+            Margin Bottom
+          </label>
+          <select
+            value={firstBlock.margin_bottom ?? 'mb-0'}
+            onChange={(e) => onSetRowStyling(rowIndex, 'margin_bottom', e.target.value)}
+            className="w-full rounded border border-hmc-b/30 bg-white px-2 py-1 text-[11px] text-hmc-textprimary"
+          >
+            {MARGIN_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AddBlockModal({ isOpen, onClose, productFieldOptions, onCreate }) {
   const {
     handleSubmit,
@@ -590,6 +672,12 @@ export default function ProductFieldsPage() {
     );
   }
 
+  function handleSetRowStyling(rowIndex, stylingKey, value) {
+    setDraftBlocks((prev) =>
+      (prev ?? []).map((b) => (b.grid_row === rowIndex + 1 ? { ...b, [stylingKey]: value } : b))
+    );
+  }
+
   // Persist the whole draft: delete removed blocks, create new ones, update the
   // fields that changed on existing ones, then sync the saved state from results.
   async function handleConfirm() {
@@ -703,6 +791,11 @@ export default function ProductFieldsPage() {
                 <RowInsertGhost index={0} />
                 {layout.map((row, rIdx) => (
                   <Fragment key={rIdx}>
+                    <RowStylingPanel
+                      rowIndex={rIdx}
+                      row={row}
+                      onSetRowStyling={handleSetRowStyling}
+                    />
                     <div className="flex items-stretch gap-3">
                       {row.map((block) => (
                         <SortableBlockCard

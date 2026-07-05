@@ -37,6 +37,7 @@ export default function AdminMenu() {
         value={selectedOption}
         onChange={(option) => navigate(option.value)}
         placeholder="ADMIN"
+        controlBg="var(--color-hmc-header-opaque)"
       />
     </div>
   );
