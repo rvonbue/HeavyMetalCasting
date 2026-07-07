@@ -36,8 +36,8 @@ export async function signUpWithEmail(email, password, fullName = '') {
 
     if (userError) throw userError;
 
-    // Send verification email
-    await sendVerificationEmail(email, verificationToken);
+    // TODO: Send verification email (disabled for now)
+    // await sendVerificationEmail(email, verificationToken);
 
     return {
       success: true,
