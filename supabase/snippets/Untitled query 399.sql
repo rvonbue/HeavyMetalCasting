@@ -1,1 +1,3 @@
-delete from store_settings where key like 'theme_color_%';
+pg_dump "postgresql://postgres:postgres@127.0.0.1:54322/postgre" > backup.sql
+
+

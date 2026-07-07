@@ -1,19 +1,15 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
+## HEAVY METAL CASTING
 
 Supabase URL 
 Go into supabase folder 
 ~npx supabase start
 
 http://localhost:54323
+
+## Dumping schemas from local database 
+supabase db dump --db-url "postgresql://postgres:postgres@127.0.0.1:54322/postgres" > backup.sql
+
+
+## 
+"C:\Program Files\PostgreSQL\18\bin\psql" "postgresql://postgres:[YOUR-PASSWORD]@https://ktvkxvhltrsqluxkxmkt.supabase.co"
+
