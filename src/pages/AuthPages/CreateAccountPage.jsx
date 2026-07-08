@@ -101,42 +101,42 @@ export default function CreateAccountPage() {
           </button>
         </div>
 
-        {/* Social Login Buttons (Both Tabs) */}
-        <div className="space-y-2 mb-6">
+        {/* Social Login Logos (Both Tabs) */}
+        <div className="flex justify-center gap-4 mb-6">
           <button
             onClick={() => handleSocialLogin('google')}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-hmc-border-a rounded hover:bg-hmc-button-a/10 transition disabled:opacity-60"
+            className="w-16 h-16 flex items-center justify-center border border-hmc-border-a rounded hover:bg-hmc-button-a/10 transition disabled:opacity-60"
+            title="Sign in with Google"
           >
-            <span>🔵</span>
-            <span className="font-semibold text-hmc-textprimary">Google</span>
+            <img src="/logos/google.png" alt="Google" className="w-12 h-12 object-contain" />
           </button>
 
           <button
             onClick={() => handleSocialLogin('facebook')}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-hmc-border-a rounded hover:bg-hmc-button-a/10 transition disabled:opacity-60"
+            className="w-16 h-16 flex items-center justify-center border border-hmc-border-a rounded hover:bg-hmc-button-a/10 transition disabled:opacity-60"
+            title="Sign in with Facebook"
           >
-            <span>📘</span>
-            <span className="font-semibold text-hmc-textprimary">Facebook</span>
+            <img src="/logos/facebook.png" alt="Facebook" className="w-12 h-12 object-contain" />
           </button>
 
           <button
             onClick={() => handleSocialLogin('apple')}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-hmc-border-a rounded hover:bg-hmc-button-a/10 transition disabled:opacity-60"
+            className="w-16 h-16 flex items-center justify-center border border-hmc-border-a rounded hover:bg-hmc-button-a/10 transition disabled:opacity-60"
+            title="Sign in with Apple"
           >
-            <span>🍎</span>
-            <span className="font-semibold text-hmc-textprimary">Apple</span>
+            <img src="/logos/apple.png" alt="Apple" className="w-12 h-12 object-contain" />
           </button>
 
           <button
             onClick={() => handleSocialLogin('discord')}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-hmc-border-a rounded hover:bg-hmc-button-a/10 transition disabled:opacity-60"
+            className="w-16 h-16 flex items-center justify-center border border-hmc-border-a rounded hover:bg-hmc-button-a/10 transition disabled:opacity-60"
+            title="Sign in with Discord"
           >
-            <span>💜</span>
-            <span className="font-semibold text-hmc-textprimary">Discord</span>
+            <img src="/logos/discord.png" alt="Discord" className="w-12 h-12 object-contain" />
           </button>
         </div>
 
