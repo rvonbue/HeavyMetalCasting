@@ -33,7 +33,9 @@ function Root() {
       if (user) {
         dispatch(setUser(user));
       }
-    }).catch(err => console.error('Failed to load user:', err));
+    }).catch(() => {
+      // No user session - expected on first load
+    });
   }, [dispatch]);
 
   // Off home, the banner sits in flow and pushes content down, so the outlet
