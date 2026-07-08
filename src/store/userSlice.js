@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   user: {},
   userLoggedIn: false,
-  hasAdminAccess: true,
+  hasAdminAccess: false,
 };
 
 const userSlice = createSlice({
