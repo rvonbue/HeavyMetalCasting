@@ -10,6 +10,8 @@ import './styles/App.css'
 import { useEffect, useState } from 'react'
 import { loadAppData } from "./api/apis";
 import { buildThemeOverrideStyle } from "./staticData/themeColors";
+import { getCurrentUser } from './api/authAPI';
+import { setUser } from './store/userSlice';
 
 function Root() {
   const dispatch = useDispatch()
@@ -26,7 +28,13 @@ function Root() {
 
   useEffect(() => {
     loadAppData(dispatch);
-  }, []);
+    // Load current user if authenticated
+    getCurrentUser().then(user => {
+      if (user) {
+        dispatch(setUser(user));
+      }
+    }).catch(err => console.error('Failed to load user:', err));
+  }, [dispatch]);
 
   // Off home, the banner sits in flow and pushes content down, so the outlet
   // shrinks by its measured height (header is sticky, taking toolbarHeight).

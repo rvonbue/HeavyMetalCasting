@@ -101,14 +101,6 @@ supabase db dump --db-url "postgresql://postgres:postgres@127.0.0.1:54322/postgr
 
 ## Troubleshooting
 
-**App shows 404 on reload?**
-- Check `vercel.json` exists in project root
-- This file configures SPA routing for Vercel
-
-**Can't sign up?**
-- Verify RLS policies allow public INSERT on `users` table
-- Check `store_settings` table has required configuration
-
 **Supabase connection fails locally?**
 - Run `npx supabase start` from the `supabase/` folder
 - Verify port 54322 (database) and 54323 (studio) are available

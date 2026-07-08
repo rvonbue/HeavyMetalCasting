@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
 import './Login.css';
-import { signInWithEmail } from '../api/authAPI';
+import { signInWithEmail, getCurrentUser } from '../api/authAPI';
 import { Button_A } from '../components/Resuables';
+import { setUser } from '../store/userSlice';
 
 function LoginPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +20,10 @@ function LoginPage() {
 
     try {
       await signInWithEmail(email, password);
+      const user = await getCurrentUser();
+      if (user) {
+        dispatch(setUser(user));
+      }
       toast.success('Signed in successfully');
       navigate('/shop');
     } catch (error) {

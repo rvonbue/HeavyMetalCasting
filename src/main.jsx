@@ -24,6 +24,7 @@ import EventOverviewPage from "./pages/AdminPages/EventOverviewPage.jsx";
 import ProductFieldsPage from "./pages/AdminPages/ProductFieldsPage.jsx";
 import EditEventPage from "./pages/AdminPages/EditEventPage.jsx";
 import EventsPage from "./pages/CustomerPages/EventsPage.jsx";
+import UserProfilePage from "./pages/CustomerPages/UserProfilePage.jsx";
 import CreateAccountPage from "./pages/AuthPages/CreateAccountPage.jsx";
 import VerifyEmailPage from "./pages/AuthPages/VerifyEmailPage.jsx";
 import ForgotPasswordPage from "./pages/AuthPages/ForgotPasswordPage.jsx";
@@ -52,6 +53,7 @@ createRoot(document.getElementById('root')).render(
             <Route path=":product/:product_id" element={<CustomerProductPage />} />
             <Route path="about_us" element={<AboutUsPage />} />
             <Route path="events" element={<EventsPage />} />
+            <Route path="profile" element={<UserProfilePage />} />
             <Route path="checkout" element={<CheckoutPage />} />
             <Route path="payment" element={<PaymentPage />} />
             <Route path="/order_status/:orderToken" element={<OrderStatusPage />} />
