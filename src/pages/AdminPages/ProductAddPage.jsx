@@ -57,37 +57,37 @@ export default function AddProductPage({ productAttributes }) {
         onSubmit={handleSubmit(onSubmit)}
         className="mx-auto max-w-3xl space-y-4 rounded border border-hmc-border-a bg-hmc-panelbackground p-6 shadow"
       >
-        <h1 className="text-2xl font-bold text-hmc-a">Add Product</h1>
+        <h1 className="text-2xl font-bold text-hmc-textprimary">Add Product</h1>
 
         <div>
-          <label className="mb-1 block text-xs font-bold uppercase text-hmc-a">
+          <label className="mb-1 block text-xs font-bold uppercase text-hmc-textprimary">
             Product Name
           </label>
           <input
             {...register("name", { required: true })}
-            className="w-full rounded border border-hmc-border-a px-3 py-2 text-hmc-a"
+            className="w-full rounded border border-hmc-border-a px-3 py-2 text-hmc-textprimary"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-xs font-bold uppercase text-hmc-a">
+          <label className="mb-1 block text-xs font-bold uppercase text-hmc-textprimary">
             Price
           </label>
           <input
             type="number"
             step="0.01"
             {...register("price", { required: true })}
-            className="w-full rounded border border-hmc-border-a px-3 py-2 text-hmc-a"
+            className="w-full rounded border border-hmc-border-a px-3 py-2 text-hmc-textprimary"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-xs font-bold uppercase text-hmc-a">
+          <label className="mb-1 block text-xs font-bold uppercase text-hmc-textprimary">
             Description
           </label>
           <textarea
             {...register("description")}
-            className="h-32 w-full resize-none rounded border border-hmc-border-a px-3 py-2 text-hmc-a"
+            className="h-32 w-full resize-none rounded border border-hmc-border-a px-3 py-2 text-hmc-textprimary"
           />
         </div>
 
@@ -155,17 +155,17 @@ export default function AddProductPage({ productAttributes }) {
         />
 
         <div>
-          <label className="mb-1 block text-xs font-bold uppercase text-hmc-a">
+          <label className="mb-1 block text-xs font-bold uppercase text-hmc-textprimary">
             Max Quantity Per Order
           </label>
           <input
             type="number"
             {...register("max_quantity_per_order")}
-            className="w-full rounded border border-hmc-border-a px-3 py-2 text-hmc-a"
+            className="w-full rounded border border-hmc-border-a px-3 py-2 text-hmc-textprimary"
           />
         </div>
 
-        <label className="flex items-center gap-2 text-sm font-bold text-hmc-a">
+        <label className="flex items-center gap-2 text-sm font-bold text-hmc-textprimary">
           <input type="checkbox" {...register("live")} />
           Live
         </label>

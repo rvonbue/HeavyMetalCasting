@@ -51,7 +51,7 @@ export default function PaymentPage() {
         <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
           {/* your inputs here */}
       <div>
-            <label className="mb-1 block text-xs font-bold uppercase">
+            <label className="mb-1 block text-xs font-bold uppercase text-hmc-textprimary">
               Name on Card
             </label>
             <input
@@ -62,7 +62,7 @@ export default function PaymentPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-bold uppercase">
+            <label className="mb-1 block text-xs font-bold uppercase text-hmc-textprimary">
               Card Number
             </label>
             <input
@@ -74,7 +74,7 @@ export default function PaymentPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-xs font-bold uppercase">
+              <label className="mb-1 block text-xs font-bold uppercase text-hmc-textprimary">
                 Expiration
               </label>
               <input
@@ -85,7 +85,7 @@ export default function PaymentPage() {
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-bold uppercase">
+              <label className="mb-1 block text-xs font-bold uppercase text-hmc-textprimary">
                 CVC
               </label>
               <input

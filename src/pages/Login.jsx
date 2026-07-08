@@ -45,7 +45,7 @@ function LoginPage() {
           </NavLink>
         </h2>
 
-        <label>Email Address:</label>
+        <label className="text-hmc-textprimary font-bold">Email Address:</label>
         <input
           type="email"
           value={email}
@@ -54,7 +54,7 @@ function LoginPage() {
           disabled={isLoading}
         />
 
-        <label>Password:</label>
+        <label className="text-hmc-textprimary font-bold">Password:</label>
         <input
           type="password"
           value={password}
