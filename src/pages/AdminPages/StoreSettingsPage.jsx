@@ -143,10 +143,9 @@ function ColorSwatch({ varName, value, onChange }) {
         type="color"
         value={hex}
         onChange={(e) => onChange(e.target.value)}
-        className="h-8 w-8 cursor-pointer rounded border border-hmc-border-b bg-transparent p-0"
+        className="h-8 w-8 cursor-pointer rounded bg-transparent p-0"
         aria-label={`Edit ${varName}`}
       />
-      <span className="text-xs text-hmc-textprimary/70">{hex}</span>
     </div>
   );
 }
@@ -270,12 +269,9 @@ export default function StoreSettingsPage() {
                     Reset to theme defaults
                   </button>
                 </div>
-                <div className="w-4/5 grid grid-cols-2 gap-3">
+                <div className="w-4/5 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-2">
                   {THEME_COLORS.map((c) => (
-                    <div key={c.var} className="flex flex-col gap-1">
-                      <label className="text-sm font-semibold text-hmc-textprimary">
-                        {c.label}
-                      </label>
+                    <div key={c.var} className="flex items-center gap-2">
                       <ColorSwatch
                         varName={c.var}
                         value={watch(themeColorKey(c.var))}
@@ -283,6 +279,9 @@ export default function StoreSettingsPage() {
                           setValue(themeColorKey(c.var), hex, { shouldDirty: true })
                         }
                       />
+                      <label className="text-sm font-semibold text-hmc-textprimary text-left truncate">
+                        {c.label}
+                      </label>
                     </div>
                   ))}
                 </div>
