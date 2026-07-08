@@ -148,7 +148,7 @@ export default function HeaderDesktop({
               title="View Profile"
             >
               {showLogo && settings.logo_url ? (
-                <img src={settings.logo_url} alt="Logo" className="h-6 w-auto object-contain" />
+                <img src={settings.logo_url} alt="Logo" className="h-12 w-auto object-contain" />
               ) : (
                 <SkullIcon />
               )}
