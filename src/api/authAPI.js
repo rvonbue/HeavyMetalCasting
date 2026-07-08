@@ -161,8 +161,11 @@ export async function resetPassword(newPassword) {
 // Get current user
 export async function getCurrentUser() {
   try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return null;
+
     const { data, error } = await supabase.auth.getUser();
-    if (error) throw error;
+    if (error) return null;
 
     if (!data.user) return null;
 
@@ -173,11 +176,10 @@ export async function getCurrentUser() {
       .eq('id', data.user.id)
       .single();
 
-    if (userError) throw userError;
+    if (userError) return null;
 
     return { ...data.user, role: userData?.role };
   } catch (error) {
-    // No user session - expected when not logged in
     return null;
   }
 }
