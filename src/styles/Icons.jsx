@@ -78,39 +78,20 @@ export const ArrowUpIcon = ({ classNames }) => {
 
   );
 };
+import SkullSVG from '../assets/icons/skull.svg';
+
 export const SkullIcon = ({
-  stroke = "currentColor",
   size = 36,
-  strokeWidth = 1,
   ...props
 }) => (
-  <svg
+  <img
+    src={SkullSVG}
+    alt="Skull"
     width={size}
     height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    stroke={stroke}
-    strokeWidth={strokeWidth}
-    strokeLinecap="round"
-    strokeLinejoin="round"
+    style={{ objectFit: 'contain', ...props.style }}
     {...props}
-  >
-    {/* Skull outline */}
-    <path d="M12 2c-4.4 0-8 3.4-8 7.6 0 3.1 1.8 5.8 4.5 6.9V20c0 .6.4 1 1 1h1v-2h3v2h1c.6 0 1-.4 1-1v-3.5c2.7-1.1 4.5-3.8 4.5-6.9C20 5.4 16.4 2 12 2z" />
-
-    {/* Eyes */}
-    <circle cx="9" cy="10" r="1.5" />
-    <circle cx="15" cy="10" r="1.5" />
-
-    {/* Nose */}
-    <path d="M12 12v2" />
-
-    {/* Teeth */}
-    <path d="M9 16v1" />
-    <path d="M12 16v1" />
-    <path d="M15 16v1" />
-  </svg>
+  />
 );
 
 export const DeleteIcon = ({ stroke = "#000", size = 36 }) => (
