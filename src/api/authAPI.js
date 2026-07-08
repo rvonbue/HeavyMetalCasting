@@ -4,13 +4,10 @@ import { sendVerificationEmail, sendPasswordResetEmail } from './brevoAPI';
 // Sign up with email and password
 export async function signUpWithEmail(email, password, fullName = '') {
   try {
-    // Create auth user
+    // Create auth user (Supabase auto-email disabled; using AWS SES instead)
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/verify-email`,
-      },
     });
 
     if (authError) throw authError;
