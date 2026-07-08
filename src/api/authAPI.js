@@ -177,7 +177,7 @@ export async function getCurrentUser() {
 
     return { ...data.user, role: userData?.role };
   } catch (error) {
-    console.error('Failed to get current user:', error);
+    // No user session - expected when not logged in
     return null;
   }
 }
