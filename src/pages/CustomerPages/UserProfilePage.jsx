@@ -211,57 +211,57 @@ export default function UserProfilePage() {
 
   return (
     <PageContainer>
-      <div className="max-w-4xl mx-auto py-4 px-4">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-4xl font-bold text-hmc-textprimary">Profile</h1>
+      <div className="max-w-4xl mx-auto py-8 px-4">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-5xl font-bold text-hmc-textprimary">Profile</h1>
           <button
             onClick={handleLogout}
             disabled={isLoading}
-            className="px-2 py-1 text-xs bg-hmc-button-a text-hmc-button-text-a font-bold rounded hover:opacity-90 disabled:opacity-60"
+            className="px-6 py-2 text-sm bg-hmc-button-a text-hmc-button-text-a font-bold rounded hover:opacity-90 disabled:opacity-60 transition"
           >
-            {isLoading ? 'Out...' : 'Logout'}
+            {isLoading ? 'Signing out...' : 'Logout'}
           </button>
         </div>
 
         {/* Account Info Section */}
-        <div className="bg-white rounded-lg shadow p-4 mb-4">
-          <h2 className="text-2xl font-bold text-hmc-textprimary mb-3">Account Information</h2>
-          <div className="space-y-3">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <label className="text-sm font-bold text-hmc-textprimary">Email</label>
-                <span className="text-lg">{user?.email_verified ? '✅' : '❌'}</span>
-                {!user?.email_verified && <span className="text-xs text-hmc-textprimary font-semibold">Not verified</span>}
+        <div className="bg-hmc-panelbackground border border-hmc-border-b rounded-lg p-8 mb-6">
+          <h2 className="text-3xl font-bold text-hmc-textprimary mb-6">Account Information</h2>
+          <div className="space-y-5">
+            <div className="pb-5 border-b border-hmc-border-b">
+              <div className="flex items-center gap-3 mb-2">
+                <label className="text-base font-bold text-hmc-textprimary">Email</label>
+                <span className="text-xl">{user?.email_verified ? '✅' : '❌'}</span>
+                {!user?.email_verified && <span className="text-sm text-hmc-textprimary font-semibold">Not verified</span>}
               </div>
-              <p className="text-sm text-hmc-textprimary">{user?.email}</p>
+              <p className="text-lg text-hmc-textprimary font-light">{user?.email}</p>
             </div>
 
             {user?.full_name && (
-              <div>
-                <label className="text-xs font-bold text-hmc-textprimary mb-1 block">Full Name</label>
-                <p className="text-sm text-hmc-textprimary">{user.full_name}</p>
+              <div className="pb-5 border-b border-hmc-border-b">
+                <label className="text-sm font-bold text-hmc-textprimary/70 block mb-2 uppercase tracking-wide">Full Name</label>
+                <p className="text-lg text-hmc-textprimary">{user.full_name}</p>
               </div>
             )}
 
             {user?.role === 'admin' && (
-              <div>
-                <label className="text-xs font-bold text-hmc-textprimary mb-1 block">Role</label>
-                <p className="text-sm text-hmc-textprimary capitalize">{user.role}</p>
+              <div className="pb-5 border-b border-hmc-border-b">
+                <label className="text-sm font-bold text-hmc-textprimary/70 block mb-2 uppercase tracking-wide">Role</label>
+                <p className="text-lg text-hmc-textprimary capitalize font-semibold px-3 py-1 bg-hmc-button-a/20 w-fit rounded">{user.role}</p>
               </div>
             )}
 
             {user?.created_at && (
-              <div>
-                <label className="text-xs font-bold text-hmc-textprimary mb-1 block">Member Since</label>
-                <p className="text-sm text-hmc-textprimary">{new Date(user.created_at).toLocaleDateString()}</p>
+              <div className="pb-5">
+                <label className="text-sm font-bold text-hmc-textprimary/70 block mb-2 uppercase tracking-wide">Member Since</label>
+                <p className="text-lg text-hmc-textprimary">{new Date(user.created_at).toLocaleDateString()}</p>
               </div>
             )}
 
-            <div className="border-t border-hmc-border-a pt-3 mt-3">
-              <h3 className="text-sm font-semibold text-hmc-textprimary mb-3">Preferences</h3>
-              <div className="space-y-3">
+            <div className="pt-6 mt-6 border-t border-hmc-border-b">
+              <h3 className="text-2xl font-bold text-hmc-textprimary mb-6">Preferences</h3>
+              <div className="space-y-5">
                 <div>
-                  <label className="text-xs font-bold text-hmc-textprimary mb-1 block">Theme</label>
+                  <label className="text-sm font-bold text-hmc-textprimary/70 block mb-3 uppercase tracking-wide">Theme</label>
                   <Select
                     options={THEME_OPTIONS}
                     value={THEME_OPTIONS.find(opt => opt.value === theme)}
@@ -270,40 +270,41 @@ export default function UserProfilePage() {
                     styles={{
                       control: (base) => ({
                         ...base,
-                        backgroundColor: 'white',
-                        borderColor: 'var(--color-hmc-border-a)',
-                        minHeight: '28px',
-                        fontSize: '12px',
+                        backgroundColor: 'var(--color-hmc-panelbackground)',
+                        borderColor: 'var(--color-hmc-border-b)',
+                        borderWidth: '2px',
+                        minHeight: '40px',
+                        fontSize: '14px',
                       }),
                       option: (base, state) => ({
                         ...base,
-                        backgroundColor: state.isSelected ? 'var(--color-hmc-button-a)' : 'white',
+                        backgroundColor: state.isSelected ? 'var(--color-hmc-button-a)' : 'var(--color-hmc-panelbackground)',
                         color: state.isSelected ? 'white' : 'var(--color-hmc-textprimary)',
-                        fontSize: '12px',
-                        padding: '4px 8px',
+                        fontSize: '14px',
+                        padding: '8px 12px',
                       }),
                       singleValue: (base) => ({
                         ...base,
                         color: 'var(--color-hmc-textprimary)',
-                        fontSize: '12px',
+                        fontSize: '14px',
                       }),
                       valueContainer: (base) => ({
                         ...base,
-                        padding: '2px 8px',
+                        padding: '4px 12px',
                       }),
                     }}
                   />
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3 pt-3">
                   <input
                     type="checkbox"
                     id="marketing-unsubscribe"
                     checked={unsubscribeMarketing}
                     onChange={handleMarketingToggle}
-                    className="w-4 h-4"
+                    className="w-5 h-5 cursor-pointer"
                   />
-                  <label htmlFor="marketing-unsubscribe" className="text-xs font-bold text-hmc-textprimary cursor-pointer">
+                  <label htmlFor="marketing-unsubscribe" className="text-base text-hmc-textprimary cursor-pointer">
                     Unsubscribe from marketing emails
                   </label>
                 </div>
@@ -313,13 +314,13 @@ export default function UserProfilePage() {
         </div>
 
         {/* Shipping Addresses Section */}
-        <div className="bg-white rounded-lg shadow p-4 mb-4">
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-2xl font-bold text-hmc-textprimary">Shipping Addresses ({addresses.length}/3)</h2>
+        <div className="bg-hmc-panelbackground border border-hmc-border-b rounded-lg p-8 mb-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-3xl font-bold text-hmc-textprimary">Shipping Addresses <span className="text-hmc-textprimary/50 text-2xl">({addresses.length}/3)</span></h2>
             {addresses.length < 3 && (
               <button
                 onClick={() => setShowAddForm(!showAddForm)}
-                className="ml-8 px-3 py-1 text-3xl bg-hmc-button-a text-hmc-button-text-a font-bold rounded hover:opacity-90"
+                className="ml-8 px-4 py-3 text-2xl bg-hmc-button-a text-hmc-button-text-a font-bold rounded hover:opacity-90 transition"
               >
                 {showAddForm ? '✕' : '+'}
               </button>
@@ -327,98 +328,102 @@ export default function UserProfilePage() {
           </div>
 
           {showAddForm && (
-            <div className="border border-hmc-border-a rounded p-3 mb-3">
-              <div className="space-y-2">
+            <div className="border-2 border-hmc-border-b rounded-lg p-6 mb-6 bg-hmc-button-a/5">
+              <div className="space-y-4">
                 <input
                   type="text"
                   placeholder="Full Name"
                   value={formData.full_name}
                   onChange={(e) => setFormData({...formData, full_name: e.target.value})}
-                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
+                  className="w-full px-4 py-3 text-base border border-hmc-border-b rounded text-hmc-textprimary bg-hmc-panelbackground focus:outline-none focus:border-hmc-button-a"
                 />
                 <input
                   type="text"
                   placeholder="Street Address"
                   value={formData.street}
                   onChange={(e) => setFormData({...formData, street: e.target.value})}
-                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
+                  className="w-full px-4 py-3 text-base border border-hmc-border-b rounded text-hmc-textprimary bg-hmc-panelbackground focus:outline-none focus:border-hmc-button-a"
                 />
-                <input
-                  type="text"
-                  placeholder="City"
-                  value={formData.city}
-                  onChange={(e) => setFormData({...formData, city: e.target.value})}
-                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
-                />
-                <input
-                  type="text"
-                  placeholder="State"
-                  value={formData.state}
-                  onChange={(e) => setFormData({...formData, state: e.target.value})}
-                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
-                />
-                <input
-                  type="text"
-                  placeholder="ZIP Code"
-                  value={formData.zip}
-                  onChange={(e) => setFormData({...formData, zip: e.target.value})}
-                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
-                />
-                <input
-                  type="text"
-                  placeholder="Country"
-                  value={formData.country}
-                  onChange={(e) => setFormData({...formData, country: e.target.value})}
-                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder="City"
+                    value={formData.city}
+                    onChange={(e) => setFormData({...formData, city: e.target.value})}
+                    className="px-4 py-3 text-base border border-hmc-border-b rounded text-hmc-textprimary bg-hmc-panelbackground focus:outline-none focus:border-hmc-button-a"
+                  />
+                  <input
+                    type="text"
+                    placeholder="State"
+                    value={formData.state}
+                    onChange={(e) => setFormData({...formData, state: e.target.value})}
+                    className="px-4 py-3 text-base border border-hmc-border-b rounded text-hmc-textprimary bg-hmc-panelbackground focus:outline-none focus:border-hmc-button-a"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder="ZIP Code"
+                    value={formData.zip}
+                    onChange={(e) => setFormData({...formData, zip: e.target.value})}
+                    className="px-4 py-3 text-base border border-hmc-border-b rounded text-hmc-textprimary bg-hmc-panelbackground focus:outline-none focus:border-hmc-button-a"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Country"
+                    value={formData.country}
+                    onChange={(e) => setFormData({...formData, country: e.target.value})}
+                    className="px-4 py-3 text-base border border-hmc-border-b rounded text-hmc-textprimary bg-hmc-panelbackground focus:outline-none focus:border-hmc-button-a"
+                  />
+                </div>
               </div>
               <button
                 onClick={handleAddAddress}
-                className="mt-2 px-3 py-1 text-sm bg-hmc-button-a text-hmc-button-text-a font-bold rounded hover:opacity-90"
+                className="mt-6 px-6 py-2 text-base bg-hmc-button-a text-hmc-button-text-a font-bold rounded hover:opacity-90 transition"
               >
-                Save
+                Save Address
               </button>
             </div>
           )}
 
           {addresses.length === 0 ? (
-            <p className="text-hmc-textprimary text-center py-2 text-sm">No addresses saved yet</p>
+            <p className="text-hmc-textprimary text-center py-8 text-lg opacity-60">No addresses saved yet</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-4">
               {addresses.map((addr) => (
-                <div key={addr.id} className="border border-hmc-border-a rounded p-3">
-                  <div className="space-y-2 mb-2">
+                <div key={addr.id} className="border border-hmc-border-b rounded-lg p-6 bg-hmc-button-a/5">
+                  <div className="grid grid-cols-2 gap-6 mb-4">
                     <div>
-                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">Name</label>
-                      <p className="text-hmc-textprimary">{addr.full_name}</p>
+                      <label className="text-xs font-bold text-hmc-textprimary/70 block mb-2 uppercase tracking-wide">Name</label>
+                      <p className="text-lg text-hmc-textprimary">{addr.full_name}</p>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">Street</label>
-                      <p className="text-hmc-textprimary">{addr.street}</p>
+                      <label className="text-xs font-bold text-hmc-textprimary/70 block mb-2 uppercase tracking-wide">Street</label>
+                      <p className="text-lg text-hmc-textprimary">{addr.street}</p>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">City</label>
-                      <p className="text-hmc-textprimary">{addr.city}</p>
+                      <label className="text-xs font-bold text-hmc-textprimary/70 block mb-2 uppercase tracking-wide">City</label>
+                      <p className="text-lg text-hmc-textprimary">{addr.city}</p>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">State</label>
-                      <p className="text-hmc-textprimary">{addr.state}</p>
+                      <label className="text-xs font-bold text-hmc-textprimary/70 block mb-2 uppercase tracking-wide">State</label>
+                      <p className="text-lg text-hmc-textprimary">{addr.state}</p>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">ZIP</label>
-                      <p className="text-hmc-textprimary">{addr.zip}</p>
+                      <label className="text-xs font-bold text-hmc-textprimary/70 block mb-2 uppercase tracking-wide">ZIP</label>
+                      <p className="text-lg text-hmc-textprimary">{addr.zip}</p>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">Country</label>
-                      <p className="text-hmc-textprimary">{addr.country}</p>
+                      <label className="text-xs font-bold text-hmc-textprimary/70 block mb-2 uppercase tracking-wide">Country</label>
+                      <p className="text-lg text-hmc-textprimary">{addr.country}</p>
                     </div>
                   </div>
                   <div className="flex justify-end">
                     <button
                       onClick={() => handleDeleteAddress(addr.id)}
-                      className="px-2 py-0.5 bg-red-600 text-white text-xs rounded hover:opacity-90"
+                      className="px-4 py-2 bg-hmc-error text-white text-sm font-bold rounded hover:opacity-90 transition"
                     >
-                      ✕
+                      Delete
                     </button>
                   </div>
                 </div>
@@ -428,20 +433,20 @@ export default function UserProfilePage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="bg-white rounded-lg shadow p-4">
-          <div className="flex justify-end gap-2">
+        <div className="bg-hmc-panelbackground border border-hmc-border-b rounded-lg p-8">
+          <div className="flex justify-end">
             <button
               onClick={handleDeleteAccount}
               disabled={isDeleting || hasOrders}
-              className="px-2 py-1 text-xs bg-red-600 text-white font-bold rounded hover:opacity-90 disabled:opacity-60 disabled:bg-gray-400"
+              className="px-6 py-3 text-base bg-hmc-error text-white font-bold rounded hover:opacity-90 disabled:opacity-60 disabled:bg-hmc-textprimary/30 transition"
               title={hasOrders ? 'Cannot delete account with order history' : 'Delete account permanently'}
             >
-              {isDeleting ? '...' : 'Delete Account'}
+              {isDeleting ? 'Deleting...' : 'Delete Account'}
             </button>
           </div>
 
           {hasOrders && (
-            <p className="text-red-600 text-xs mt-2">Your account cannot be deleted because you have order history.</p>
+            <p className="text-hmc-error text-base mt-4 font-semibold">Your account cannot be deleted because you have order history.</p>
           )}
         </div>
       </div>
