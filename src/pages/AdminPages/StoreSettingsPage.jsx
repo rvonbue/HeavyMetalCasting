@@ -20,7 +20,7 @@ const SETTINGS_CONFIG = [
   { key: 'homepage_image_desktop_url', label: 'Homepage Image (Desktop)', type: 'image', context: 'homepage_desktop', group: 'Branding' },
   { key: 'homepage_image_mobile_url', label: 'Homepage Image (Mobile)', type: 'image', context: 'homepage_mobile', group: 'Branding' },
   { key: 'logo_url', label: 'Site Logo', type: 'image', context: 'logo', group: 'Branding' },
-  { key: 'navbar_home_button_image_url', label: 'Navbar Home Button Image', type: 'image', context: 'navbar_home', group: 'Branding' },
+  { key: 'navbar_home_button_image_url', label: 'Navbar Home Button Image', type: 'image', context: 'navbar_home', group: 'Branding', textKey: 'navbar_home_text', textPlaceholder: 'HMC' },
   { key: 'shopping_cart_bg_image_url', label: 'Shopping Cart Background Image', type: 'image', context: 'shopping_cart_bg', group: 'Branding' },
   { key: 'logo_show_in_navbar', label: 'Show Logo in Navbar', type: 'checkbox', group: 'Branding' },
 
@@ -80,10 +80,23 @@ function ImageSettingField({ value, onUpload }) {
 function SettingField({ config, register, watch, onImageUpload }) {
   if (config.type === 'image') {
     return (
-      <ImageSettingField
-        value={watch(config.key)}
-        onUpload={(file) => onImageUpload(config, file)}
-      />
+      <div className="flex items-center gap-4">
+        <ImageSettingField
+          value={watch(config.key)}
+          onUpload={(file) => onImageUpload(config, file)}
+        />
+        {config.textKey && (
+          <>
+            <span className="text-sm font-bold text-hmc-textprimary">OR:</span>
+            <input
+              type="text"
+              {...register(config.textKey)}
+              placeholder={config.textPlaceholder}
+              className={`${inputClass} w-40`}
+            />
+          </>
+        )}
+      </div>
     );
   }
 
