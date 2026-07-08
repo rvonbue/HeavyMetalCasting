@@ -1,4 +1,4 @@
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useState, useEffect } from 'react'
 
@@ -17,6 +17,7 @@ export default function HeaderDesktop({
   hasAdminAccess
 }) {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const toolbarHeight = useSelector(state => state.app.toolbarHeight);
   const headerTransparent = useSelector(state => state.app.headerTransparent);
@@ -141,7 +142,13 @@ export default function HeaderDesktop({
           style={{ marginLeft: 'auto', gap: '0.25rem' }}
         >
           {loggedIn ? (
-            <SkullIcon />
+            <button
+              onClick={() => navigate('/profile')}
+              style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'inherit', display: 'inline-flex', alignItems: 'center' }}
+              title="View Profile"
+            >
+              <SkullIcon />
+            </button>
           ) : (
             <Link to="/login" className={inactiveBorder} style={{ color: 'inherit', display: 'inline-flex', alignItems: 'center' }}>
               <span className="hidden sm:inline">SIGN IN</span>
