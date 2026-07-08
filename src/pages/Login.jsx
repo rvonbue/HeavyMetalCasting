@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from 'sonner';
 import './Login.css';
 import { signInWithEmail } from '../api/authAPI';
+import { Button_A } from '../components/Resuables';
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -55,23 +56,12 @@ function LoginPage() {
           disabled={isLoading}
         />
 
-        <button
-          type="submit"
+        <Button_A
+          button_name={isLoading ? 'Signing In...' : 'LOG IN'}
+          button_type="form"
+          button_styles_outer={{ marginTop: '1.5rem' }}
           disabled={isLoading}
-          style={{
-            marginTop: '1.5rem',
-            padding: '0.75rem 1.5rem',
-            backgroundColor: 'var(--theme-button-bg)',
-            color: 'var(--theme-button-text)',
-            border: 'none',
-            borderRadius: '0.375rem',
-            fontWeight: 'bold',
-            cursor: isLoading ? 'not-allowed' : 'pointer',
-            opacity: isLoading ? 0.6 : 1,
-          }}
-        >
-          {isLoading ? 'Signing In...' : 'LOG IN'}
-        </button>
+        />
       </form>
     </div>
   );
