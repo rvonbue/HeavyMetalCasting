@@ -84,8 +84,35 @@ supabase db dump --db-url "postgresql://postgres:postgres@127.0.0.1:54322/postgr
 
 ---
 
+## Important Setup Notes
+
+### Vercel Deployment (SPA Routing)
+- `vercel.json` is already configured to handle client-side routing for the React SPA
+- This ensures all routes redirect to `index.html` for Vite to handle
+
+### Email Configuration (Supabase)
+⚠️ **Critical:** The default Supabase email service is limited to **2 emails per hour**, which breaks immediately on signup attempts.
+
+**Solution:** Configure a custom SMTP provider:
+1. Go to **Supabase Dashboard** → **Authentication** → **Email**
+2. Select **Custom SMTP**
+3. Enter your email provider credentials (AWS SES, Resend, SendGrid, etc.)
+
+For AWS SES specifically:
+- Get SMTP credentials from AWS SES Console
+- Use `email-smtp.[region].amazonaws.com` as host
+- Port: `587` (TLS)
+- **Note:** AWS SES sandbox mode only allows sending to verified email addresses. Request production access to send to any email.
+
+---
+
 ## Troubleshooting
 
 **Supabase connection fails locally?**
 - Run `npx supabase start` from the `supabase/` folder
 - Verify port 54322 (database) and 54323 (studio) are available
+
+**Email signup returning 500 error?**
+- Check Supabase custom SMTP settings are configured correctly
+- Verify sender email is recognized by your email provider
+- If using AWS SES sandbox, ensure recipient email is verified
