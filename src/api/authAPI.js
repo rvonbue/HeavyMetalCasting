@@ -129,19 +129,104 @@ export async function verifyEmail(token) {
 // Request password reset
 export async function requestPasswordReset(email) {
   try {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-
-    if (error) throw error;
-
-    // Also send via Brevo for backup
+    // Generate reset token (valid for 30 minutes)
     const resetToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 30);
+
+    // Find user and store token
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', email)
+      .single();
+
+    if (userError || !userData) {
+      throw new Error('Email not found');
+    }
+
+    // Update user with reset token
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({
+        reset_password_token: resetToken,
+        reset_password_expires_at: expiresAt.toISOString(),
+      })
+      .eq('id', userData.id);
+
+    if (updateError) throw updateError;
+
+    // Send email via AWS SES
     await sendPasswordResetEmail(email, resetToken);
 
     return { success: true, message: 'Password reset email sent' };
   } catch (error) {
     throw new Error(error.message || 'Failed to request password reset');
+  }
+}
+
+// Validate reset token
+export async function validateResetToken(token) {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id')
+      .eq('reset_password_token', token)
+      .gt('reset_password_expires_at', new Date().toISOString())
+      .single();
+
+    if (error || !data) {
+      return { valid: false };
+    }
+
+    return { valid: true, userId: data.id };
+  } catch (error) {
+    return { valid: false };
+  }
+}
+
+// Reset password with token
+export async function resetPasswordWithToken(token, newPassword) {
+  try {
+    // Validate token first
+    const validation = await validateResetToken(token);
+    if (!validation.valid) {
+      throw new Error('Invalid or expired reset token');
+    }
+
+    // Get user email for password update
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('email')
+      .eq('reset_password_token', token)
+      .single();
+
+    if (userError || !userData) {
+      throw new Error('User not found');
+    }
+
+    // Update Supabase auth password
+    const { error: authError } = await supabase.auth.admin.updateUserById(
+      validation.userId,
+      { password: newPassword }
+    );
+
+    if (authError) throw authError;
+
+    // Clear reset token
+    const { error: clearError } = await supabase
+      .from('users')
+      .update({
+        reset_password_token: null,
+        reset_password_expires_at: null,
+      })
+      .eq('reset_password_token', token);
+
+    if (clearError) throw clearError;
+
+    return { success: true, message: 'Password reset successfully' };
+  } catch (error) {
+    throw new Error(error.message || 'Failed to reset password');
   }
 }
 

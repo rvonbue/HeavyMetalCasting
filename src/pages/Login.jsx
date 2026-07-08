@@ -69,6 +69,15 @@ function LoginPage() {
           button_styles_outer={{ marginTop: '1.5rem' }}
           disabled={isLoading}
         />
+
+        <div className="text-center mt-4">
+          <NavLink
+            to="/forgot-password"
+            style={{ color: "var(--theme-text-color-B)", textDecoration: "underline", fontSize: "0.875rem" }}
+          >
+            Forgot password?
+          </NavLink>
+        </div>
       </form>
     </div>
   );

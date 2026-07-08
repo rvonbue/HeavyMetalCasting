@@ -48,18 +48,32 @@ export async function sendVerificationEmail(email, verificationToken) {
 export async function sendPasswordResetEmail(email, resetToken) {
   const resetLink = `${window.location.origin}/reset-password?token=${resetToken}`;
 
-  return sendEmail(email, 'Reset your Heavy Metal Casting password', `
-    <h2>Password Reset Request</h2>
-    <p>We received a request to reset your password.</p>
-    <p>
-      <a href="${resetLink}" style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px;">
-        Reset Password
-      </a>
-    </p>
-    <p>Or copy this link: ${resetLink}</p>
-    <p style="color: #666; font-size: 12px;">
-      This link expires in 1 hour. If you didn't request this, you can safely ignore this email.
-    </p>
+  return sendEmail(email, 'Reset Your Heavy Metal Casting Password', `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #1a1a1a;">Password Reset Request</h2>
+      <p>Hello,</p>
+      <p>We received a request to reset the password for your Heavy Metal Casting account. If you made this request, click the button below to reset your password.</p>
+
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${resetLink}" style="background-color: #DD1C1A; color: white; padding: 14px 28px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">
+          Reset Password
+        </a>
+      </div>
+
+      <p>If the button doesn't work, copy and paste this link in your browser:</p>
+      <p style="word-break: break-all; color: #0066cc;">${resetLink}</p>
+
+      <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+
+      <p style="font-size: 12px; color: #666;">
+        <strong>Important:</strong> This password reset link will expire in 30 minutes for security purposes.<br>
+        If you didn't request this password reset, you can safely ignore this email. Your account is secure.
+      </p>
+
+      <p style="font-size: 12px; color: #999;">
+        © Heavy Metal Casting. All rights reserved.
+      </p>
+    </div>
   `);
 }
 
