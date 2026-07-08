@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { PageContainer, AdminPageHeader, FolderTab } from '../../components/Resuables';
 import { updateSetting } from '../../store/settingsSlice';
 import { setTheme } from '../../store/appSlice';
-import { updateStoreSettingAPI, uploadSiteImageAPI, getAllSiteImagesAPI, deleteSiteImageAPI } from '../../api/storeSettingsAPI';
+import { updateStoreSettingAPI, uploadSiteImageAPI } from '../../api/storeSettingsAPI';
 import { THEME_COLORS, themeColorKey, resolveVarToHex } from '../../staticData/themeColors';
 
 const SETTINGS_CONFIG = [
@@ -20,6 +20,8 @@ const SETTINGS_CONFIG = [
   { key: 'homepage_image_desktop_url', label: 'Homepage Image (Desktop)', type: 'image', context: 'homepage_desktop', group: 'Branding' },
   { key: 'homepage_image_mobile_url', label: 'Homepage Image (Mobile)', type: 'image', context: 'homepage_mobile', group: 'Branding' },
   { key: 'logo_url', label: 'Site Logo', type: 'image', context: 'logo', group: 'Branding' },
+  { key: 'navbar_home_button_image_url', label: 'Navbar Home Button Image', type: 'image', context: 'navbar_home', group: 'Branding' },
+  { key: 'shopping_cart_bg_image_url', label: 'Shopping Cart Background Image', type: 'image', context: 'shopping_cart_bg', group: 'Branding' },
   { key: 'logo_show_in_navbar', label: 'Show Logo in Navbar', type: 'checkbox', group: 'Branding' },
 
   { key: 'about_us_text', label: 'About Us Text', type: 'textarea', group: 'About Us' },
@@ -153,8 +155,6 @@ export default function StoreSettingsPage() {
   const dispatch = useDispatch();
   const storedSettings = useSelector((state) => state.settings.settings);
   const [activeGroup, setActiveGroup] = useState(GROUPS[0]);
-  const [siteImages, setSiteImages] = useState([]);
-  const [loadingImages, setLoadingImages] = useState(false);
 
   const { register, handleSubmit, reset, setValue, watch, formState: { isDirty, isSubmitting } } = useForm({
     defaultValues: storedSettings
@@ -171,37 +171,6 @@ export default function StoreSettingsPage() {
     }
   }, [storedSettings, reset]);
 
-  useEffect(() => {
-    if (activeGroup === 'Branding') {
-      loadSiteImages();
-    }
-  }, [activeGroup]);
-
-  async function loadSiteImages() {
-    setLoadingImages(true);
-    try {
-      const images = await getAllSiteImagesAPI();
-      setSiteImages(images);
-    } catch (error) {
-      console.error('Failed to load site images:', error);
-      toast.error('Failed to load site images');
-    } finally {
-      setLoadingImages(false);
-    }
-  }
-
-  async function handleDeleteImage(imageId, imagePath) {
-    if (!window.confirm('Delete this image?')) return;
-
-    try {
-      await deleteSiteImageAPI(imageId, imagePath);
-      setSiteImages(siteImages.filter(img => img.id !== imageId));
-      toast.success('Image deleted');
-    } catch (error) {
-      console.error('Failed to delete image:', error);
-      toast.error('Failed to delete image');
-    }
-  }
 
   function handleResetThemeColors() {
     THEME_COLORS.forEach((c) =>
@@ -267,43 +236,6 @@ export default function StoreSettingsPage() {
             />
           ))}
         </div>
-
-        {/* Site Images Gallery - only on Branding tab */}
-        {activeGroup === 'Branding' && (
-          <div className="bg-hmc-panelbackground border border-hmc-border-b rounded-lg p-6 mb-6">
-            <h3 className="text-lg font-bold text-hmc-textprimary mb-4">All Site Images</h3>
-            {loadingImages ? (
-              <p className="text-hmc-textprimary">Loading images...</p>
-            ) : siteImages.length === 0 ? (
-              <p className="text-hmc-textprimary/60">No images uploaded yet</p>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {siteImages.map((image) => (
-                  <div key={image.id} className="border border-hmc-border-b rounded-lg p-2 bg-hmc-button-a/5">
-                    <div className="w-full h-32 bg-hmc-bg-a rounded mb-2 overflow-hidden">
-                      <img
-                        src={image.image_url}
-                        alt={image.context}
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="text-xs text-hmc-textprimary/70 mb-2">
-                      <p className="font-semibold">{image.context}</p>
-                      <p>{image.width}x{image.height}</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteImage(image.id, image.image_path)}
-                      className="w-full px-2 py-1 text-xs font-bold bg-hmc-error text-white rounded hover:opacity-90 transition"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Active section panel */}
         <div className="bg-hmc-panelbackground border border-hmc-border-b">

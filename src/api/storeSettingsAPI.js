@@ -47,25 +47,3 @@ export async function uploadSiteImageAPI(file, context) {
   if (error) throw error;
   return data;
 }
-
-export async function getAllSiteImagesAPI() {
-  const { data, error } = await supabase
-    .from('site_images')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function deleteSiteImageAPI(imageId, imagePath) {
-  const { error: storageError } = await supabase.storage
-    .from('site-images')
-    .remove([imagePath]);
-  if (storageError) throw storageError;
-
-  const { error: dbError } = await supabase
-    .from('site_images')
-    .delete()
-    .eq('id', imageId);
-  if (dbError) throw dbError;
-}
