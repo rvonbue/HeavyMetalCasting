@@ -14,7 +14,8 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
   const shoppingCartItems = useSelector(
     state => state.cart.shoppingCartItems
   )
-  const logoUrl = useSelector(state => state.settings.settings.logo_url)
+  const settings = useSelector(state => state.settings.settings)
+  const cartBgUrl = settings.shopping_cart_bg_image_url || settings.logo_url
 
   const { totalCost, totalQuantities } = shoppingCartItemDetails
   const shoppingCartEmpty = shoppingCartItems.length === 0
@@ -36,10 +37,10 @@ export default function ShoppingTab({ isOpen, onClose, shoppingCartItemDetails }
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        {/* Logo watermark background */}
-        {logoUrl && (
+        {/* Background image */}
+        {cartBgUrl && (
           <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center opacity-25">
-            <img src={logoUrl} alt="" className="max-h-[55%] max-w-[70%] object-contain" />
+            <img src={cartBgUrl} alt="" className="max-h-[55%] max-w-[70%] object-contain" />
           </div>
         )}
 

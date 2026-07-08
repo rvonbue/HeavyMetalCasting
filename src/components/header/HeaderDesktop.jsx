@@ -91,10 +91,11 @@ export default function HeaderDesktop({
         {/* Left: brand */}
         <div className="flex items-center">
           <NavLink to="/" end className={({ isActive }) => isActive ? activeBorder : inactiveBorder} style={{ color: 'inherit' }}>
-            <span className="inline-flex items-center">
-              {siteInitials}
-              {showLogo && (
-                <img src={settings.logo_url} alt="" className="ml-2 h-6 w-auto object-contain" />
+            <span className="inline-flex items-center gap-2">
+              {settings.navbar_home_button_image_url ? (
+                <img src={settings.navbar_home_button_image_url} alt="Home" className="h-6 w-auto object-contain" />
+              ) : (
+                settings.navbar_home_text || siteInitials
               )}
             </span>
           </NavLink>
