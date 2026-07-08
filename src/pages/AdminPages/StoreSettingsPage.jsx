@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { PageContainer, AdminPageHeader, FolderTab } from '../../components/Resuables';
 import { updateSetting } from '../../store/settingsSlice';
 import { setTheme } from '../../store/appSlice';
-import { updateStoreSettingAPI, uploadSiteImageAPI } from '../../api/storeSettingsAPI';
+import { updateStoreSettingAPI, uploadSiteImageAPI, getAllSiteImagesAPI, deleteSiteImageAPI } from '../../api/storeSettingsAPI';
 import { THEME_COLORS, themeColorKey, resolveVarToHex } from '../../staticData/themeColors';
 
 const SETTINGS_CONFIG = [
@@ -153,6 +153,8 @@ export default function StoreSettingsPage() {
   const dispatch = useDispatch();
   const storedSettings = useSelector((state) => state.settings.settings);
   const [activeGroup, setActiveGroup] = useState(GROUPS[0]);
+  const [siteImages, setSiteImages] = useState([]);
+  const [loadingImages, setLoadingImages] = useState(false);
 
   const { register, handleSubmit, reset, setValue, watch, formState: { isDirty, isSubmitting } } = useForm({
     defaultValues: storedSettings
@@ -168,6 +170,38 @@ export default function StoreSettingsPage() {
       reset(normalized);
     }
   }, [storedSettings, reset]);
+
+  useEffect(() => {
+    if (activeGroup === 'Branding') {
+      loadSiteImages();
+    }
+  }, [activeGroup]);
+
+  async function loadSiteImages() {
+    setLoadingImages(true);
+    try {
+      const images = await getAllSiteImagesAPI();
+      setSiteImages(images);
+    } catch (error) {
+      console.error('Failed to load site images:', error);
+      toast.error('Failed to load site images');
+    } finally {
+      setLoadingImages(false);
+    }
+  }
+
+  async function handleDeleteImage(imageId, imagePath) {
+    if (!window.confirm('Delete this image?')) return;
+
+    try {
+      await deleteSiteImageAPI(imageId, imagePath);
+      setSiteImages(siteImages.filter(img => img.id !== imageId));
+      toast.success('Image deleted');
+    } catch (error) {
+      console.error('Failed to delete image:', error);
+      toast.error('Failed to delete image');
+    }
+  }
 
   function handleResetThemeColors() {
     THEME_COLORS.forEach((c) =>
@@ -234,12 +268,49 @@ export default function StoreSettingsPage() {
           ))}
         </div>
 
+        {/* Site Images Gallery - only on Branding tab */}
+        {activeGroup === 'Branding' && (
+          <div className="bg-hmc-panelbackground border border-hmc-border-b rounded-lg p-6 mb-6">
+            <h3 className="text-lg font-bold text-hmc-textprimary mb-4">All Site Images</h3>
+            {loadingImages ? (
+              <p className="text-hmc-textprimary">Loading images...</p>
+            ) : siteImages.length === 0 ? (
+              <p className="text-hmc-textprimary/60">No images uploaded yet</p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {siteImages.map((image) => (
+                  <div key={image.id} className="border border-hmc-border-b rounded-lg p-2 bg-hmc-button-a/5">
+                    <div className="w-full h-32 bg-hmc-bg-a rounded mb-2 overflow-hidden">
+                      <img
+                        src={image.image_url}
+                        alt={image.context}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="text-xs text-hmc-textprimary/70 mb-2">
+                      <p className="font-semibold">{image.context}</p>
+                      <p>{image.width}x{image.height}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteImage(image.id, image.image_path)}
+                      className="w-full px-2 py-1 text-xs font-bold bg-hmc-error text-white rounded hover:opacity-90 transition"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Active section panel */}
         <div className="bg-hmc-panelbackground border border-hmc-border-b">
-          <div className="p-5 flex flex-col gap-5">
+          <div className="p-3 flex flex-col gap-2">
             {groupConfigs.map((config) => (
-              <div key={config.key} className="grid grid-cols-3 gap-4 items-start">
-                <label className="text-sm font-semibold text-hmc-textprimary pt-2 col-span-1">
+              <div key={config.key} className="border border-hmc-border-b rounded p-3 grid grid-cols-3 gap-3 items-start bg-hmc-button-a/5">
+                <label className="text-sm font-semibold text-hmc-textprimary pt-1 col-span-1">
                   {config.label}
                 </label>
                 <div className="col-span-2">
