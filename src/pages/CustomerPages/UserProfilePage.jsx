@@ -22,11 +22,22 @@ export default function UserProfilePage() {
   const [theme, setTheme] = useState('light');
   const [unsubscribeMarketing, setUnsubscribeMarketing] = useState(false);
   const [hasOrders, setHasOrders] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [formData, setFormData] = useState({
+    full_name: '',
+    street: '',
+    city: '',
+    state: '',
+    zip: '',
+    country: '',
+  });
 
   useEffect(() => {
     if (user?.id) {
       checkUserOrders();
       loadUserPreferences();
+      loadAddresses();
     }
   }, [user?.id]);
 
@@ -60,6 +71,64 @@ export default function UserProfilePage() {
       }
     } catch (error) {
       console.error('Error loading preferences:', error);
+    }
+  };
+
+  const loadAddresses = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('shipping_addresses')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setAddresses(data || []);
+    } catch (error) {
+      console.error('Error loading addresses:', error);
+    }
+  };
+
+  const handleAddAddress = async () => {
+    if (!formData.full_name || !formData.street || !formData.city || !formData.zip) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    if (addresses.length >= 3) {
+      toast.error('Maximum 3 addresses allowed');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('shipping_addresses')
+        .insert([{ user_id: user.id, ...formData }]);
+
+      if (error) throw error;
+      toast.success('Address added');
+      setFormData({ full_name: '', street: '', city: '', state: '', zip: '', country: '' });
+      setShowAddForm(false);
+      loadAddresses();
+    } catch (error) {
+      toast.error('Failed to add address');
+    }
+  };
+
+  const handleDeleteAddress = async (addressId) => {
+    if (!window.confirm('Delete this address?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('shipping_addresses')
+        .delete()
+        .eq('id', addressId);
+
+      if (error) throw error;
+      toast.success('Address deleted');
+      loadAddresses();
+    } catch (error) {
+      toast.error('Failed to delete address');
     }
   };
 
@@ -142,143 +211,237 @@ export default function UserProfilePage() {
 
   return (
     <PageContainer>
-      <div className="max-w-2xl mx-auto py-12">
-        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', padding: '32px' }}>
-          <h1 style={{ fontSize: '30px', fontWeight: 'bold', color: 'var(--color-hmc-textprimary)', marginBottom: '32px' }}>
-            Profile
-          </h1>
+      <div className="max-w-4xl mx-auto py-4 px-4">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-4xl font-bold text-hmc-textprimary">Profile</h1>
+          <button
+            onClick={handleLogout}
+            disabled={isLoading}
+            className="px-2 py-1 text-xs bg-hmc-button-a text-hmc-button-text-a font-bold rounded hover:opacity-90 disabled:opacity-60"
+          >
+            {isLoading ? 'Out...' : 'Logout'}
+          </button>
+        </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
-            {/* Left Column */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div>
-                <label style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-hmc-textprimary-70)' }}>Email</label>
-                <p style={{ fontSize: '18px', color: 'var(--color-hmc-textprimary)', marginTop: '8px' }}>{user?.email}</p>
-              </div>
-
-              {user?.full_name && (
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-hmc-textprimary-70)' }}>Full Name</label>
-                  <p style={{ fontSize: '18px', color: 'var(--color-hmc-textprimary)', marginTop: '8px' }}>{user.full_name}</p>
-                </div>
-              )}
-
-              <div>
-                <label style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-hmc-textprimary-70)' }}>Email Verified</label>
-                <p style={{ fontSize: '18px', color: 'var(--color-hmc-textprimary)', marginTop: '8px' }}>
-                  {user?.email_verified ? '✓ Verified' : '✗ Not Verified'}
-                </p>
-              </div>
-
-              {user?.role === 'admin' && (
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-hmc-textprimary-70)' }}>Role</label>
-                  <p style={{ fontSize: '18px', color: 'var(--color-hmc-textprimary)', marginTop: '8px', textTransform: 'capitalize' }}>
-                    {user.role}
-                  </p>
-                </div>
-              )}
-
-              {user?.created_at && (
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-hmc-textprimary-70)' }}>Member Since</label>
-                  <p style={{ fontSize: '18px', color: 'var(--color-hmc-textprimary)', marginTop: '8px' }}>
-                    {new Date(user.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-              )}
+        {/* Account Info Section */}
+        <div className="bg-white rounded-lg shadow p-4 mb-4">
+          <h2 className="text-2xl font-bold text-hmc-textprimary mb-3">Account Information</h2>
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs font-bold text-hmc-textprimary mb-1 block">📧 Email</label>
+              <p className="text-sm text-hmc-textprimary">{user?.email}</p>
             </div>
 
-            {/* Right Column */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {user?.full_name && (
               <div>
-                <label style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-hmc-textprimary-70)', display: 'block', marginBottom: '8px' }}>
-                  Theme
-                </label>
-                <Select
-                  options={THEME_OPTIONS}
-                  value={THEME_OPTIONS.find(opt => opt.value === theme)}
-                  onChange={handleThemeChange}
-                  styles={{
-                    control: (base) => ({
-                      ...base,
-                      backgroundColor: 'white',
-                      borderColor: 'var(--color-hmc-border-a)',
-                      color: 'var(--color-hmc-textprimary)',
-                    }),
-                    option: (base, state) => ({
-                      ...base,
-                      backgroundColor: state.isSelected ? 'var(--color-hmc-button-a)' : 'white',
-                      color: state.isSelected ? 'white' : 'var(--color-hmc-textprimary)',
-                    }),
-                    singleValue: (base) => ({
-                      ...base,
-                      color: 'var(--color-hmc-textprimary)',
-                    }),
-                  }}
-                />
+                <label className="text-xs font-bold text-hmc-textprimary mb-1 block">Full Name</label>
+                <p className="text-sm text-hmc-textprimary">{user.full_name}</p>
               </div>
+            )}
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <input
-                  type="checkbox"
-                  id="marketing-unsubscribe"
-                  checked={unsubscribeMarketing}
-                  onChange={handleMarketingToggle}
-                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                />
-                <label
-                  htmlFor="marketing-unsubscribe"
-                  style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-hmc-textprimary)', cursor: 'pointer' }}
-                >
-                  Unsubscribe from marketing emails
-                </label>
+            <div className="flex items-center gap-2">
+              <span className="text-lg">{user?.email_verified ? '✅' : '❌'}</span>
+            </div>
+
+            {user?.role === 'admin' && (
+              <div>
+                <label className="text-xs font-bold text-hmc-textprimary mb-1 block">Role</label>
+                <p className="text-sm text-hmc-textprimary capitalize">{user.role}</p>
+              </div>
+            )}
+
+            {user?.created_at && (
+              <div>
+                <label className="text-xs font-bold text-hmc-textprimary mb-1 block">Member Since</label>
+                <p className="text-sm text-hmc-textprimary">{new Date(user.created_at).toLocaleDateString()}</p>
+              </div>
+            )}
+
+            <div className="border-t border-hmc-border-a pt-3 mt-3">
+              <h3 className="text-sm font-semibold text-hmc-textprimary mb-3">Preferences</h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-bold text-hmc-textprimary mb-1 block">Theme</label>
+                  <Select
+                    options={THEME_OPTIONS}
+                    value={THEME_OPTIONS.find(opt => opt.value === theme)}
+                    onChange={handleThemeChange}
+                    isSearchable={false}
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        backgroundColor: 'white',
+                        borderColor: 'var(--color-hmc-border-a)',
+                        minHeight: '28px',
+                        fontSize: '12px',
+                      }),
+                      option: (base, state) => ({
+                        ...base,
+                        backgroundColor: state.isSelected ? 'var(--color-hmc-button-a)' : 'white',
+                        color: state.isSelected ? 'white' : 'var(--color-hmc-textprimary)',
+                        fontSize: '12px',
+                        padding: '4px 8px',
+                      }),
+                      singleValue: (base) => ({
+                        ...base,
+                        color: 'var(--color-hmc-textprimary)',
+                        fontSize: '12px',
+                      }),
+                      valueContainer: (base) => ({
+                        ...base,
+                        padding: '2px 8px',
+                      }),
+                    }}
+                  />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="marketing-unsubscribe"
+                    checked={unsubscribeMarketing}
+                    onChange={handleMarketingToggle}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="marketing-unsubscribe" className="text-xs font-bold text-hmc-textprimary cursor-pointer">
+                    Unsubscribe from marketing emails
+                  </label>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Action Buttons */}
-          <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
-            <button
-              onClick={handleLogout}
-              disabled={isLoading}
-              style={{
-                padding: '12px 24px',
-                backgroundColor: 'var(--color-hmc-button-a)',
-                color: 'var(--color-hmc-button-text-a)',
-                fontWeight: 'bold',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                opacity: isLoading ? 0.6 : 1,
-              }}
-            >
-              {isLoading ? 'Signing Out...' : 'Logout'}
-            </button>
+        {/* Shipping Addresses Section */}
+        <div className="bg-white rounded-lg shadow p-4 mb-4">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-2xl font-bold text-hmc-textprimary">Shipping Addresses ({addresses.length}/3)</h2>
+            {addresses.length < 3 && (
+              <button
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="ml-auto px-2 py-1 text-xs bg-hmc-button-a text-hmc-button-text-a font-bold rounded hover:opacity-90"
+              >
+                {showAddForm ? '✕' : '+'}
+              </button>
+            )}
+          </div>
 
+          {showAddForm && (
+            <div className="border border-hmc-border-a rounded p-3 mb-3">
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={formData.full_name}
+                  onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
+                />
+                <input
+                  type="text"
+                  placeholder="Street Address"
+                  value={formData.street}
+                  onChange={(e) => setFormData({...formData, street: e.target.value})}
+                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
+                />
+                <input
+                  type="text"
+                  placeholder="City"
+                  value={formData.city}
+                  onChange={(e) => setFormData({...formData, city: e.target.value})}
+                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
+                />
+                <input
+                  type="text"
+                  placeholder="State"
+                  value={formData.state}
+                  onChange={(e) => setFormData({...formData, state: e.target.value})}
+                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
+                />
+                <input
+                  type="text"
+                  placeholder="ZIP Code"
+                  value={formData.zip}
+                  onChange={(e) => setFormData({...formData, zip: e.target.value})}
+                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
+                />
+                <input
+                  type="text"
+                  placeholder="Country"
+                  value={formData.country}
+                  onChange={(e) => setFormData({...formData, country: e.target.value})}
+                  className="px-2 py-1 text-sm border border-hmc-border-a rounded text-hmc-textprimary"
+                />
+              </div>
+              <button
+                onClick={handleAddAddress}
+                className="mt-2 px-3 py-1 text-sm bg-hmc-button-a text-hmc-button-text-a font-bold rounded hover:opacity-90"
+              >
+                Save
+              </button>
+            </div>
+          )}
+
+          {addresses.length === 0 ? (
+            <p className="text-hmc-textprimary text-center py-2 text-sm">No addresses saved yet</p>
+          ) : (
+            <div className="space-y-2">
+              {addresses.map((addr) => (
+                <div key={addr.id} className="border border-hmc-border-a rounded p-3">
+                  <div className="space-y-2 mb-2">
+                    <div>
+                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">Name</label>
+                      <p className="text-hmc-textprimary">{addr.full_name}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">Street</label>
+                      <p className="text-hmc-textprimary">{addr.street}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">City</label>
+                      <p className="text-hmc-textprimary">{addr.city}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">State</label>
+                      <p className="text-hmc-textprimary">{addr.state}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">ZIP</label>
+                      <p className="text-hmc-textprimary">{addr.zip}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-hmc-textprimary block mb-0.5">Country</label>
+                      <p className="text-hmc-textprimary">{addr.country}</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => handleDeleteAddress(addr.id)}
+                      className="px-2 py-0.5 bg-red-600 text-white text-xs rounded hover:opacity-90"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="flex justify-end gap-2">
             <button
               onClick={handleDeleteAccount}
               disabled={isDeleting || hasOrders}
-              style={{
-                padding: '12px 24px',
-                backgroundColor: hasOrders ? '#ccc' : '#dc2626',
-                color: 'white',
-                fontWeight: 'bold',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: isDeleting || hasOrders ? 'not-allowed' : 'pointer',
-                opacity: isDeleting ? 0.6 : 1,
-              }}
+              className="px-2 py-1 text-xs bg-red-600 text-white font-bold rounded hover:opacity-90 disabled:opacity-60 disabled:bg-gray-400"
               title={hasOrders ? 'Cannot delete account with order history' : 'Delete account permanently'}
             >
-              {isDeleting ? 'Deleting...' : 'Delete Account'}
+              {isDeleting ? '...' : 'Delete Account'}
             </button>
           </div>
 
           {hasOrders && (
-            <p style={{ fontSize: '14px', color: '#dc2626', marginTop: '12px' }}>
-              Your account cannot be deleted because you have order history.
-            </p>
+            <p className="text-red-600 text-xs mt-2">Your account cannot be deleted because you have order history.</p>
           )}
         </div>
       </div>
