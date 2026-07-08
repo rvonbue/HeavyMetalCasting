@@ -147,7 +147,11 @@ export default function HeaderDesktop({
               style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'inherit', display: 'inline-flex', alignItems: 'center' }}
               title="View Profile"
             >
-              <SkullIcon />
+              {showLogo && settings.logo_url ? (
+                <img src={settings.logo_url} alt="Logo" className="h-6 w-auto object-contain" />
+              ) : (
+                <SkullIcon />
+              )}
             </button>
           ) : (
             <Link to="/login" className={inactiveBorder} style={{ color: 'inherit', display: 'inline-flex', alignItems: 'center' }}>
