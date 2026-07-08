@@ -143,7 +143,7 @@ function ColorSwatch({ varName, value, onChange }) {
         type="color"
         value={hex}
         onChange={(e) => onChange(e.target.value)}
-        className="h-8 w-8 cursor-pointer rounded bg-transparent p-0"
+        className="h-6 w-6 cursor-pointer rounded bg-transparent p-0"
         aria-label={`Edit ${varName}`}
       />
     </div>
@@ -271,7 +271,7 @@ export default function StoreSettingsPage() {
                 </div>
                 <div className="w-4/5 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-2">
                   {THEME_COLORS.map((c) => (
-                    <div key={c.var} className="flex items-center gap-2 border border-hmc-border-b rounded px-2 py-1">
+                    <div key={c.var} className="flex items-center gap-2 border border-hmc-border-b rounded px-1.5 py-0.5">
                       <ColorSwatch
                         varName={c.var}
                         value={watch(themeColorKey(c.var))}
