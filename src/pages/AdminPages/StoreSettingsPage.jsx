@@ -271,7 +271,7 @@ export default function StoreSettingsPage() {
                 </div>
                 <div className="w-4/5 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-2">
                   {THEME_COLORS.map((c) => (
-                    <div key={c.var} className="flex items-center gap-2">
+                    <div key={c.var} className="flex items-center gap-2 border border-hmc-border-b rounded px-2 py-1">
                       <ColorSwatch
                         varName={c.var}
                         value={watch(themeColorKey(c.var))}
