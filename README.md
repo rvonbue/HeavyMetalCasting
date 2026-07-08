@@ -19,21 +19,25 @@ A full-stack e-commerce platform for handcrafted metal jewelry. Built with React
 
 ### Prerequisites
 - Node.js 18+
-- PostgreSQL 14+ (for local Supabase)
 - Supabase CLI
+- **Docker** (optional - only needed if running Supabase locally; otherwise use remote Supabase)
 
 ### Install Dependencies
 ```bash
 npm install
 ```
 
-### Start Local Supabase
+### Start Local Supabase (Optional)
+If you want to run Supabase locally for development:
+
 ```bash
 cd supabase
 npx supabase start
 ```
 
-This runs Supabase locally at `http://localhost:54323` with the database on `postgresql://postgres:postgres@127.0.0.1:54322/postgres`.
+This requires Docker and runs Supabase locally at `http://localhost:54323` with the database on `postgresql://postgres:postgres@127.0.0.1:54322/postgres`.
+
+**Note:** You can skip this step and use the remote Supabase instance instead. The app will connect to the production database during development.
 
 ### Run Development Server
 ```bash
