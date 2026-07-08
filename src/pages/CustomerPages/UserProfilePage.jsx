@@ -228,7 +228,11 @@ export default function UserProfilePage() {
           <h2 className="text-2xl font-bold text-hmc-textprimary mb-3">Account Information</h2>
           <div className="space-y-3">
             <div>
-              <label className="text-xs font-bold text-hmc-textprimary mb-1 block">📧 Email</label>
+              <div className="flex items-center gap-2 mb-1">
+                <label className="text-sm font-bold text-hmc-textprimary">Email</label>
+                <span className="text-lg">{user?.email_verified ? '✅' : '❌'}</span>
+                {!user?.email_verified && <span className="text-xs text-hmc-textprimary font-semibold">Not verified</span>}
+              </div>
               <p className="text-sm text-hmc-textprimary">{user?.email}</p>
             </div>
 
@@ -238,10 +242,6 @@ export default function UserProfilePage() {
                 <p className="text-sm text-hmc-textprimary">{user.full_name}</p>
               </div>
             )}
-
-            <div className="flex items-center gap-2">
-              <span className="text-lg">{user?.email_verified ? '✅' : '❌'}</span>
-            </div>
 
             {user?.role === 'admin' && (
               <div>
@@ -319,7 +319,7 @@ export default function UserProfilePage() {
             {addresses.length < 3 && (
               <button
                 onClick={() => setShowAddForm(!showAddForm)}
-                className="ml-auto px-2 py-1 text-xs bg-hmc-button-a text-hmc-button-text-a font-bold rounded hover:opacity-90"
+                className="ml-8 px-3 py-1 text-3xl bg-hmc-button-a text-hmc-button-text-a font-bold rounded hover:opacity-90"
               >
                 {showAddForm ? '✕' : '+'}
               </button>

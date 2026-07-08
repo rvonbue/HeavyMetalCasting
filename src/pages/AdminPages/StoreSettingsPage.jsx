@@ -154,7 +154,9 @@ export default function StoreSettingsPage() {
   const storedSettings = useSelector((state) => state.settings.settings);
   const [activeGroup, setActiveGroup] = useState(GROUPS[0]);
 
-  const { register, handleSubmit, reset, setValue, watch, formState: { isDirty, isSubmitting } } = useForm();
+  const { register, handleSubmit, reset, setValue, watch, formState: { isDirty, isSubmitting } } = useForm({
+    defaultValues: storedSettings
+  });
 
   useEffect(() => {
     if (Object.keys(storedSettings).length > 0) {
@@ -252,7 +254,7 @@ export default function StoreSettingsPage() {
             ))}
 
             {activeGroup === 'Theme' && (
-              <div className="flex flex-col gap-4 border-t border-hmc-border-b pt-5">
+              <div className="flex flex-col gap-2 border-t border-hmc-border-b pt-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold uppercase tracking-widest text-hmc-textprimary/60">
                     Theme Colors
@@ -265,12 +267,12 @@ export default function StoreSettingsPage() {
                     Reset to theme defaults
                   </button>
                 </div>
-                {THEME_COLORS.map((c) => (
-                  <div key={c.var} className="grid grid-cols-3 gap-4 items-center">
-                    <label className="text-sm font-semibold text-hmc-textprimary col-span-1">
-                      {c.label}
-                    </label>
-                    <div className="col-span-2">
+                <div className="w-4/5 grid grid-cols-2 gap-3">
+                  {THEME_COLORS.map((c) => (
+                    <div key={c.var} className="flex flex-col gap-1">
+                      <label className="text-sm font-semibold text-hmc-textprimary">
+                        {c.label}
+                      </label>
                       <ColorSwatch
                         varName={c.var}
                         value={watch(themeColorKey(c.var))}
@@ -279,8 +281,8 @@ export default function StoreSettingsPage() {
                         }
                       />
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
           </div>
