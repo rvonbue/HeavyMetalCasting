@@ -12,7 +12,7 @@ A full-stack e-commerce platform for handcrafted metal jewelry. Built with React
 | **Vercel Dashboard** | [https://vercel.com/rvonbue-5602s-projects/heavy-metal-casting](https://vercel.com/rvonbue-5602s-projects/heavy-metal-casting) |
 | **Live App** | [https://heavy-metal-casting.vercel.app](https://heavy-metal-casting.vercel.app) |
 | **Local Dev** | `http://localhost:5173` |
-
+| **Supabse Local Dev** | http://localhost:54323/
 ---
 
 ## Development Setup
@@ -69,21 +69,6 @@ git push origin main
   - Deploys to production at `https://heavy-metal-casting.vercel.app`
 - Deployment typically completes in 1-2 minutes
 
-### 4. Verify Deployment
-- Check the [Vercel Dashboard](https://vercel.com/rvonbue-5602s-projects/heavy-metal-casting) to confirm status
-- Visit the live app and test key features
-
----
-
-## Environment Variables
-
-The app requires these Supabase credentials (set in Vercel):
-- `VITE_SUPABASE_URL` - Remote Supabase project URL
-- `VITE_SUPABASE_ANON_KEY` - Supabase public API key
-
-These are already configured in Vercel's environment settings.
-
----
 
 ## Database Management
 
