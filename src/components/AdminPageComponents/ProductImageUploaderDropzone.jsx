@@ -67,7 +67,7 @@ async function handleUpload() {
         onClick={() => inputRef.current.click()}
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
-        className="flex h-full w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 text-center text-sm text-gray-500 hover:bg-gray-50"
+        className="flex h-full w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-hmc-border-b p-4 text-center text-sm text-hmc-textprimary hover:bg-hmc-border-b/10"
       >
         Drop product images here or click to upload
       </div>
@@ -83,28 +83,40 @@ async function handleUpload() {
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-3xl rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-lg font-semibold">
-              Upload Product Images
-            </h2>
+          <div className="w-full max-w-3xl rounded-lg bg-hmc-panelbackground border border-hmc-border-b p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-hmc-textprimary">
+                Upload Product Images
+              </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setModalOpen(false);
+                  setFiles([]);
+                }}
+                className="text-hmc-textprimary/60 hover:text-hmc-textprimary transition text-2xl leading-none"
+              >
+                ✕
+              </button>
+            </div>
 
             <div className="grid grid-cols-4 gap-4">
               {files.map(({ file, previewUrl }, index) => (
-                <div key={previewUrl} className="rounded border p-2">
+                <div key={previewUrl} className="rounded border border-hmc-border-b p-2">
                   <img
                     src={previewUrl}
                     alt={file.name}
                     className="h-32 w-full rounded object-cover"
                   />
 
-                  <p className="mt-2 truncate text-xs">{file.name}</p>
+                  <p className="mt-2 truncate text-xs text-hmc-textprimary">{file.name}</p>
 
                   <button
                     type="button"
                     onClick={() =>
                       setFiles((prev) => prev.filter((_, i) => i !== index))
                     }
-                    className="mt-2 text-xs text-red-600"
+                    className="mt-2 text-xs text-hmc-error font-semibold"
                   >
                     Remove
                   </button>
@@ -119,7 +131,7 @@ async function handleUpload() {
                   setModalOpen(false);
                   setFiles([]);
                 }}
-                className="rounded border px-4 py-2"
+                className="rounded border border-hmc-border-b px-4 py-2 text-hmc-textprimary hover:bg-hmc-border-b/20 transition"
               >
                 Cancel
               </button>
@@ -127,7 +139,7 @@ async function handleUpload() {
               <button
                 type="button"
                 onClick={handleUpload}
-                className="rounded bg-black px-4 py-2 text-white"
+                className="rounded bg-hmc-button-a px-4 py-2 text-hmc-button-text-a font-bold hover:opacity-90 transition"
               >
                 Upload Images
               </button>
