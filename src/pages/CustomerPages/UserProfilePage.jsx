@@ -215,7 +215,7 @@ export default function UserProfilePage() {
 
   return (
     <PageContainer bg="admin">
-      <div className="mx-auto w-full max-w-2xl text-left">
+      <div className="mx-auto w-full max-w-2xl text-left flex flex-col flex-1">
         <AdminPageHeader
           title="Profile"
           action={
@@ -234,13 +234,14 @@ export default function UserProfilePage() {
           <h2 className="text-xs font-bold uppercase tracking-widest text-hmc-textprimary/60 mb-3">
             Account Information
           </h2>
-          <div className="grid grid-cols-[140px_1fr] items-center gap-x-4 gap-y-2">
+          <div className="grid grid-cols-[auto_1fr] items-center gap-x-6 gap-y-2">
             <label className={labelClass}>Email</label>
-            <div className={`flex items-center gap-2 ${valueClass}`}>
+            <div className={`flex items-center gap-3 ${valueClass}`}>
               <span>{user?.email}</span>
-              <span>{user?.email_verified ? '✅' : '❌'}</span>
-              {!user?.email_verified && (
-                <span className="text-xs text-hmc-textprimary/60">Not verified</span>
+              {user?.email_verified ? (
+                <span className="text-xs font-bold uppercase tracking-wide text-hmc-textprimary/60">✓ Verified</span>
+              ) : (
+                <span className="text-xs font-bold uppercase tracking-wide text-hmc-error">✕ Not verified</span>
               )}
             </div>
 
@@ -271,7 +272,7 @@ export default function UserProfilePage() {
             <h2 className="text-xs font-bold uppercase tracking-widest text-hmc-textprimary/60 mb-3">
               Preferences
             </h2>
-            <div className="grid grid-cols-[140px_1fr] items-center gap-x-4 gap-y-2">
+            <div className="grid grid-cols-[auto_1fr] items-center gap-x-6 gap-y-2">
               <label className={labelClass}>Theme</label>
               <div className="w-44">
                 <Select
@@ -427,7 +428,7 @@ export default function UserProfilePage() {
         </div>
 
         {/* Delete account */}
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex flex-col items-end gap-1 mt-auto">
           <button
             onClick={handleDeleteAccount}
             disabled={isDeleting || hasOrders}
