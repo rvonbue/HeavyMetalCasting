@@ -1,9 +1,10 @@
-// AWS SES email service for transactional and marketing emails
+// Transactional and marketing email, sent via the /api/send-email serverless
+// function (Resend).
 const EMAIL_API_URL = '/api/send-email';
 const FROM_EMAIL = 'noreply@heavymetalcasting.com';
 const FROM_NAME = 'Heavy Metal Casting';
 
-// Helper to send emails via AWS SES serverless function
+// Helper to send emails via the serverless function.
 async function sendEmail(to, subject, htmlContent) {
   const response = await fetch(EMAIL_API_URL, {
     method: 'POST',

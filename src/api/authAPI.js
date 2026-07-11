@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { sendVerificationEmail, sendPasswordResetEmail } from './brevoAPI';
+import { sendVerificationEmail, sendPasswordResetEmail } from './emailAPI';
 
 // Sign up with email and password
 export async function signUpWithEmail(email, password, fullName = '') {
